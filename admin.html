@@ -728,6 +728,7 @@ async function updateOrder(row, status, items) {
 // ===== STORE MANAGEMENT =====
 let sheet1Products = [];
 let storeProducts_list = [];
+let storeProducts_raw = [];
 
 async function loadSheet1Products() {
   const tb = document.getElementById('store-manage-table');
@@ -756,8 +757,10 @@ async function loadSheet1Products() {
     }
     // Parse Store products (already in store)
     if(r2.status==='ok' && r2.data.length>1) {
-      storeProducts_list = r2.data.slice(1).filter(r=>r[0]).map(r=>String(r[1]||'').trim());
+      storeProducts_raw = r2.data.slice(1).filter(r=>r[0]);
+      storeProducts_list = storeProducts_raw.map(r=>String(r[1]||'').trim());
     } else {
+      storeProducts_raw = [];
       storeProducts_list = [];
     }
   } catch(e) { sheet1Products = []; }
@@ -772,15 +775,20 @@ function renderStoreManage() {
     return;
   }
   tb.innerHTML = available.map((p,i)=>{
-    const inStore = storeProducts_list.includes(p.name);
+    const storeItem = storeProducts_raw ? storeProducts_raw.find(r=>String(r[1]).trim()===p.name) : null;
+    const inStore = !!storeItem;
+    const isPending = storeItem && String(storeItem[8]).trim()==='pending';
     return `<tr>
       <td style="color:var(--earth-muted);font-size:11px">${i+1}</td>
       <td><strong>${p.name}</strong></td>
       <td style="font-family:Kanit,sans-serif;color:var(--earth-accent)">฿${p.sell.toLocaleString()}</td>
       <td><span class="badge ${p.sold?'badge-sold':'badge-available'}">${p.sold?'ขายแล้ว':'ในสต็อก'}</span></td>
-      <td><span class="badge ${inStore?'badge-available':'badge-unposted'}">${inStore?'✅ แสดงอยู่':'ซ่อน'}</span></td>
+      <td><span class="badge ${isPending?'badge-unposted':inStore?'badge-available':'badge-stock'}">${isPending?'⏳ Sold Out':inStore?'✅ แสดงอยู่':'ซ่อน'}</span></td>
       <td><div class="row-action">
-        ${inStore
+        ${isPending
+          ? `<button class="btn btn-success btn-sm" onclick="restoreProduct('${p.name.replace(/'/g,"\'")}')">🔄 คืนสต็อก</button>
+             <button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\'")}')">🗑️ ลบออก</button>`
+          : inStore
           ? `<button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\'")}')">🙈 ซ่อน</button>`
           : `<button class="btn btn-success btn-sm" onclick="openStoreForm('${p.name.replace(/'/g,"\'")}',${p.sell})">🛍️ แสดงในร้าน</button>`
         }
@@ -800,6 +808,22 @@ function openStoreForm(name, price) {
   document.getElementById('store-form-box').dataset.price = price;
   document.getElementById('store-form-box').style.display = 'block';
   document.getElementById('store-form-box').scrollIntoView({behavior:'smooth'});
+}
+
+async function restoreProduct(name) {
+  try {
+    const res = await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
+    if(res.status==='ok') {
+      const rowIdx = res.data.findIndex((r,i)=>i>0&&String(r[1]).trim()===name);
+      if(rowIdx>0) {
+        const rd = [...res.data[rowIdx]];
+        rd[8] = 'available';
+        await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Store',row:rowIdx+1,data:rd})});
+        toast('🔄 คืนสต็อกแล้ว สินค้ากลับมาขายได้');
+        loadSheet1Products();
+      }
+    }
+  } catch(e) { toast('⚠️ เกิดข้อผิดพลาด'); }
 }
 
 async function saveToStore() {

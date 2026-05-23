@@ -719,6 +719,7 @@ window.toggleUserDropdown = () => {
 // Watch auth state
 onAuthStateChanged(auth, (user) => {
   const userArea = document.getElementById('user-area');
+  if(!userArea) return;
   if(user) {
     const name = user.displayName || user.email.split('@')[0];
     const initials = name.slice(0,2).toUpperCase();

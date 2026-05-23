@@ -206,9 +206,14 @@ footer strong{color:var(--gold-light);}
     <a href="#">หน้าแรก</a>
     <a href="#products">สินค้า</a>
   </div>
-  <button class="nav-cart" onclick="toggleCart()">
-    🛒 ตะกร้า <span class="cart-badge" id="cart-badge">0</span>
-  </button>
+  <div style="display:flex;gap:9px;align-items:center;">
+    <div id="user-area">
+      <button class="nav-cart" style="background:transparent;border:1px solid rgba(193,125,60,0.5);color:var(--gold-light);" onclick="openAuthModal()">👤 เข้าสู่ระบบ</button>
+    </div>
+    <button class="nav-cart" onclick="toggleCart()">
+      🛒 ตะกร้า <span class="cart-badge" id="cart-badge">0</span>
+    </button>
+  </div>
 </nav>
 
 <!-- HERO -->

@@ -463,6 +463,9 @@ async function loadProducts() {
       products = JSON.parse(cached);
       renderProducts();
     } catch(e) {}
+  } else {
+    // ยังไม่มี cache - แสดง loading spinner ไปก่อน
+    document.getElementById('product-count').textContent = 'กำลังโหลด...';
   }
   try {
     const res = await fetch(GAS_URL+'?action=read&sheet='+STORE_SHEET);
@@ -481,6 +484,7 @@ async function loadProducts() {
         }));
     }
       localStorage.setItem('rj_products_cache', JSON.stringify(products));
+      renderProducts();
     }
   } catch(e) {
     // Demo products

@@ -260,6 +260,10 @@ footer strong{color:var(--gold-light);}
       <h2 class="modal-name" id="modal-name">ชื่อสินค้า</h2>
       <div class="modal-price" id="modal-price">฿0</div>
       <div class="modal-desc" id="modal-desc">รายละเอียดสินค้า</div>
+      <div id="modal-defect-box" style="background:#FFF5F5;border:1px solid #FFD0D0;border-radius:8px;padding:10px 14px;margin-bottom:16px;display:none;">
+        <div style="font-size:11px;font-weight:600;color:#A85252;letter-spacing:1px;margin-bottom:4px;">⚠️ ตำหนิ</div>
+        <div id="modal-defect" style="font-size:13px;color:#7A3030;line-height:1.6;"></div>
+      </div>
       <div class="modal-size-label">Size</div>
       <div class="size-display" id="modal-size">L</div>
       <button class="modal-add-btn" onclick="addToCartFromModal()">🛒 เพิ่มลงตะกร้า</button>
@@ -407,21 +411,21 @@ async function loadProducts() {
     if(data.status==='ok' && data.data.length>1) {
       const headers = data.data[0]; // [id, name, type, size, price, desc, img, status]
       products = data.data.slice(1)
-        .filter(r => r[0] && r[7]!=='sold')
+        .filter(r => r[0] && r[8]!=='sold')
         .map(r => ({
           id: r[0], name: r[1], type: r[2], size: r[3],
-          price: parseInt(r[4])||0, desc: r[5], img: r[6], status: r[7]||'available'
+          price: parseInt(r[4])||0, desc: r[5], defect: r[6]||'', 
+          imgs: r[7] ? String(r[7]).split(',').map(s=>s.trim()).filter(Boolean) : [],
+          img: r[7] ? String(r[7]).split(',')[0].trim() : '',
+          status: r[8]||'available'
         }));
     }
   } catch(e) {
     // Demo products
     products = [
-      {id:'1',name:'Liverpool Home Player 2023/24',type:'มือ1',size:'L',price:1942,desc:'เสื้อ Liverpool Home ซีซัน 2023/24 ของแท้ Player Edition สภาพใหม่มือ 1',img:'',status:'available'},
-      {id:'2',name:'PSG Away Player 2023/24',type:'มือ1',size:'XL',price:1550,desc:'เสื้อ PSG Away ซีซัน 2023/24 Player Edition สภาพดีเยี่ยม',img:'',status:'available'},
-      {id:'3',name:'Liverpool Third Replica 1998/00',type:'มือ2',size:'XL',price:3500,desc:'เสื้อ Liverpool Third Vintage ซีซัน 1998/00 สภาพดี มีร่องรอยการใช้งานบ้างเล็กน้อย',img:'',status:'available'},
-      {id:'4',name:'Liverpool Home Replica 1996/98',type:'มือ2',size:'L',price:4400,desc:'เสื้อ Liverpool Home Vintage ซีซัน 1996/98 หายาก สภาพดี',img:'',status:'available'},
-      {id:'5',name:'Brazil Away 1998',type:'มือ2',size:'M',price:2000,desc:'เสื้อทีมชาติบราซิล Away ปี 1998 World Cup Edition สภาพดี',img:'',status:'available'},
-      {id:'6',name:'England Home 2006',type:'มือ2',size:'XL',price:950,desc:'เสื้อทีมชาติอังกฤษ Home ปี 2006 สภาพดี',img:'',status:'available'},
+      {id:'1',name:'Liverpool Home Player 2023/24',type:'มือ1',size:'L (อก 46" ยาว 30")',price:1942,desc:'เสื้อ Liverpool Home ซีซัน 2023/24 ของแท้ Player Edition สภาพใหม่มือ 1',defect:'ไม่มีตำหนิ',imgs:[],img:'',status:'available'},
+      {id:'2',name:'PSG Away Player 2023/24',type:'มือ1',size:'XL (อก 48" ยาว 31")',price:1550,desc:'เสื้อ PSG Away ซีซัน 2023/24 Player Edition สภาพดีเยี่ยม',defect:'ไม่มีตำหนิ',imgs:[],img:'',status:'available'},
+      {id:'3',name:'Liverpool Third Replica 1998/00',type:'มือ2',size:'XL (อก 48" ยาว 31")',price:3500,desc:'เสื้อ Liverpool Third Vintage ซีซัน 1998/00 สภาพดี',defect:'มีรอยเหลืองเล็กน้อยที่ปก',imgs:[],img:'',status:'available'},
     ];
   }
   renderProducts();
@@ -474,6 +478,14 @@ function openProduct(id) {
   document.getElementById('modal-name').textContent = p.name;
   document.getElementById('modal-price').textContent = '฿'+p.price.toLocaleString();
   document.getElementById('modal-desc').textContent = p.desc||'ไม่มีรายละเอียด';
+  const defectBox = document.getElementById('modal-defect-box');
+  const defectEl = document.getElementById('modal-defect');
+  if(p.defect && p.defect !== 'none' && p.defect !== 'ไม่มีตำหนิ' && p.defect.trim()) {
+    defectEl.textContent = p.defect;
+    defectBox.style.display = 'block';
+  } else {
+    defectBox.style.display = 'none';
+  }
   document.getElementById('modal-size').textContent = p.size;
   const imgEl = document.getElementById('modal-img');
   imgEl.innerHTML = p.img

@@ -150,6 +150,7 @@
     <div class="nav-item" onclick="showSection('stock')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>สินค้าในสต็อก</div>
     <div class="nav-item" onclick="showSection('sold')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>สินค้าขายแล้ว</div>
     <div class="nav-item" onclick="showSection('finance')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>การเงิน</div>
+    <div class="nav-item" onclick="showSection('store')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>จัดการร้านค้า</div>
     <div class="nav-item" onclick="showSection('jipatha')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l1 4H8L9 3z"/><path d="M8 7v13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7"/><path d="M10 11h4"/><path d="M10 15h4"/></svg></span>จิปาถะ</div>
   </nav>
   <div class="sidebar-footer">เชื่อมกับ Google Sheet • v3.0</div>
@@ -255,6 +256,40 @@
       <div class="table-card">
         <div class="table-header"><div class="table-title">🧴 รายการจิปาถะทั้งหมด</div></div>
         <div class="tbl-wrap"><table><thead><tr><th>#</th><th>ชื่อรายการ</th><th>ราคา</th><th>หมายเหตุ</th><th>จัดการ</th></tr></thead><tbody id="tbl-jip"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- STORE MANAGEMENT -->
+    <div class="section" id="section-store">
+      <div style="background:var(--earth-card);border:1px solid var(--earth-border);border-radius:12px;padding:17px;margin-bottom:17px;">
+        <div style="font-size:13px;font-weight:600;color:var(--earth-dark);margin-bottom:6px;">🛍️ จัดการสินค้าในร้าน</div>
+        <div style="font-size:12px;color:var(--earth-muted);">กดปุ่ม "แสดงในร้าน" เพื่อโชว์สินค้าให้ลูกค้าเห็น • กด "ซ่อน" เพื่อเอาออก</div>
+      </div>
+      <div id="store-form-box" style="display:none;background:var(--earth-card);border:1px solid var(--earth-accent);border-radius:12px;padding:20px;margin-bottom:17px;">
+        <div style="font-size:13px;font-weight:600;color:var(--earth-dark);margin-bottom:14px;">➕ เพิ่มสินค้าเข้าร้าน: <span id="store-form-name" style="color:var(--earth-accent)"></span></div>
+        <input type="hidden" id="sf-id">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div class="form-group"><label>ประเภท</label><select id="sf-type"><option value="มือ1">มือ 1</option><option value="มือ2">มือ 2</option></select></div>
+          <div class="form-group"><label>Size</label><input type="text" id="sf-size" placeholder='L (อก 46" ยาว 30")'></div>
+          <div class="form-group" style="grid-column:1/-1"><label>รายละเอียดสินค้า</label><textarea id="sf-desc" rows="3" style="width:100%;padding:9px 12px;border:1px solid var(--earth-border);border-radius:8px;font-family:Sarabun,sans-serif;font-size:13px;background:var(--earth-bg);resize:vertical;" placeholder="บรรยายสินค้า สภาพ ฯลฯ"></textarea></div>
+          <div class="form-group" style="grid-column:1/-1"><label>ตำหนิ (ถ้าไม่มีเว้นว่าง)</label><input type="text" id="sf-defect" placeholder="เช่น มีรอยเหลืองเล็กน้อยที่ปก"></div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label>URL รูปภาพ (คั่นด้วย , ถ้ามีหลายรูป)</label>
+            <input type="text" id="sf-imgs" placeholder="https://... , https://...">
+            <div style="font-size:11px;color:var(--earth-muted);margin-top:4px;">💡 อัพรูปขึ้น Google Drive → Share → Copy link แล้ววางที่นี่</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-primary" onclick="saveToStore()">✅ แสดงในร้าน</button>
+          <button class="btn btn-outline" onclick="document.getElementById('store-form-box').style.display='none'">ยกเลิก</button>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">📋 สินค้าทั้งหมด (จาก Sheet1)</div>
+          <button class="btn btn-outline btn-sm" onclick="loadSheet1Products()">🔄 รีเฟรช</button>
+        </div>
+        <div class="tbl-wrap"><table><thead><tr><th>#</th><th>ชื่อสินค้า</th><th>ราคาขาย</th><th>สถานะ</th><th>ในร้าน</th><th>จัดการ</th></tr></thead><tbody id="store-manage-table"></tbody></table></div>
       </div>
     </div>
 
@@ -589,7 +624,8 @@ async function saveItem(){
 }
 
 function showSection(name){
-  const T={overview:"ภาพรวม",stock:"สินค้าในสต็อก",sold:"สินค้าขายแล้ว",finance:"การเงิน",jipatha:"จิปาถะ"};
+  const T={overview:"ภาพรวม",stock:"สินค้าในสต็อก",sold:"สินค้าขายแล้ว",finance:"การเงิน",jipatha:"จิปาถะ",store:"จัดการร้านค้า"};
+  if(name==="store") loadSheet1Products();
   document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
   document.getElementById("section-"+name).classList.add("active");
@@ -601,6 +637,118 @@ function n(v){return parseFloat(String(v).replace(/[^0-9.-]/g,""))||0;}
 function fmt(v){return"฿"+Math.round(v).toLocaleString("th-TH");}
 function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
 function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3200);}
+
+// ===== STORE MANAGEMENT =====
+let sheet1Products = [];
+let storeProducts_list = [];
+
+async function loadSheet1Products() {
+  const tb = document.getElementById('store-manage-table');
+  tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--earth-muted)">⏳ กำลังโหลด...</td></tr>';
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch(GAS_URL+'?action=read&sheet=Sheet1').then(r=>r.json()),
+      fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json()).catch(()=>({status:'ok',data:[]}))
+    ]);
+    // Parse Sheet1 products
+    if(r1.status==='ok') {
+      let dataStart=0;
+      for(let i=0;i<r1.data.length;i++){
+        const v=String(r1.data[i][0]).toUpperCase().trim();
+        if(v==='TRUE'||v==='FALSE'){dataStart=i;break;}
+      }
+      sheet1Products = r1.data.slice(dataStart)
+        .filter(r=>r[1]&&String(r[1]).trim())
+        .map((r,i)=>({
+          _row: dataStart+i+1,
+          name: String(r[1]||'').trim(),
+          cost: parseFloat(r[2])||0,
+          sell: parseFloat(r[3])||0,
+          sold: parseFloat(r[3])>0
+        }));
+    }
+    // Parse Store products (already in store)
+    if(r2.status==='ok' && r2.data.length>1) {
+      storeProducts_list = r2.data.slice(1).filter(r=>r[0]).map(r=>String(r[1]||'').trim());
+    } else {
+      storeProducts_list = [];
+    }
+  } catch(e) { sheet1Products = []; }
+  renderStoreManage();
+}
+
+function renderStoreManage() {
+  const tb = document.getElementById('store-manage-table');
+  const available = sheet1Products.filter(p=>!p.sold);
+  if(!available.length) {
+    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--earth-muted)">ไม่พบสินค้าในสต็อก</td></tr>';
+    return;
+  }
+  tb.innerHTML = available.map((p,i)=>{
+    const inStore = storeProducts_list.includes(p.name);
+    return `<tr>
+      <td style="color:var(--earth-muted);font-size:11px">${i+1}</td>
+      <td><strong>${p.name}</strong></td>
+      <td style="font-family:Kanit,sans-serif;color:var(--earth-accent)">฿${p.sell.toLocaleString()}</td>
+      <td><span class="badge ${p.sold?'badge-sold':'badge-available'}">${p.sold?'ขายแล้ว':'ในสต็อก'}</span></td>
+      <td><span class="badge ${inStore?'badge-available':'badge-unposted'}">${inStore?'✅ แสดงอยู่':'ซ่อน'}</span></td>
+      <td><div class="row-action">
+        ${inStore
+          ? `<button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\'")}')">🙈 ซ่อน</button>`
+          : `<button class="btn btn-success btn-sm" onclick="openStoreForm('${p.name.replace(/'/g,"\'")}',${p.sell})">🛍️ แสดงในร้าน</button>`
+        }
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openStoreForm(name, price) {
+  document.getElementById('store-form-name').textContent = name;
+  document.getElementById('sf-id').value = 'RJ'+Date.now();
+  document.getElementById('sf-size').value = '';
+  document.getElementById('sf-desc').value = '';
+  document.getElementById('sf-defect').value = '';
+  document.getElementById('sf-imgs').value = '';
+  document.getElementById('store-form-box').dataset.name = name;
+  document.getElementById('store-form-box').dataset.price = price;
+  document.getElementById('store-form-box').style.display = 'block';
+  document.getElementById('store-form-box').scrollIntoView({behavior:'smooth'});
+}
+
+async function saveToStore() {
+  const box = document.getElementById('store-form-box');
+  const name = box.dataset.name;
+  const price = box.dataset.price;
+  const id = document.getElementById('sf-id').value;
+  const type = document.getElementById('sf-type').value;
+  const size = document.getElementById('sf-size').value.trim();
+  const desc = document.getElementById('sf-desc').value.trim();
+  const defect = document.getElementById('sf-defect').value.trim();
+  const imgs = document.getElementById('sf-imgs').value.trim();
+  if(!size){toast('กรุณาใส่ Size ก่อนครับ');return;}
+  const data = [id, name, type, size, price, desc, defect, imgs, 'available'];
+  try {
+    await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'append',sheet:'Store',data})});
+    toast('✅ เพิ่มสินค้าเข้าร้านแล้ว!');
+    box.style.display='none';
+    loadSheet1Products();
+  } catch(e) { toast('⚠️ บันทึกไม่สำเร็จ'); }
+}
+
+async function removeFromStore(name) {
+  if(!confirm('ซ่อนสินค้า "'+name+'" จากร้านไหมครับ?')) return;
+  try {
+    const res = await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
+    if(res.status==='ok') {
+      const row = res.data.findIndex((r,i)=>i>0&&String(r[1]).trim()===name);
+      if(row>0) {
+        await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Store',row:row+1})});
+        toast('🙈 ซ่อนสินค้าแล้ว');
+        loadSheet1Products();
+      }
+    }
+  } catch(e) { toast('⚠️ เกิดข้อผิดพลาด'); }
+}
 
 window.addEventListener("load",loadData);
 </script>

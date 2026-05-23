@@ -369,10 +369,10 @@ footer strong{color:var(--gold-light);}
       <div class="auth-divider">หรือ</div>
       <!-- Register fields (hidden on login) -->
       <div id="register-name-field" style="display:none">
-        <input class="auth-input" type="text" id="auth-name" placeholder="ชื่อ-นามสกุล">
+        <input class="auth-input" type="text" id="auth-name" placeholder="ชื่อ (แสดงในโปรไฟล์)">
       </div>
       <input class="auth-input" type="text" id="auth-username" placeholder="ชื่อผู้ใช้">
-      <input class="auth-input" type="password" id="auth-password" placeholder="รหัสผ่าน">
+      <input class="auth-input" type="password" id="auth-password" placeholder="รหัสผ่าน (อย่างน้อย 6 ตัว)">
       <div class="auth-error" id="auth-error">เกิดข้อผิดพลาด กรุณาลองใหม่</div>
       <button class="auth-btn" id="auth-submit-btn" onclick="submitAuth()">เข้าสู่ระบบ</button>
     </div>
@@ -651,11 +651,11 @@ window.switchAuthTab = (tab, el) => {
   if(tab === 'register') {
     nameField.style.display = 'block';
     submitBtn.textContent = 'สมัครสมาชิก';
-    userInput.placeholder = 'อีเมล (ใช้ Login)';
+    userInput.placeholder = 'ชื่อผู้ใช้';
   } else {
     nameField.style.display = 'none';
     submitBtn.textContent = 'เข้าสู่ระบบ';
-    userInput.placeholder = 'ชื่อผู้ใช้ หรือ อีเมล';
+    userInput.placeholder = 'ชื่อผู้ใช้';
   }
   document.getElementById('auth-error').style.display = 'none';
 };

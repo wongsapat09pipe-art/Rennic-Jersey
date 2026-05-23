@@ -290,6 +290,18 @@
           <div class="form-group"><label>Size</label><input type="text" id="sf-size" placeholder='L (อก 46" ยาว 30")'></div>
           <div class="form-group" style="grid-column:1/-1"><label>รายละเอียดสินค้า</label><textarea id="sf-desc" rows="3" style="width:100%;padding:9px 12px;border:1px solid var(--earth-border);border-radius:8px;font-family:Sarabun,sans-serif;font-size:13px;background:var(--earth-bg);resize:vertical;" placeholder="บรรยายสินค้า สภาพ ฯลฯ"></textarea></div>
           <div class="form-group" style="grid-column:1/-1"><label>ตำหนิ (ถ้าไม่มีเว้นว่าง)</label><input type="text" id="sf-defect" placeholder="เช่น มีรอยเหลืองเล็กน้อยที่ปก"></div>
+          <div class="form-group">
+            <label>ลีก</label>
+            <select id="sf-league">
+              <option value="">— ไม่ระบุ —</option>
+              <option value="Premier League">Premier League</option>
+              <option value="La Liga">La Liga</option>
+              <option value="Serie A">Serie A</option>
+              <option value="Bundesliga">Bundesliga</option>
+              <option value="Ligue 1">Ligue 1</option>
+              <option value="National Team">🌍 National Team</option>
+            </select>
+          </div>
           <div class="form-group" style="grid-column:1/-1">
             <label>URL รูปภาพ (คั่นด้วย , ถ้ามีหลายรูป)</label>
             <input type="text" id="sf-imgs" placeholder="https://... , https://...">
@@ -837,7 +849,8 @@ async function saveToStore() {
   const defect = document.getElementById('sf-defect').value.trim();
   const imgs = document.getElementById('sf-imgs').value.trim();
   if(!size){toast('กรุณาใส่ Size ก่อนครับ');return;}
-  const data = [id, name, type, size, price, desc, defect, imgs, 'available'];
+  const league = document.getElementById('sf-league').value;
+  const data = [id, name, type, size, price, desc, defect, imgs, 'available', league];
   try {
     await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'append',sheet:'Store',data})});
     toast('✅ เพิ่มสินค้าเข้าร้านแล้ว!');

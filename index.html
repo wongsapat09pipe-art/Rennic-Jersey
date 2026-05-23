@@ -464,8 +464,8 @@ async function loadProducts() {
       renderProducts();
     } catch(e) {}
   } else {
-    // ยังไม่มี cache - แสดง loading spinner ไปก่อน
-    document.getElementById('product-count').textContent = 'กำลังโหลด...';
+    // ยังไม่มี cache - โหลด demo ก่อนเลย
+    loadDemo();
   }
   try {
     const res = await fetch(GAS_URL+'?action=read&sheet='+STORE_SHEET);
@@ -487,13 +487,16 @@ async function loadProducts() {
       renderProducts();
     }
   } catch(e) {
-    // Demo products
-    products = [
+    if(!cached) loadDemo();
+  }
+}
+
+function loadDemo() {
+  products = [
       {id:'1',name:'Liverpool Home Player 2023/24',type:'มือ1',size:'L (อก 46" ยาว 30")',price:1942,desc:'เสื้อ Liverpool Home ซีซัน 2023/24 ของแท้ Player Edition สภาพใหม่มือ 1',defect:'ไม่มีตำหนิ',imgs:[],img:'',status:'available'},
       {id:'2',name:'PSG Away Player 2023/24',type:'มือ1',size:'XL (อก 48" ยาว 31")',price:1550,desc:'เสื้อ PSG Away ซีซัน 2023/24 Player Edition สภาพดีเยี่ยม',defect:'ไม่มีตำหนิ',imgs:[],img:'',status:'available'},
       {id:'3',name:'Liverpool Third Replica 1998/00',type:'มือ2',size:'XL (อก 48" ยาว 31")',price:3500,desc:'เสื้อ Liverpool Third Vintage ซีซัน 1998/00 สภาพดี',defect:'มีรอยเหลืองเล็กน้อยที่ปก',imgs:[],img:'',status:'available'},
     ];
-  }
   renderProducts();
 }
 

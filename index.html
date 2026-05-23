@@ -72,6 +72,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--dark);paddi
 .card-size{font-size:11px;color:var(--muted);background:var(--surface);padding:3px 8px;border-radius:4px;}
 .card-btn{background:var(--dark);color:var(--gold-light);border:none;padding:8px 16px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Sarabun',sans-serif;transition:all 0.2s;}
 .card-btn:hover{background:var(--brown);}
+.card-btn.soldout{background:var(--border);color:var(--muted);cursor:not-allowed;}
+.sold-out-badge{position:absolute;inset:0;background:rgba(28,16,8,0.55);display:flex;align-items:center;justify-content:center;}
+.sold-out-tag{background:#1C1008;color:#F5F0E8;font-size:12px;font-weight:600;letter-spacing:2px;padding:7px 18px;border-radius:20px;text-transform:uppercase;}
 
 /* MODAL PRODUCT */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(28,16,8,0.7);z-index:200;align-items:center;justify-content:center;padding:20px;}
@@ -468,13 +471,17 @@ function renderProducts() {
       <div class="card-img">
         ${p.img ? `<img src="${p.img}" alt="${p.name}" loading="lazy">` : '<div class="card-img-placeholder">👕</div>'}
         <div class="card-badge ${p.type==='มือ1'?'new':''}">${p.type}</div>
+        ${p.status==='pending'?'<div class="sold-out-badge"><div class="sold-out-tag">Sold Out</div></div>':''}
       </div>
       <div class="card-body">
         <div class="card-name">${p.name}</div>
         <div class="card-meta">Size: ${p.size}</div>
         <div class="card-footer">
           <div class="card-price">฿${p.price.toLocaleString()}</div>
-          <button class="card-btn" onclick="event.stopPropagation();addToCart('${p.id}')">+ ตะกร้า</button>
+          ${p.status==='pending'
+            ? '<button class="card-btn soldout" disabled>Sold Out</button>'
+            : `<button class="card-btn" onclick="event.stopPropagation();addToCart('${p.id}')">+ ตะกร้า</button>`
+          }
         </div>
       </div>
     </div>
@@ -719,6 +726,21 @@ async function submitOrder() {
   saveAddressIfNeeded(name, phone, address, document.getElementById('o-note').value);
   try{
     await fetch(GAS_URL,{method:'POST',body:JSON.stringify(orderData)});
+    // Mark products as pending (sold out) in Store sheet
+    for(const item of cart) {
+      try {
+        const res = await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
+        if(res.status==='ok') {
+          const rowIdx = res.data.findIndex((r,i)=>i>0&&String(r[0]).trim()===item.id);
+          if(rowIdx>0) {
+            await fetch(GAS_URL,{method:'POST',body:JSON.stringify({
+              action:'update',sheet:'Store',row:rowIdx+1,
+              data:[item.id,item.name,item.type,item.size,item.price,item.desc||'',item.defect||'',item.imgs?item.imgs.join(','):'','pending']
+            })});
+          }
+        }
+      } catch(e) {}
+    }
   }catch(e){}
 
   // Success

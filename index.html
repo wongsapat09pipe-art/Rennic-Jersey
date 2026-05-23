@@ -504,7 +504,11 @@ function renderProducts() {
   document.getElementById('product-count').textContent = filtered.length+' รายการ';
   const grid = document.getElementById('products-grid');
   if(!filtered.length) {
-    grid.innerHTML='<div class="loading-spinner">ไม่พบสินค้า</div>';
+    if(products.length === 0) {
+      grid.innerHTML='<div class="loading-spinner" style="color:var(--muted)">ยังไม่มีสินค้าในร้านขณะนี้<br><span style="font-size:12px">กรุณากลับมาใหม่ในภายหลัง</span></div>';
+    } else {
+      grid.innerHTML='<div class="loading-spinner">ไม่พบสินค้าที่ตรงกับการค้นหา</div>';
+    }
     return;
   }
   grid.innerHTML = filtered.map(p => `

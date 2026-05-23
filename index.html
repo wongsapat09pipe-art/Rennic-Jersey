@@ -628,7 +628,7 @@ async function loadSavedAddress() {
     }
     // Try Google Sheet (cross-device)
     try {
-      const res = await fetch(GAS_URL+'?action=read&sheet=Members').then(r=>r.json());
+      const res = await fetch(GAS_URL+'?action=read&sheet=Member').then(r=>r.json());
       if(res.status==='ok') {
         const row = res.data.find((r,i)=>i>0&&String(r[0]).trim()===uid);
         if(row) {
@@ -676,20 +676,20 @@ async function saveAddressIfNeeded(name, phone, address, note) {
     // Save to Google Sheet Members
     try {
       // Check if member exists first
-      const res = await fetch(GAS_URL+'?action=read&sheet=Members').then(r=>r.json());
+      const res = await fetch(GAS_URL+'?action=read&sheet=Member').then(r=>r.json());
       if(res.status==='ok') {
         const rows = res.data||[];
         const existingIdx = rows.findIndex((r,i)=>i>0&&String(r[0]).trim()===uid);
         if(existingIdx>0) {
           // Update existing row
           await fetch(GAS_URL,{method:'POST',body:JSON.stringify({
-            action:'update',sheet:'Members',row:existingIdx+1,
+            action:'update',sheet:'Member',row:existingIdx+1,
             data:[uid,name,email,phone,address,note,updated]
           })});
         } else {
           // Append new member
           await fetch(GAS_URL,{method:'POST',body:JSON.stringify({
-            action:'append',sheet:'Members',
+            action:'append',sheet:'Member',
             data:[uid,name,email,phone,address,note,updated]
           })});
         }

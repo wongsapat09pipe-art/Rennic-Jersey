@@ -661,7 +661,7 @@ let ordersList = [];
 
 async function loadOrders() {
   try {
-    const res = await fetch(GAS_URL+'?action=read&sheet=order').then(r=>r.json());
+    const res = await fetch(GAS_URL+'?action=read&sheet=Order').then(r=>r.json());
     if(res.status==='ok' && res.data.length>1) {
       ordersList = res.data.slice(1).filter(r=>r[0]).map((r,i)=>({
         _row:i+2, date:r[0], name:r[1], phone:r[2],
@@ -698,11 +698,11 @@ function renderOrdersTable() {
 async function updateOrder(row, status, items) {
   try {
     // Read current order row
-    const res = await fetch(GAS_URL+'?action=read&sheet=order').then(r=>r.json());
+    const res = await fetch(GAS_URL+'?action=read&sheet=Order').then(r=>r.json());
     if(res.status==='ok' && res.data[row-1]) {
       const rowData = [...res.data[row-1]];
       rowData[7] = status;
-      await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'order',row,data:rowData})});
+      await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Order',row,data:rowData})});
     }
     // Handle store product status
     const storeRes = await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
@@ -750,7 +750,7 @@ async function loadSheet1Products() {
           _row: dataStart+i+1,
           name: String(r[1]||'').trim(),
           cost: parseFloat(r[2])||0,
-          sell: parseFloat(r[3])||0,
+          sell: parseFloat(r[3])||parseFloat(r[2])||0,
           sold: parseFloat(r[3])>0
         }));
     }

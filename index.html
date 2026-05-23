@@ -713,7 +713,7 @@ async function submitOrder() {
   if(!name||!phone||!address){ toast('กรุณากรอกข้อมูลให้ครบถ้วนครับ'); return; }
   const total = cart.reduce((s,p)=>s+p.price,0);
   const orderData = {
-    action:'append', sheet:'Orders',
+    action:'append', sheet:'Order',
     data:[
       new Date().toLocaleString('th-TH'),
       name, phone, address,

@@ -324,16 +324,16 @@ footer strong{color:var(--gold-light);}
         <div class="qr-section">
           <div class="qr-title">สแกน QR Code เพื่อโอนเงิน</div>
           <div class="qr-sub">จำนวนเงิน: <strong id="qr-amount-display">฿0</strong></div>
-          <div class="qr-type-tabs">
-            <button class="qr-tab active" onclick="switchQrType('phone',this)">เบอร์มือถือ</button>
-            <button class="qr-tab" onclick="switchQrType('account',this)">เลขบัญชี</button>
+          <div style="margin:14px 0;">
+            <img id="qr-img" src="" alt="QR PromptPay" style="width:200px;height:200px;border-radius:10px;border:4px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,0.1);display:block;margin:0 auto;">
           </div>
-          <div class="qr-input-row">
-            <input type="text" class="qr-input" id="qr-input" placeholder="กรอกเบอร์พร้อมเพย์..." value="">
-            <button class="qr-gen-btn" onclick="generateQR()">สร้าง QR</button>
+          <div style="background:#fff;border-radius:10px;padding:12px 16px;text-align:left;border:1px solid var(--border);font-size:13px;">
+            <div style="color:var(--muted);font-size:11px;font-weight:600;margin-bottom:4px;">โอนมาที่</div>
+            <div style="font-weight:600;color:var(--brown);font-size:15px;">MR. WONGSAPAT YASOTHORNSRIKUL</div>
+            <div style="color:var(--muted);margin-top:4px;">ธนาคารกสิกรไทย (KBank)</div>
+            <div style="font-family:monospace;font-size:14px;color:var(--gold);font-weight:600;margin-top:2px;">1943-797-303</div>
           </div>
-          <div id="qr-display"></div>
-          <div style="font-size:11px;color:var(--muted);margin-top:10px;">* กรอกเบอร์หรือเลขบัญชีพร้อมเพย์ของร้านแล้วกด "สร้าง QR"</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:10px;">* QR Code จะอัพเดทยอดเงินอัตโนมัติตามสินค้าที่สั่ง</div>
         </div>
 
         <!-- SLIP UPLOAD -->
@@ -546,6 +546,10 @@ function openCheckout() {
   toggleCart();
   const total = cart.reduce((s,p)=>s+p.price,0);
   document.getElementById('qr-amount-display').textContent = '฿'+total.toLocaleString();
+  // Auto generate QR with KBank account
+  const account = '1943797303';
+  const qrUrl = 'https://promptpay.io/'+account+'/'+total+'.png';
+  document.getElementById('qr-img').src = qrUrl;
   document.getElementById('order-summary').innerHTML = cart.map(p=>`
     <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
       <span>${p.name} (${p.size})</span><span style="color:var(--gold);font-weight:500;">฿${p.price.toLocaleString()}</span>

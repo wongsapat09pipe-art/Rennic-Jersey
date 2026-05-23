@@ -300,15 +300,30 @@ footer strong{color:var(--gold-light);}
       <!-- STEP 1: ข้อมูลลูกค้า -->
       <div class="checkout-step">
         <div class="step-title"><span class="step-num">1</span>ข้อมูลผู้สั่งซื้อ</div>
-        <div class="form-row">
-          <div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="o-name" placeholder="กรอกชื่อ"></div>
-          <div class="form-group"><label>เบอร์โทร</label><input type="tel" id="o-phone" placeholder="08x-xxx-xxxx"></div>
+        <div id="saved-address-box" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <div style="font-size:12px;font-weight:600;color:var(--muted);">📦 ที่อยู่ที่บันทึกไว้</div>
+            <button onclick="editSavedAddress()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;font-family:Sarabun,sans-serif;">✏️ แก้ไข</button>
+          </div>
+          <div id="saved-address-display" style="font-size:13px;color:var(--text);line-height:1.6;"></div>
         </div>
-        <div class="form-row">
-          <div class="form-group full"><label>ที่อยู่จัดส่ง</label><textarea id="o-address" placeholder="บ้านเลขที่ ถนน แขวง/ตำบล เขต/อำเภอ จังหวัด รหัสไปรษณีย์"></textarea></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group full"><label>หมายเหตุ (ถ้ามี)</label><input type="text" id="o-note" placeholder="เช่น ฝากไว้ที่ประตู"></div>
+        <div id="address-form-box">
+          <div class="form-row">
+            <div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="o-name" placeholder="กรอกชื่อ"></div>
+            <div class="form-group"><label>เบอร์โทร</label><input type="tel" id="o-phone" placeholder="08x-xxx-xxxx"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full"><label>ที่อยู่จัดส่ง</label><textarea id="o-address" placeholder="บ้านเลขที่ ถนน แขวง/ตำบล เขต/อำเภอ จังหวัด รหัสไปรษณีย์"></textarea></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full"><label>หมายเหตุ (ถ้ามี)</label><input type="text" id="o-note" placeholder="เช่น ฝากไว้ที่ประตู"></div>
+          </div>
+          <div id="save-address-check" style="display:none;margin-top:8px;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;color:var(--muted);">
+              <input type="checkbox" id="chk-save-address" checked style="width:15px;height:15px;accent-color:var(--gold);">
+              บันทึกที่อยู่นี้ไว้สำหรับครั้งต่อไป
+            </label>
+          </div>
         </div>
       </div>
 
@@ -333,7 +348,9 @@ footer strong{color:var(--gold-light);}
             <div style="color:var(--muted);margin-top:4px;">ธนาคารกสิกรไทย (KBank)</div>
             <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
               <div style="font-family:monospace;font-size:14px;color:var(--gold);font-weight:600;">1943-797-303</div>
-              <button onclick="navigator.clipboard.writeText('1943797303').then(()=>window.toastStore('✅ คัดลอกเลขบัญชีแล้ว!'))" style="background:var(--gold);color:#fff;border:none;padding:3px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:Sarabun,sans-serif;">คัดลอก</button>
+              <button onclick="navigator.clipboard.writeText('1943797303').then(()=>window.toastStore('✅ คัดลอกแล้ว'))" title="คัดลอกเลขบัญชี" style="background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              </button>
             </div>
           </div>
           <div style="font-size:11px;color:var(--muted);margin-top:10px;">* QR Code จะอัพเดทยอดเงินอัตโนมัติตามสินค้าที่สั่ง</div>
@@ -549,10 +566,11 @@ function openCheckout() {
   toggleCart();
   const total = cart.reduce((s,p)=>s+p.price,0);
   document.getElementById('qr-amount-display').textContent = '฿'+total.toLocaleString();
-  // Auto generate QR with KBank account
   const account = '1943797303';
   const qrUrl = 'https://promptpay.io/'+account+'/'+total+'.png';
   document.getElementById('qr-img').src = qrUrl;
+  // Load saved address if logged in
+  loadSavedAddress();
   document.getElementById('order-summary').innerHTML = cart.map(p=>`
     <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
       <span>${p.name} (${p.size})</span><span style="color:var(--gold);font-weight:500;">฿${p.price.toLocaleString()}</span>
@@ -592,6 +610,54 @@ function previewSlip(input) {
   reader.readAsDataURL(file);
 }
 
+// ADDRESS MANAGEMENT
+function loadSavedAddress() {
+  const savedBox = document.getElementById('saved-address-box');
+  const formBox = document.getElementById('address-form-box');
+  const saveCheck = document.getElementById('save-address-check');
+  // Check if user is logged in (Firebase)
+  const isLoggedIn = window._currentUser != null;
+  if(isLoggedIn) {
+    saveCheck.style.display = 'block';
+    // Try load saved address from localStorage
+    const uid = window._currentUser.uid;
+    const saved = localStorage.getItem('rj_addr_'+uid);
+    if(saved) {
+      const addr = JSON.parse(saved);
+      document.getElementById('saved-address-display').innerHTML =
+        '<strong>'+addr.name+'</strong> | '+addr.phone+'<br>'+addr.address+(addr.note?'<br>หมายเหตุ: '+addr.note:'');
+      savedBox.style.display = 'block';
+      formBox.style.display = 'none';
+      // Pre-fill form too
+      document.getElementById('o-name').value = addr.name||'';
+      document.getElementById('o-phone').value = addr.phone||'';
+      document.getElementById('o-address').value = addr.address||'';
+      document.getElementById('o-note').value = addr.note||'';
+    } else {
+      savedBox.style.display = 'none';
+      formBox.style.display = 'block';
+    }
+  } else {
+    savedBox.style.display = 'none';
+    formBox.style.display = 'block';
+    saveCheck.style.display = 'none';
+  }
+}
+
+function editSavedAddress() {
+  document.getElementById('saved-address-box').style.display = 'none';
+  document.getElementById('address-form-box').style.display = 'block';
+}
+
+function saveAddressIfNeeded(name, phone, address, note) {
+  if(!window._currentUser) return;
+  const shouldSave = document.getElementById('chk-save-address');
+  if(shouldSave && shouldSave.checked) {
+    const uid = window._currentUser.uid;
+    localStorage.setItem('rj_addr_'+uid, JSON.stringify({name,phone,address,note}));
+  }
+}
+
 // SUBMIT ORDER
 async function submitOrder() {
   const name = document.getElementById('o-name').value.trim();
@@ -610,6 +676,7 @@ async function submitOrder() {
       'รอยืนยัน'
     ]
   };
+  saveAddressIfNeeded(name, phone, address, document.getElementById('o-note').value);
   try{
     await fetch(GAS_URL,{method:'POST',body:JSON.stringify(orderData)});
   }catch(e){}
@@ -747,6 +814,7 @@ window.toggleUserDropdown = () => {
 onAuthStateChanged(auth, (user) => {
   const userArea = document.getElementById('user-area');
   if(!userArea) return;
+  window._currentUser = user;
   if(user) {
     const name = user.displayName || user.email.split('@')[0];
     const initials = name.slice(0,2).toUpperCase();
@@ -761,6 +829,7 @@ onAuthStateChanged(auth, (user) => {
         </div>
       </div>`;
   } else {
+    window._currentUser = null;
     userArea.innerHTML = `<button class="nav-cart" style="background:transparent;border:1px solid rgba(193,125,60,0.5);color:var(--gold-light);" onclick="openAuthModal()">👤 เข้าสู่ระบบ</button>`;
   }
 });

@@ -331,7 +331,10 @@ footer strong{color:var(--gold-light);}
             <div style="color:var(--muted);font-size:11px;font-weight:600;margin-bottom:4px;">โอนมาที่</div>
             <div style="font-weight:600;color:var(--brown);font-size:15px;">MR. WONGSAPAT YASOTHORNSRIKUL</div>
             <div style="color:var(--muted);margin-top:4px;">ธนาคารกสิกรไทย (KBank)</div>
-            <div style="font-family:monospace;font-size:14px;color:var(--gold);font-weight:600;margin-top:2px;">1943-797-303</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
+              <div style="font-family:monospace;font-size:14px;color:var(--gold);font-weight:600;">1943-797-303</div>
+              <button onclick="navigator.clipboard.writeText('1943797303').then(()=>window.toastStore('✅ คัดลอกเลขบัญชีแล้ว!'))" style="background:var(--gold);color:#fff;border:none;padding:3px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:Sarabun,sans-serif;">คัดลอก</button>
+            </div>
           </div>
           <div style="font-size:11px;color:var(--muted);margin-top:10px;">* QR Code จะอัพเดทยอดเงินอัตโนมัติตามสินค้าที่สั่ง</div>
         </div>

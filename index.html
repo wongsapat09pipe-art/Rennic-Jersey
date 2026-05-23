@@ -611,32 +611,36 @@ function previewSlip(input) {
 }
 
 // ADDRESS MANAGEMENT
-function loadSavedAddress() {
+async function loadSavedAddress() {
   const savedBox = document.getElementById('saved-address-box');
   const formBox = document.getElementById('address-form-box');
   const saveCheck = document.getElementById('save-address-check');
-  // Check if user is logged in (Firebase)
   const isLoggedIn = window._currentUser != null;
   if(isLoggedIn) {
     saveCheck.style.display = 'block';
-    // Try load saved address from localStorage
     const uid = window._currentUser.uid;
-    const saved = localStorage.getItem('rj_addr_'+uid);
-    if(saved) {
-      const addr = JSON.parse(saved);
-      document.getElementById('saved-address-display').innerHTML =
-        '<strong>'+addr.name+'</strong> | '+addr.phone+'<br>'+addr.address+(addr.note?'<br>หมายเหตุ: '+addr.note:'');
-      savedBox.style.display = 'block';
-      formBox.style.display = 'none';
-      // Pre-fill form too
-      document.getElementById('o-name').value = addr.name||'';
-      document.getElementById('o-phone').value = addr.phone||'';
-      document.getElementById('o-address').value = addr.address||'';
-      document.getElementById('o-note').value = addr.note||'';
-    } else {
-      savedBox.style.display = 'none';
-      formBox.style.display = 'block';
+    // Try localStorage first (fast)
+    const cached = localStorage.getItem('rj_addr_'+uid);
+    if(cached) {
+      const addr = JSON.parse(cached);
+      fillSavedAddress(addr, savedBox, formBox);
+      return;
     }
+    // Try Google Sheet (cross-device)
+    try {
+      const res = await fetch(GAS_URL+'?action=read&sheet=Members').then(r=>r.json());
+      if(res.status==='ok') {
+        const row = res.data.find((r,i)=>i>0&&String(r[0]).trim()===uid);
+        if(row) {
+          const addr = {name:row[1],phone:row[3],address:row[4],note:row[5]};
+          localStorage.setItem('rj_addr_'+uid, JSON.stringify(addr));
+          fillSavedAddress(addr, savedBox, formBox);
+          return;
+        }
+      }
+    } catch(e) {}
+    savedBox.style.display = 'none';
+    formBox.style.display = 'block';
   } else {
     savedBox.style.display = 'none';
     formBox.style.display = 'block';
@@ -644,17 +648,53 @@ function loadSavedAddress() {
   }
 }
 
+function fillSavedAddress(addr, savedBox, formBox) {
+  document.getElementById('saved-address-display').innerHTML =
+    '<strong>'+addr.name+'</strong> | '+addr.phone+'<br>'+addr.address+(addr.note?'<br>หมายเหตุ: '+addr.note:'');
+  savedBox.style.display = 'block';
+  formBox.style.display = 'none';
+  document.getElementById('o-name').value = addr.name||'';
+  document.getElementById('o-phone').value = addr.phone||'';
+  document.getElementById('o-address').value = addr.address||'';
+  document.getElementById('o-note').value = addr.note||'';
+}
+
 function editSavedAddress() {
   document.getElementById('saved-address-box').style.display = 'none';
   document.getElementById('address-form-box').style.display = 'block';
 }
 
-function saveAddressIfNeeded(name, phone, address, note) {
+async function saveAddressIfNeeded(name, phone, address, note) {
   if(!window._currentUser) return;
   const shouldSave = document.getElementById('chk-save-address');
   if(shouldSave && shouldSave.checked) {
     const uid = window._currentUser.uid;
+    const email = window._currentUser.email||'';
+    const updated = new Date().toLocaleString('th-TH');
+    // Save to localStorage
     localStorage.setItem('rj_addr_'+uid, JSON.stringify({name,phone,address,note}));
+    // Save to Google Sheet Members
+    try {
+      // Check if member exists first
+      const res = await fetch(GAS_URL+'?action=read&sheet=Members').then(r=>r.json());
+      if(res.status==='ok') {
+        const rows = res.data||[];
+        const existingIdx = rows.findIndex((r,i)=>i>0&&String(r[0]).trim()===uid);
+        if(existingIdx>0) {
+          // Update existing row
+          await fetch(GAS_URL,{method:'POST',body:JSON.stringify({
+            action:'update',sheet:'Members',row:existingIdx+1,
+            data:[uid,name,email,phone,address,note,updated]
+          })});
+        } else {
+          // Append new member
+          await fetch(GAS_URL,{method:'POST',body:JSON.stringify({
+            action:'append',sheet:'Members',
+            data:[uid,name,email,phone,address,note,updated]
+          })});
+        }
+      }
+    } catch(e) { console.log('Members save error:',e); }
   }
 }
 

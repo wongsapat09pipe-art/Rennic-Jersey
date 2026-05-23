@@ -456,6 +456,14 @@ let slipBase64 = '';
 
 // LOAD PRODUCTS
 async function loadProducts() {
+  // โหลด cache ก่อน แสดงสินค้าทันที
+  const cached = localStorage.getItem('rj_products_cache');
+  if(cached) {
+    try {
+      products = JSON.parse(cached);
+      renderProducts();
+    } catch(e) {}
+  }
   try {
     const res = await fetch(GAS_URL+'?action=read&sheet='+STORE_SHEET);
     const data = await res.json();
@@ -471,6 +479,8 @@ async function loadProducts() {
           status: r[8]||'available',
           league: r[9]||''
         }));
+    }
+      localStorage.setItem('rj_products_cache', JSON.stringify(products));
     }
   } catch(e) {
     // Demo products

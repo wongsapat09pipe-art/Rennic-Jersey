@@ -647,7 +647,7 @@ async function loadSheet1Products(){
       let dataStart=0;
       for(let i=0;i<r1.data.length;i++){const v=String(r1.data[i][0]).toUpperCase().trim();if(v==='TRUE'||v==='FALSE'){dataStart=i;break;}}
       sheet1Products=r1.data.slice(dataStart)
-        .filter(r=>r[1]&&String(r[1]).trim()&&String(r[0]).toUpperCase().trim()==='TRUE')
+        .filter(r=>r[1]&&String(r[1]).trim())
         .map((r,i)=>({
           _row:dataStart+i+1,name:String(r[1]||'').trim(),cost:parseFloat(r[2])||0,
           sell:parseFloat(r[3])>0?parseFloat(r[3]):parseFloat(r[2])||0,

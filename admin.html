@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-
   @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@400;500;600&display=swap');
   :root{--earth-bg:#F5F0E8;--earth-surface:#EDE7D9;--earth-card:#FDFAF5;--earth-border:#D4C9B0;--earth-brown:#8B6F47;--earth-dark:#3D2610;--earth-accent:#C17D3C;--earth-green:#6B8C5A;--earth-red:#A85252;--earth-text:#3D2E1E;--earth-muted:#8A7560;--earth-highlight:#E8D5B0;--sidebar-w:230px;}
   *{box-sizing:border-box;margin:0;padding:0;}
@@ -98,30 +97,29 @@
   #toast.show{opacity:1;}
   .jip-form{background:var(--earth-card);border:1px solid var(--earth-border);border-radius:12px;padding:17px;margin-bottom:17px;}
   .jip-form h4{font-size:13px;font-weight:600;color:var(--earth-dark);margin-bottom:13px;}
-  .connect-banner{background:linear-gradient(135deg,#3D2610,#5C3A18);border-radius:12px;padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;gap:16px;}
-  .connect-banner img{width:48px;height:48px;border-radius:50%;border:2px solid rgba(193,125,60,0.5);}
-  .connect-banner-text h3{font-family:'Kanit',sans-serif;font-size:16px;font-weight:600;color:#F5E6CC;}
-  .connect-banner-text p{font-size:12px;color:rgba(245,230,204,0.6);margin-top:3px;}
-
-
-/* === ADMIN EXTRAS === */
-.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--earth-dark);}
-.login-box{background:var(--earth-card);border-radius:16px;padding:40px;width:380px;text-align:center;border:1px solid var(--earth-border);}
-.login-logo-img{width:90px;height:90px;border-radius:50%;object-fit:cover;margin:0 auto 14px;display:block;border:3px solid var(--earth-accent);}
-.login-title{font-family:'Kanit',sans-serif;font-size:20px;color:var(--earth-dark);margin-bottom:4px;}
-.login-sub{font-size:13px;color:var(--earth-muted);margin-bottom:24px;}
-.login-input{width:100%;padding:11px 14px;border:1px solid var(--earth-border);border-radius:8px;font-size:14px;font-family:'Sarabun',sans-serif;margin-bottom:12px;background:var(--earth-bg);color:var(--earth-text);}
-.login-input:focus{outline:none;border-color:var(--earth-accent);}
-.login-btn{width:100%;background:var(--earth-accent);color:#fff;border:none;padding:13px;border-radius:8px;font-size:15px;cursor:pointer;font-family:'Sarabun',sans-serif;font-weight:500;transition:background 0.2s;}
-.login-btn:hover{background:#A8692E;}
-.login-error{color:var(--earth-red);font-size:13px;margin-top:8px;display:none;}
-.logout-btn{background:transparent;border:1px solid var(--earth-border);color:var(--earth-muted);padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;}
-.logout-btn:hover{background:var(--earth-surface);}
+  .login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--earth-dark);}
+  .login-box{background:var(--earth-card);border-radius:16px;padding:40px;width:380px;text-align:center;border:1px solid var(--earth-border);}
+  .login-logo-img{width:90px;height:90px;border-radius:50%;object-fit:cover;margin:0 auto 14px;display:block;border:3px solid var(--earth-accent);}
+  .login-title{font-family:'Kanit',sans-serif;font-size:20px;color:var(--earth-dark);margin-bottom:4px;}
+  .login-sub{font-size:13px;color:var(--earth-muted);margin-bottom:24px;}
+  .login-input{width:100%;padding:11px 14px;border:1px solid var(--earth-border);border-radius:8px;font-size:14px;font-family:'Sarabun',sans-serif;margin-bottom:12px;background:var(--earth-bg);color:var(--earth-text);}
+  .login-input:focus{outline:none;border-color:var(--earth-accent);}
+  .login-btn{width:100%;background:var(--earth-accent);color:#fff;border:none;padding:13px;border-radius:8px;font-size:15px;cursor:pointer;font-family:'Sarabun',sans-serif;font-weight:500;transition:background 0.2s;}
+  .login-btn:hover{background:#A8692E;}
+  .login-error{color:var(--earth-red);font-size:13px;margin-top:8px;display:none;}
+  .logout-btn{background:transparent;border:1px solid var(--earth-border);color:var(--earth-muted);padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;}
+  .logout-btn:hover{background:var(--earth-surface);}
+  /* qty grid */
+  .qty-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px;}
+  .qty-col{text-align:center;}
+  .qty-col-label{font-size:12px;font-weight:600;color:var(--earth-muted);margin-bottom:4px;}
+  .qty-col input{width:100%;text-align:center;padding:8px 4px;}
+  .qty-preview{font-size:12px;font-family:monospace;color:var(--earth-accent);background:var(--earth-surface);padding:5px 9px;border-radius:6px;margin-top:6px;}
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div id="login-screen" class="login-screen">
   <div class="login-box">
     <img class="login-logo-img" src="logo.png" alt="Rennic Jersey">
@@ -134,7 +132,7 @@
   </div>
 </div>
 
-<!-- DASHBOARD (shown after login) -->
+<!-- DASHBOARD -->
 <div id="dashboard-screen" style="display:none">
 <div class="app">
 <aside class="sidebar">
@@ -148,14 +146,13 @@
   <nav class="sidebar-nav">
     <div class="nav-item active" onclick="showSection('overview')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>ภาพรวม</div>
     <div class="nav-item" onclick="showSection('stock')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>สินค้าในสต็อก</div>
-
     <div class="nav-item" onclick="showSection('sold')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>สินค้าขายแล้ว</div>
     <div class="nav-item" onclick="showSection('finance')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>การเงิน</div>
     <div class="nav-item" onclick="showSection('store')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>จัดการร้านค้า</div>
     <div class="nav-item" onclick="showSection('orders')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>ออเดอร์</div>
     <div class="nav-item" onclick="showSection('jipatha')"><span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l1 4H8L9 3z"/><path d="M8 7v13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7"/><path d="M10 11h4"/><path d="M10 15h4"/></svg></span>จิปาถะ</div>
   </nav>
-  <div class="sidebar-footer">เชื่อมกับ Google Sheet • v3.0</div>
+  <div class="sidebar-footer">เชื่อมกับ Google Sheet • v3.1</div>
 </aside>
 <main class="main">
   <div class="topbar">
@@ -184,7 +181,7 @@
       </div>
       <div class="table-card">
         <div class="table-header"><div class="table-title">🕐 รายการล่าสุด 10 รายการ</div></div>
-        <div class="tbl-wrap"><table><thead><tr><th>ชื่อสินค้า</th><th>โพสขาย</th><th>ต้นทุน</th><th>ต้นทุน</th><th>กำไร</th><th>สถานะ</th></tr></thead><tbody id="tbl-recent"></tbody></table></div>
+        <div class="tbl-wrap"><table><thead><tr><th>ชื่อสินค้า</th><th>โพสขาย</th><th>ต้นทุน</th><th>ราคาขาย</th><th>กำไร</th><th>สถานะ</th></tr></thead><tbody id="tbl-recent"></tbody></table></div>
       </div>
     </div>
 
@@ -201,7 +198,7 @@
           <div class="table-title">📦 สินค้าในสต็อก (ยังไม่ขาย)</div>
           <button class="btn btn-primary btn-sm" onclick="openAdd()">+ เพิ่มสินค้า</button>
         </div>
-        <div class="tbl-wrap"><table><thead><tr><th>#</th><th>ชื่อสินค้า</th><th>โพสขาย</th><th>ต้นทุน (ซื้อ)</th><th>ราคาตั้งขาย</th><th>ค่าส่ง</th><th>จัดการ</th></tr></thead><tbody id="tbl-stock"></tbody></table></div>
+        <div class="tbl-wrap"><table><thead><tr><th>#</th><th>ชื่อสินค้า</th><th>โพสขาย</th><th>ต้นทุน</th><th>ราคาตั้งขาย</th><th>ค่าส่ง</th><th>จัดการ</th></tr></thead><tbody id="tbl-stock"></tbody></table></div>
       </div>
     </div>
 
@@ -212,7 +209,7 @@
       </div>
       <div class="table-card">
         <div class="table-header"><div class="table-title">✅ สินค้าขายแล้ว</div></div>
-        <div class="tbl-wrap"><table><thead><tr><th>#</th><th>ชื่อสินค้า</th><th>ต้นทุน</th><th>ราคาขาย (ขาย)</th><th>กำไร (ได้)</th><th>ค่าส่ง</th><th>หมายเหตุ</th></tr></thead><tbody id="tbl-sold"></tbody></table></div>
+        <div class="tbl-wrap"><table><thead><tr><th>#</th><th>ชื่อสินค้า</th><th>ต้นทุน</th><th>ราคาขาย</th><th>กำไร</th><th>ค่าส่ง</th><th>หมายเหตุ</th></tr></thead><tbody id="tbl-sold"></tbody></table></div>
       </div>
     </div>
 
@@ -232,7 +229,7 @@
       </div>
       <div class="table-card">
         <div class="table-header"><div class="table-title">📋 รายการขายทั้งหมด</div></div>
-        <div class="tbl-wrap"><table><thead><tr><th>#</th><th>ชื่อสินค้า</th><th>ต้นทุน</th><th>ต้นทุน</th><th>กำไร (ได้)</th><th>%กำไร</th><th>ค่าส่ง</th></tr></thead><tbody id="tbl-fin"></tbody></table></div>
+        <div class="tbl-wrap"><table><thead><tr><th>#</th><th>ชื่อสินค้า</th><th>ต้นทุน</th><th>ราคาขาย</th><th>กำไร</th><th>%กำไร</th><th>ค่าส่ง</th></tr></thead><tbody id="tbl-fin"></tbody></table></div>
       </div>
     </div>
 
@@ -269,31 +266,29 @@
           <button class="btn btn-outline btn-sm" onclick="loadOrders()">🔄 รีเฟรช</button>
         </div>
         <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>วันที่</th><th>ชื่อ</th><th>เบอร์</th><th>สินค้า</th><th>ยอด</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
-            <tbody id="orders-table"></tbody>
-          </table>
+          <table><thead><tr><th>วันที่</th><th>ชื่อ</th><th>เบอร์</th><th>สินค้า</th><th>ยอด</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+          <tbody id="orders-table"></tbody></table>
         </div>
       </div>
     </div>
 
     <!-- STORE MANAGEMENT -->
     <div class="section" id="section-store">
-      <!-- UNSOLD ITEMS -->
       <div style="background:var(--earth-card);border:1px solid var(--earth-border);border-radius:12px;padding:17px;margin-bottom:17px;">
         <div style="font-size:13px;font-weight:600;color:var(--earth-dark);margin-bottom:6px;">🛍️ สินค้าในสต็อก</div>
         <div style="font-size:12px;color:var(--earth-muted);">กดปุ่ม "แสดงในร้าน" เพื่อโชว์สินค้าให้ลูกค้าเห็น • กด "ซ่อน" เพื่อเอาออก</div>
       </div>
+
+      <!-- STORE FORM -->
       <div id="store-form-box" style="display:none;background:var(--earth-card);border:1px solid var(--earth-accent);border-radius:12px;padding:20px;margin-bottom:17px;">
         <div style="font-size:13px;font-weight:600;color:var(--earth-dark);margin-bottom:14px;">➕ เพิ่มสินค้าเข้าร้าน: <span id="store-form-name" style="color:var(--earth-accent)"></span></div>
         <input type="hidden" id="sf-id">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-          <div class="form-group"><label>ประเภท</label><select id="sf-type"><option value="มือ1">มือ 1</option><option value="มือ2">มือ 2</option></select></div>
-          <div class="form-group"><label>Size</label><input type="text" id="sf-size" placeholder='L (อก 46" ยาว 30")'></div>
-          <div class="form-group" style="grid-column:1/-1"><label>รายละเอียดสินค้า</label><textarea id="sf-desc" rows="3" style="width:100%;padding:9px 12px;border:1px solid var(--earth-border);border-radius:8px;font-family:Sarabun,sans-serif;font-size:13px;background:var(--earth-bg);resize:vertical;" placeholder="บรรยายสินค้า สภาพ ฯลฯ"></textarea></div>
-          <div class="form-group" style="grid-column:1/-1"><label>ตำหนิ (ถ้าไม่มีเว้นว่าง)</label><input type="text" id="sf-defect" placeholder="เช่น มีรอยเหลืองเล็กน้อยที่ปก"></div>
-          <div class="form-group">
-            <label>ลีก</label>
+
+          <div class="form-group"><label>ประเภท</label>
+            <select id="sf-type"><option value="มือ1">มือ 1</option><option value="มือ2">มือ 2</option></select>
+          </div>
+          <div class="form-group"><label>ลีก</label>
             <select id="sf-league">
               <option value="">— ไม่ระบุ —</option>
               <option value="Premier League">Premier League</option>
@@ -303,6 +298,40 @@
               <option value="Ligue 1">Ligue 1</option>
               <option value="National Team">🌍 National Team</option>
             </select>
+          </div>
+
+          <!-- QTY ตาม Size -->
+          <div class="form-group" style="grid-column:1/-1">
+            <label>จำนวนสินค้าตาม Size (ใส่ 0 ถ้าไม่มี size นั้น)</label>
+            <div class="qty-grid">
+              <div class="qty-col">
+                <div class="qty-col-label">S</div>
+                <input type="number" id="sf-qty-s" value="0" min="0" oninput="updateQtyPreview()">
+              </div>
+              <div class="qty-col">
+                <div class="qty-col-label">M</div>
+                <input type="number" id="sf-qty-m" value="0" min="0" oninput="updateQtyPreview()">
+              </div>
+              <div class="qty-col">
+                <div class="qty-col-label">L</div>
+                <input type="number" id="sf-qty-l" value="0" min="0" oninput="updateQtyPreview()">
+              </div>
+              <div class="qty-col">
+                <div class="qty-col-label">XL</div>
+                <input type="number" id="sf-qty-xl" value="0" min="0" oninput="updateQtyPreview()">
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--earth-muted);margin-top:6px;">JSON ที่จะบันทึกใน Sheet (คอลัมน์ J):</div>
+            <div class="qty-preview" id="sf-qty-preview">{"S":0,"M":0,"L":0,"XL":0}</div>
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>รายละเอียดสินค้า</label>
+            <textarea id="sf-desc" rows="3" placeholder="บรรยายสินค้า สภาพ ฯลฯ"></textarea>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label>ตำหนิ (ถ้าไม่มีเว้นว่าง)</label>
+            <input type="text" id="sf-defect" placeholder="เช่น มีรอยเหลืองเล็กน้อยที่ปก">
           </div>
           <div class="form-group" style="grid-column:1/-1">
             <label>URL รูปภาพ (คั่นด้วย , ถ้ามีหลายรูป)</label>
@@ -315,6 +344,7 @@
           <button class="btn btn-outline" onclick="document.getElementById('store-form-box').style.display='none'">ยกเลิก</button>
         </div>
       </div>
+
       <div class="table-card">
         <div class="table-header">
           <div class="table-title">📋 สินค้าทั้งหมด (จาก Sheet1)</div>
@@ -328,18 +358,18 @@
 </main>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL เพิ่มสินค้า (Sheet1) -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-head"><h3 id="modal-title">เพิ่มสินค้าใหม่</h3><button class="btn btn-outline btn-sm" onclick="closeModal()">✕</button></div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="form-group full"><label>ชื่อสินค้า (รวม Size ได้เลย)</label><input type="text" id="m-name" placeholder="เช่น Liverpool Home L"></div>
+        <div class="form-group full"><label>ชื่อสินค้า</label><input type="text" id="m-name" placeholder="เช่น Liverpool Home L"></div>
         <div class="form-group"><label>ต้นทุน — ซื้อ (บาท)</label><input type="number" id="m-cost" placeholder="0"></div>
-        <div class="form-group"><label>ราคาขาย — ขาย (บาท) เว้นว่างถ้ายังไม่ขาย</label><input type="number" id="m-sell" placeholder="0"></div>
+        <div class="form-group"><label>ราคาขาย — ขาย (บาท)</label><input type="number" id="m-sell" placeholder="0"></div>
         <div class="form-group"><label>ค่าส่ง (บาท)</label><input type="number" id="m-ship" placeholder="0"></div>
         <div class="form-group"><label>หมายเหตุ (ถ้ามี)</label><input type="text" id="m-inst" placeholder="เช่น 1550/1550"></div>
-        <div class="form-group full"><label>สถานะโพสขาย (คอลัมน์ A)</label>
+        <div class="form-group full"><label>สถานะโพสขาย</label>
           <select id="m-post"><option value="TRUE">TRUE — โพสขายแล้ว</option><option value="FALSE">FALSE — ยังไม่โพส</option></select>
         </div>
       </div>
@@ -356,10 +386,9 @@
 <script>
 const GAS_URL = "https://script.google.com/macros/s/AKfycbyuo7lmF5F69frhcBC_ED5gadgSiTR_Jl1cI0fEfe09y5mUAxfyiHE_iXayV3g_xwP5/exec";
 const SHEET_MAIN = "Sheet1";
-const SHEET_JIP = "จิปาถะ";
 
 let jerseys=[], jipathas=[], editIdx=-1, CH={};
-let summaryData={profit:17099,cash:2859,totalCost:183680,totalSell:100162,eom:110120,jipTotal:0};
+let summaryData={profit:0,cash:0,totalCost:0,totalSell:0,eom:0,jipTotal:0};
 
 function setSt(s){
   const d=document.getElementById("sdot"),t=document.getElementById("stxt");
@@ -370,178 +399,71 @@ function setSt(s){
 
 async function loadData(){
   setSt("...");
-  // โหลด cache ก่อนเลย แสดงผลทันที
-  const cached = localStorage.getItem('rj_dashboard_cache');
-  if(cached) {
-    try {
-      const c = JSON.parse(cached);
-      parseJ(c.data);
-      parseJip(c.data);
-      renderAll();
-      setSt("ok");
-      document.getElementById("stxt").textContent = "โหลดจาก cache...";
-    } catch(e) {}
-  }
-  // Fetch ใหม่เงียบๆ เบื้องหลัง
+  const cached=localStorage.getItem('rj_dashboard_cache');
+  if(cached){try{const c=JSON.parse(cached);parseJ(c.data);parseJip(c.data);renderAll();setSt("ok");document.getElementById("stxt").textContent="โหลดจาก cache...";}catch(e){}}
   try{
-    const [r1]=await Promise.all([
-      fetch(GAS_URL+"?action=read&sheet="+encodeURIComponent(SHEET_MAIN)).then(r=>r.json()),
-    ]);
-    if(r1.status==="ok"){
-      // บันทึก cache
-      localStorage.setItem('rj_dashboard_cache', JSON.stringify({data: r1.data, ts: Date.now()}));
-      parseJ(r1.data);
-      parseJip(r1.data);
-      setSt("ok");
-    } else throw new Error(r1.message||"ดึงข้อมูลไม่ได้");
-  }catch(e){
-    setSt("err");
-    toast("⚠️ ดึงข้อมูลไม่ได้ — แสดงข้อมูลตัวอย่าง: "+e.message);
-    loadDemo();
-    return;
-  }
+    const r1=await fetch(GAS_URL+"?action=read&sheet="+encodeURIComponent(SHEET_MAIN)).then(r=>r.json());
+    if(r1.status==="ok"){localStorage.setItem('rj_dashboard_cache',JSON.stringify({data:r1.data,ts:Date.now()}));parseJ(r1.data);parseJip(r1.data);setSt("ok");}
+    else throw new Error(r1.message||"ดึงข้อมูลไม่ได้");
+  }catch(e){setSt("err");toast("⚠️ ดึงข้อมูลไม่ได้: "+e.message);return;}
   renderAll();
 }
 
 function parseJ(raw){
-  // โครงสร้าง Sheet จริง (ยืนยันจากรูปล่าสุด):
-  // row[0] = แถว 1: A=ว่าง, B=List, C=ซื้อ, D=ขาย, E=ได้, F=ค่าส่ง, G=หมายเหตุ | H=กำไรตั้งหมด | I=เงินปัจจุบัน | K=ซื้อทั้งหมด | L=ขายได้ | M=เงินสิ้นเดือน | N=ราคา | O=ยอดรวมจิปาถะ
-  // row[1] = แถว 2: ข้อมูลแรก (TRUE, Liverpool...) + H=ว่าง | I=17099 | J=2859 | K=183680 | L=100162 | M=110120 | N=100 | O=5999
-  // row[2+] = ข้อมูลสินค้า: A=TRUE/FALSE, B=ชื่อ, C=ซื้อ, D=ขาย, E=ได้, F=ค่าส่ง, G=หมายเหตุ
   if(raw.length>1){
-    // หา summary row = แถวแรกที่มีข้อมูลตัวเลขที่ index 7 (กำไรทั้งหมด)
     let sr=raw[1];
-    for(let i=0;i<Math.min(raw.length,5);i++){
-      if(n(raw[i][7])>0){ sr=raw[i]; break; }
-    }
-    console.log("Summary row found:",sr[7],sr[8],sr[9],sr[10],sr[11]);
-    // index: A=0,B=1,C=2,D=3,E=4,F=5,G=6,H=7,I=8,J=9,K=10,L=11,M=12,N=13,O=14
-    // ยืนยันจากรูป: H=กำไรทั้งหมด, I=เงินปัจจุบัน, J=ซื้อทั้งหมด, K=ขายได้, L=เงินสิ้นเดือน
-    // index:           7                8                  9                10          11
-    summaryData.profit    = n(sr[7])  || 0;                     // H(7) = กำไรทั้งหมด = 17099
-    summaryData.cash      = n(sr[8])  || summaryData.cash;      // I(8) = เงินปัจจุบัน = 2859
-    summaryData.totalCost = n(sr[9])  || summaryData.totalCost; // J(9) = ซื้อทั้งหมด = 183680
-    summaryData.totalSell = n(sr[10]) || summaryData.totalSell; // K(10) = ขายได้ = 100162
-    summaryData.eom       = n(sr[11]) || summaryData.eom;       // L(11) = เงินสิ้นเดือน = 110120
-    summaryData.jipTotal  = n(sr[13]) || 0;                     // N(13) = ยอดรวมจิปาถะ = 5999
+    for(let i=0;i<Math.min(raw.length,5);i++){if(n(raw[i][7])>0){sr=raw[i];break;}}
+    summaryData.profit    = n(sr[7])||0;
+    summaryData.cash      = n(sr[8])||summaryData.cash;
+    summaryData.totalCost = n(sr[9])||summaryData.totalCost;
+    summaryData.totalSell = n(sr[10])||summaryData.totalSell;
+    summaryData.eom       = n(sr[11])||summaryData.eom;
+    summaryData.jipTotal  = n(sr[13])||0;
   }
-  // ข้อมูลสินค้าเริ่มแถว 0 (index 0) เลย เพราะแถวแรกมีทั้ง header และข้อมูลแรก
-  // หาแถวแรกที่ A = TRUE หรือ FALSE
-  let dataStart = 0;
-  for(let i=0; i<raw.length; i++){
-    const v = String(raw[i][0]).toUpperCase().trim();
-    if(v==="TRUE" || v==="FALSE"){ dataStart=i; break; }
-  }
-  // โหลดทุกแถว ไม่ตัด
-  jerseys = raw.slice(dataStart)
-    .filter(r => r[1]!==undefined && r[1]!==null && String(r[1]).trim()!=="")
-    .map((r,i) => ({
-      _row   : dataStart+i+1,
-      posted : String(r[0]).toUpperCase().trim()==="TRUE",
-      name   : String(r[1]||"").trim(),
-      cost   : n(r[2]),   // C = ซื้อ (ต้นทุน)
-      sell   : n(r[3]),   // D = ขาย (ราคาขาย)
-      profit : n(r[4]),   // E = ได้ (กำไร)
-      ship   : n(r[5]),   // F = ค่าส่ง
-      inst   : String(r[6]||"")  // G = หมายเหตุ
+  let dataStart=0;
+  for(let i=0;i<raw.length;i++){const v=String(raw[i][0]).toUpperCase().trim();if(v==="TRUE"||v==="FALSE"){dataStart=i;break;}}
+  jerseys=raw.slice(dataStart)
+    .filter(r=>r[1]!==undefined&&r[1]!==null&&String(r[1]).trim()!=="")
+    .map((r,i)=>({
+      _row:dataStart+i+1,
+      posted:String(r[0]).toUpperCase().trim()==="TRUE",
+      name:String(r[1]||"").trim(),
+      cost:n(r[2]),sell:n(r[3]),profit:n(r[4]),ship:n(r[5]),inst:String(r[6]||"")
     }));
 }
 
 function parseJip(raw){
-  // จิปาถะอยู่ใน Sheet1 เดียวกัน คอลัมน์ M(index12)=ชื่อ, N(index13)=ราคา
-  // หาแถวที่มีข้อมูลจิปาถะ = แถวที่ index 12 มีข้อมูลและ index 13 เป็นตัวเลข
-  jipathas = raw
-    .filter(r => r[12] && String(r[12]).trim() !== "" && String(r[12]).trim() !== "จิปาถะ" && n(r[13])>0)
-    .map((r,i) => ({
-      _row: i+1,
-      name: String(r[12]||"").trim(),
-      price: n(r[13]),
-      note: ""
-    }));
-}
-
-function loadDemo(){
-  summaryData={cash:17099,totalCost:183680,totalSell:100162,eom:110120};
-  jerseys=[
-    {_row:4,posted:true,name:"Liverpool Home Player 2023/24 L",cost:1000,sell:1942,profit:903,ship:39,inst:""},
-    {_row:5,posted:true,name:"Portugal Away Player 2022/23 XL",cost:2400,sell:1135,profit:-1265,ship:265,inst:""},
-    {_row:6,posted:true,name:"PSG Away Player 2023/24 XL",cost:1000,sell:1550,profit:526,ship:24,inst:"1550/1550"},
-    {_row:7,posted:true,name:"CA Away Player 2022/23 L",cost:1000,sell:1500,profit:479,ship:21,inst:""},
-    {_row:8,posted:true,name:"Liverpool Away Player 2022/23 M",cost:1000,sell:1390,profit:390,ship:0,inst:""},
-    {_row:9,posted:true,name:"Liverpool Third Replica 2003/04 XL",cost:650,sell:1250,profit:600,ship:0,inst:""},
-    {_row:10,posted:true,name:"Liverpool Away Replica 2023/24 L",cost:1000,sell:1350,profit:315,ship:35,inst:""},
-    {_row:11,posted:true,name:"Liverpool Home Replica 2018/19 XL",cost:1350,sell:1650,profit:279,ship:21,inst:""},
-    {_row:12,posted:true,name:"Ac Milan Home Replica 15/16 XL",cost:1050,sell:0,profit:-1050,ship:0,inst:""},
-    {_row:13,posted:true,name:"Liverpool Third Replica 2004/05 XL",cost:1050,sell:1120,profit:45,ship:25,inst:""},
-    {_row:14,posted:true,name:"Liverpool Home Replica 2009/10 XL Torres",cost:1200,sell:0,profit:-1200,ship:0,inst:""},
-    {_row:15,posted:true,name:"ACDC lisa XL",cost:2700,sell:2500,profit:-300,ship:100,inst:""},
-    {_row:16,posted:true,name:"ACDC red",cost:1050,sell:1000,profit:-50,ship:0,inst:""},
-    {_row:17,posted:true,name:"Pink Floyd",cost:1050,sell:300,profit:-750,ship:0,inst:""},
-    {_row:18,posted:true,name:"Liverpool Away Replica 2021/22 L",cost:1390,sell:2200,profit:786,ship:24,inst:""},
-    {_row:19,posted:true,name:"England Home 2006 XL",cost:750,sell:950,profit:179,ship:21,inst:"950/950"},
-    {_row:20,posted:true,name:"Italy Puma white",cost:1150,sell:0,profit:-1150,ship:0,inst:""},
-    {_row:21,posted:true,name:"Liverpool Third Replica 1998/00",cost:3200,sell:3500,profit:276,ship:24,inst:""},
-    {_row:22,posted:true,name:"Liverpool Home Replica 1996/98",cost:3650,sell:4400,profit:750,ship:0,inst:""},
-    {_row:23,posted:true,name:"Liverpool Home Replica 2012/13",cost:700,sell:900,profit:200,ship:0,inst:""},
-    {_row:24,posted:true,name:"Belgium Kompany Nameset",cost:600,sell:0,profit:-600,ship:0,inst:""},
-    {_row:25,posted:true,name:"Brazil Away 1998",cost:1600,sell:2000,profit:400,ship:0,inst:""},
-    {_row:26,posted:true,name:"Vasco de garma Away 1993",cost:1000,sell:0,profit:-1000,ship:0,inst:""},
-    {_row:27,posted:true,name:"Liverpool Away 1996/97",cost:3530,sell:3500,profit:-58,ship:28,inst:""},
-  ];
-  jipathas=[
-    {_row:2,name:"ถุงซิป",price:100,note:""},{_row:3,name:"ถุงซิปเล็ก",price:55,note:""},
-    {_row:4,name:"ทินเนอร์",price:39,note:""},{_row:5,name:"น้ำมันสน",price:39,note:""},
-    {_row:6,name:"ถุงคลุมเสื้อ",price:147,note:""},{_row:7,name:"ถุงคลุมเสื้อ",price:368,note:"ซื้อเพิ่ม"},
-    {_row:8,name:"แวนิช",price:155,note:""},{_row:9,name:"แปลง",price:14,note:""},
-    {_row:10,name:"ตะขอ",price:15,note:""},{_row:11,name:"ฟอกกี้",price:28,note:""},
-    {_row:12,name:"สายวัด",price:48,note:""},{_row:13,name:"ดินโส",price:15,note:""},
-    {_row:14,name:"น้ำยืนสายยู",price:15,note:""},{_row:15,name:"เครื่องตัดขุย",price:98,note:""},
-    {_row:16,name:"น้ำยาผึดผ้าหมอม",price:129,note:""},{_row:17,name:"ยาดีวิทรรค",price:209,note:""},
-    {_row:18,name:"ไฮเตอมาเล2วก",price:59,note:""},{_row:19,name:"ทินเนอร์",price:70,note:"ซื้อเพิ่ม"},
-    {_row:20,name:"สำลี",price:19,note:""},{_row:21,name:"ฟองน้ำ",price:14,note:""},
-    {_row:22,name:"เตารีด",price:599,note:""},{_row:23,name:"ที่รองรีดน้ำ",price:489,note:""},
-    {_row:24,name:"แวนิข",price:20,note:""},{_row:25,name:"ฟองน้ำ",price:14,note:""},
-    {_row:26,name:"กาว",price:41,note:""},{_row:27,name:"Vanish",price:167,note:""},
-  ];
-  renderAll();
+  jipathas=raw
+    .filter(r=>r[12]&&String(r[12]).trim()!==""&&String(r[12]).trim()!=="จิปาถะ"&&n(r[13])>0)
+    .map((r,i)=>({_row:i+1,name:String(r[12]||"").trim(),price:n(r[13]),note:""}));
 }
 
 function renderAll(){renderOverview();renderStock();renderSold();renderFinance();renderJipatha();}
 
 function renderOverview(){
   const sold=jerseys.filter(r=>r.sell>0),stk=jerseys.filter(r=>!r.sell||r.sell===0);
-  const tc=jerseys.reduce((s,r)=>s+r.cost,0);
-  const ts=sold.reduce((s,r)=>s+r.sell,0);
-  const tp=sold.reduce((s,r)=>s+r.profit,0);
+  const tc=jerseys.reduce((s,r)=>s+r.cost,0),ts=sold.reduce((s,r)=>s+r.sell,0),tp=sold.reduce((s,r)=>s+r.profit,0);
   const jt=jipathas.reduce((s,r)=>s+r.price,0);
-  const pct=ts>0?((tp/ts)*100).toFixed(1):0;
-  setText("s-profit",fmt(summaryData.profit||tp));
-  setText("s-cash",fmt(summaryData.cash));
-  setText("s-cost",fmt(summaryData.totalCost||tc));
-  setText("s-sell",fmt(summaryData.totalSell||ts));
-  setText("s-total",jerseys.length);
-  setText("s-stk",stk.length);
-  setText("s-sld",sold.length);
-  setText("s-jip",fmt(jt));
-  setText("s-jip-n",jipathas.length+" รายการ");
+  setText("s-profit",fmt(summaryData.profit||tp));setText("s-cash",fmt(summaryData.cash));
+  setText("s-cost",fmt(summaryData.totalCost||tc));setText("s-sell",fmt(summaryData.totalSell||ts));
+  setText("s-total",jerseys.length);setText("s-stk",stk.length);setText("s-sld",sold.length);
+  setText("s-jip",fmt(jt));setText("s-jip-n",jipathas.length+" รายการ");
   const recent=[...jerseys].slice(-10).reverse();
   document.getElementById("tbl-recent").innerHTML=recent.map(r=>`<tr>
     <td><strong>${r.name}</strong></td>
     <td><span class="badge ${r.posted?"badge-posted":"badge-unposted"}">${r.posted?"โพสแล้ว":"ยังไม่โพส"}</span></td>
-    <td>${fmt(r.cost)}</td>
-    <td>${r.sell>0?fmt(r.sell):"—"}</td>
+    <td>${fmt(r.cost)}</td><td>${r.sell>0?fmt(r.sell):"—"}</td>
     <td class="${r.profit>=0?"profit-pos":"profit-neg"}">${fmt(r.profit)}</td>
     <td><span class="badge ${r.sell>0?"badge-sold":"badge-stock"}">${r.sell>0?"ขายแล้ว":"ในสต็อก"}</span></td>
   </tr>`).join("");
   if(CH.bar)CH.bar.destroy();
   CH.bar=new Chart(document.getElementById("c-bar"),{type:"bar",data:{labels:["เงินเริ่มต้น","ยอดขายรวม","กำไรทั้งหมด"],datasets:[{data:[summaryData.eom||tc,summaryData.totalSell||ts,summaryData.profit||tp],backgroundColor:["#D4C9B0","#C17D3C","#6B8C5A"],borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>"฿"+v.toLocaleString()}}}}});
   if(CH.pie)CH.pie.destroy();
-  CH.pie=new Chart(document.getElementById("c-pie"),{type:"doughnut",data:{labels:["ในสต็อก","ขายแล้ว"],datasets:[{data:[stk.length,sold.length],backgroundColor:["#C17D3C","#6B8C5A"],borderWidth:2,borderColor:"#FDFAF5"}]},options:{responsive:true,plugins:{legend:{position:"bottom",labels:{font:{size:12}}}}}});
+  CH.pie=new Chart(document.getElementById("c-pie"),{type:"doughnut",data:{labels:["ในสต็อก","ขายแล้ว"],datasets:[{data:[stk.length,sold.length],backgroundColor:["#C17D3C","#6B8C5A"],borderWidth:2,borderColor:"#FDFAF5"}]},options:{responsive:true,plugins:{legend:{position:"bottom"}}}});
 }
 
 function renderStock(){
-  const q=(document.getElementById("fq-stk").value||"").toLowerCase();
-  const p=document.getElementById("fp-stk").value;
+  const q=(document.getElementById("fq-stk").value||"").toLowerCase(),p=document.getElementById("fp-stk").value;
   const items=jerseys.filter(r=>{
     if(r.sell>0)return false;
     if(q&&!r.name.toLowerCase().includes(q))return false;
@@ -552,11 +474,9 @@ function renderStock(){
   const tb=document.getElementById("tbl-stock");
   if(!items.length){tb.innerHTML='<tr><td colspan="7"><div class="empty-state">📦 ไม่พบสินค้าในสต็อก</div></td></tr>';return;}
   tb.innerHTML=items.map((r,i)=>`<tr>
-    <td style="color:var(--earth-muted);font-size:11px">${i+1}</td>
-    <td><strong>${r.name}</strong></td>
+    <td style="color:var(--earth-muted);font-size:11px">${i+1}</td><td><strong>${r.name}</strong></td>
     <td><span class="badge ${r.posted?"badge-posted":"badge-unposted"}">${r.posted?"โพสแล้ว":"ยังไม่โพส"}</span></td>
-    <td>${fmt(r.cost)}</td>
-    <td style="color:var(--earth-muted)">—</td>
+    <td>${fmt(r.cost)}</td><td style="color:var(--earth-muted)">—</td>
     <td style="font-size:12px;color:var(--earth-muted)">${r.ship>0?fmt(r.ship):"—"}</td>
     <td><div class="row-action">
       <button class="btn btn-outline btn-xs" onclick="editItem(${r._row})">✏️</button>
@@ -571,10 +491,8 @@ function renderSold(){
   const tb=document.getElementById("tbl-sold");
   if(!items.length){tb.innerHTML='<tr><td colspan="7"><div class="empty-state">✅ ยังไม่มีรายการขาย</div></td></tr>';return;}
   tb.innerHTML=items.map((r,i)=>`<tr>
-    <td style="color:var(--earth-muted);font-size:11px">${i+1}</td>
-    <td><strong>${r.name}</strong></td>
-    <td>${fmt(r.cost)}</td>
-    <td>${fmt(r.sell)}</td>
+    <td style="color:var(--earth-muted);font-size:11px">${i+1}</td><td><strong>${r.name}</strong></td>
+    <td>${fmt(r.cost)}</td><td>${fmt(r.sell)}</td>
     <td class="${r.profit>=0?"profit-pos":"profit-neg"}">${fmt(r.profit)}</td>
     <td style="font-size:12px;color:var(--earth-muted)">${r.ship>0?fmt(r.ship):"—"}</td>
     <td style="font-size:12px;color:var(--earth-muted)">${r.inst||"—"}</td>
@@ -583,17 +501,11 @@ function renderSold(){
 
 function renderFinance(){
   const sold=jerseys.filter(r=>r.sell>0),stk=jerseys.filter(r=>!r.sell||r.sell===0);
-  const tc=jerseys.reduce((s,r)=>s+r.cost,0);
-  const ts=sold.reduce((s,r)=>s+r.sell,0);
-  const tp=sold.reduce((s,r)=>s+r.profit,0);
-  const sv=stk.reduce((s,r)=>s+r.cost,0);
-  const jt=jipathas.reduce((s,r)=>s+r.price,0);
-  setText("f-profit",fmt(summaryData.profit||tp));
-  setText("f-cash",fmt(summaryData.cash));
-  setText("f-cost",fmt(summaryData.totalCost||tc));
-  setText("f-sell",fmt(summaryData.totalSell||ts));
-  setText("f-stkval",fmt(sv));
-  setText("f-jip",fmt(jt));
+  const tc=jerseys.reduce((s,r)=>s+r.cost,0),ts=sold.reduce((s,r)=>s+r.sell,0),tp=sold.reduce((s,r)=>s+r.profit,0);
+  const sv=stk.reduce((s,r)=>s+r.cost,0),jt=jipathas.reduce((s,r)=>s+r.price,0);
+  setText("f-profit",fmt(summaryData.profit||tp));setText("f-cash",fmt(summaryData.cash));
+  setText("f-cost",fmt(summaryData.totalCost||tc));setText("f-sell",fmt(summaryData.totalSell||ts));
+  setText("f-stkval",fmt(sv));setText("f-jip",fmt(jt));
   if(CH.fin)CH.fin.destroy();
   CH.fin=new Chart(document.getElementById("c-fin"),{type:"bar",data:{labels:["เงินเริ่มต้น","ยอดขายรวม","กำไรทั้งหมด"],datasets:[{data:[summaryData.eom||tc,summaryData.totalSell||ts,summaryData.profit||tp],backgroundColor:["#D4C9B0","#C17D3C","#6B8C5A"],borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>"฿"+v.toLocaleString()}}}}});
   if(CH.exp)CH.exp.destroy();
@@ -605,8 +517,7 @@ function renderFinance(){
 }
 
 function renderJipatha(){
-  const total=jipathas.reduce((s,r)=>s+r.price,0);
-  const avg=jipathas.length?Math.round(total/jipathas.length):0;
+  const total=jipathas.reduce((s,r)=>s+r.price,0),avg=jipathas.length?Math.round(total/jipathas.length):0;
   setText("jip-total",fmt(total));setText("jip-count",jipathas.length);setText("jip-avg",fmt(avg));
   const top=[...jipathas].sort((a,b)=>b.price-a.price).slice(0,10);
   if(CH.jip)CH.jip.destroy();
@@ -614,8 +525,7 @@ function renderJipatha(){
   const tb=document.getElementById("tbl-jip");
   if(!jipathas.length){tb.innerHTML='<tr><td colspan="5"><div class="empty-state">🧴 ยังไม่มีรายการจิปาถะ</div></td></tr>';return;}
   tb.innerHTML=jipathas.map((r,i)=>`<tr>
-    <td style="color:var(--earth-muted);font-size:11px">${i+1}</td>
-    <td><strong>${r.name}</strong></td>
+    <td style="color:var(--earth-muted);font-size:11px">${i+1}</td><td><strong>${r.name}</strong></td>
     <td style="font-weight:600;color:var(--earth-brown)">${fmt(r.price)}</td>
     <td style="font-size:12px;color:var(--earth-muted)">${r.note||"—"}</td>
     <td><button class="btn btn-danger btn-xs" onclick="delJip(${r._row})">ลบ</button></td>
@@ -623,25 +533,17 @@ function renderJipatha(){
 }
 
 async function saveJip(){
-  const name=document.getElementById("jn").value.trim();
-  const price=n(document.getElementById("jp").value);
-  const note=document.getElementById("jt").value.trim();
-  if(!name){toast("กรุณาใส่ชื่อรายการ");return;}
-  // จิปาถะบันทึกใน Sheet1 - ยังไม่รองรับการเพิ่มผ่าน Dashboard (เพิ่มตรงใน Sheet ได้เลย)
   toast("💡 กรุณาเพิ่มจิปาถะตรงใน Google Sheet คอลัมน์ M-N แล้วกด รีเฟรช");
-  return;
-  jipathas.push({_row:jipathas.reduce((m,r)=>Math.max(m,r._row),1)+1,name,price,note});
-  document.getElementById("jn").value="";document.getElementById("jp").value="";document.getElementById("jt").value="";
-  renderJipatha();renderOverview();renderFinance();
-  toast("✅ บันทึกจิปาถะและอัพเดท Sheet แล้ว");
 }
 async function delJip(row){
-  try{await fetch(GAS_URL,{method:"POST",body:JSON.stringify({action:"delete",sheet:SHEET_JIP,row})});}catch(e){}
-  jipathas=jipathas.filter(r=>r._row!==row);
-  renderJipatha();renderOverview();renderFinance();toast("🗑️ ลบรายการแล้ว");
+  jipathas=jipathas.filter(r=>r._row!==row);renderJipatha();renderOverview();renderFinance();toast("🗑️ ลบรายการแล้ว");
 }
 
-function openAdd(){editIdx=-1;document.getElementById("modal-title").textContent="เพิ่มสินค้าใหม่";["m-name","m-cost","m-sell","m-ship","m-inst"].forEach(id=>document.getElementById(id).value="");document.getElementById("m-post").value="TRUE";document.getElementById("modal").classList.add("open");}
+function openAdd(){
+  editIdx=-1;document.getElementById("modal-title").textContent="เพิ่มสินค้าใหม่";
+  ["m-name","m-cost","m-sell","m-ship","m-inst"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("m-post").value="TRUE";document.getElementById("modal").classList.add("open");
+}
 function editItem(row){
   const r=jerseys.find(x=>x._row===row);if(!r)return;editIdx=row;
   document.getElementById("modal-title").textContent="แก้ไข / บันทึกขาย";
@@ -656,8 +558,7 @@ async function saveItem(){
   const name=document.getElementById("m-name").value.trim();if(!name){toast("กรุณาใส่ชื่อสินค้า");return;}
   const cost=n(document.getElementById("m-cost").value),sell=n(document.getElementById("m-sell").value);
   const ship=n(document.getElementById("m-ship").value),inst=document.getElementById("m-inst").value;
-  const posted=document.getElementById("m-post").value==="TRUE";
-  const profit=sell>0?sell-cost:cost*-1;
+  const posted=document.getElementById("m-post").value==="TRUE",profit=sell>0?sell-cost:cost*-1;
   const data=[posted?"TRUE":"FALSE",name,cost,sell||"",profit,ship||"",inst];
   try{
     const body=editIdx>0?{action:"update",sheet:SHEET_MAIN,row:editIdx,data}:{action:"append",sheet:SHEET_MAIN,data};
@@ -665,14 +566,13 @@ async function saveItem(){
   }catch(e){toast("⚠️ บันทึกลง Sheet ไม่สำเร็จ");}
   if(editIdx>0){const i=jerseys.findIndex(x=>x._row===editIdx);if(i>=0)jerseys[i]={...jerseys[i],posted,name,cost,sell,profit,ship,inst};}
   else jerseys.push({_row:jerseys.reduce((m,r)=>Math.max(m,r._row),3)+1,posted,name,cost,sell,profit,ship,inst});
-  closeModal();renderAll();
-  toast("✅ บันทึกและอัพเดท Sheet แล้ว");
+  closeModal();renderAll();toast("✅ บันทึกและอัพเดท Sheet แล้ว");
 }
 
 function showSection(name){
   const T={overview:"ภาพรวม",stock:"สินค้าในสต็อก",sold:"สินค้าขายแล้ว",finance:"การเงิน",jipatha:"จิปาถะ",store:"จัดการร้านค้า",orders:"ออเดอร์"};
-  if(name==="store") loadSheet1Products();
-  if(name==="orders") loadOrders();
+  if(name==="store")loadSheet1Products();
+  if(name==="orders")loadOrders();
   document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
   document.getElementById("section-"+name).classList.add("active");
@@ -685,274 +585,212 @@ function fmt(v){return"฿"+Math.round(v).toLocaleString("th-TH");}
 function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
 function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3200);}
 
-// ===== ORDERS =====
-let ordersList = [];
-
-async function loadOrders() {
-  try {
-    const res = await fetch(GAS_URL+'?action=read&sheet=Order').then(r=>r.json());
-    if(res.status==='ok' && res.data.length>1) {
-      ordersList = res.data.slice(1).filter(r=>r[0]).map((r,i)=>({
-        _row:i+2, date:r[0], name:r[1], phone:r[2],
-        address:r[3], items:r[4], total:parseInt(r[5])||0,
-        note:r[6], status:r[7]||'รอยืนยัน'
-      }));
-    } else { ordersList = []; }
-  } catch(e) { ordersList = []; }
+// ── ORDERS ────────────────────────────────────────────────────────
+let ordersList=[];
+async function loadOrders(){
+  try{
+    const res=await fetch(GAS_URL+'?action=read&sheet=Order').then(r=>r.json());
+    ordersList=res.status==='ok'&&res.data.length>1
+      ?res.data.slice(1).filter(r=>r[0]).map((r,i)=>({_row:i+2,date:r[0],name:r[1],phone:r[2],address:r[3],items:r[4],total:parseInt(r[5])||0,note:r[6],status:r[7]||'รอยืนยัน'}))
+      :[];
+  }catch(e){ordersList=[];}
   renderOrdersTable();
 }
-
-function renderOrdersTable() {
-  const tb = document.getElementById('orders-table');
-  if(!tb) return;
-  if(!ordersList.length) {
-    tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--earth-muted)">ยังไม่มีออเดอร์</td></tr>';
-    return;
-  }
-  tb.innerHTML = ordersList.map(o=>`<tr>
+function renderOrdersTable(){
+  const tb=document.getElementById('orders-table');if(!tb)return;
+  if(!ordersList.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--earth-muted)">ยังไม่มีออเดอร์</td></tr>';return;}
+  tb.innerHTML=ordersList.map(o=>`<tr>
     <td style="font-size:11px;color:var(--earth-muted)">${o.date}</td>
     <td><strong>${o.name}</strong><br><span style="font-size:11px;color:var(--earth-muted)">${o.phone}</span></td>
-    <td style="font-size:11px;max-width:120px;overflow:hidden">${o.address}</td>
+    <td style="font-size:11px;max-width:120px">${o.address}</td>
     <td style="font-size:12px">${o.items}</td>
     <td style="font-family:Kanit,sans-serif;color:var(--earth-accent)">฿${o.total.toLocaleString()}</td>
     <td><span class="badge ${o.status==='รอยืนยัน'?'badge-unposted':o.status==='ยืนยันแล้ว'||o.status==='จัดส่งแล้ว'?'badge-sold':'badge-stock'}">${o.status}</span></td>
     <td><div class="row-action" style="flex-wrap:wrap;gap:4px;">
-      <button class="btn btn-success btn-xs" onclick="updateOrder(${o._row},'ยืนยันแล้ว','${o.items.replace(/'/g,"\'")}')">✅ ยืนยัน</button>
-      <button class="btn btn-outline btn-xs" onclick="updateOrder(${o._row},'จัดส่งแล้ว','${o.items.replace(/'/g,"\'")}')">📮 จัดส่ง</button>
-      <button class="btn btn-danger btn-xs" onclick="updateOrder(${o._row},'ยกเลิก','${o.items.replace(/'/g,"\'")}')">❌ ยกเลิก</button>
+      <button class="btn btn-success btn-xs" onclick="updateOrder(${o._row},'ยืนยันแล้ว')">✅ ยืนยัน</button>
+      <button class="btn btn-outline btn-xs" onclick="updateOrder(${o._row},'จัดส่งแล้ว')">📮 จัดส่ง</button>
+      <button class="btn btn-danger btn-xs" onclick="updateOrder(${o._row},'ยกเลิก')">❌ ยกเลิก</button>
     </div></td>
   </tr>`).join('');
 }
-
-async function updateOrder(row, status, items) {
-  try {
-    // Read current order row
-    const res = await fetch(GAS_URL+'?action=read&sheet=Order').then(r=>r.json());
-    if(res.status==='ok' && res.data[row-1]) {
-      const rowData = [...res.data[row-1]];
-      rowData[7] = status;
-      await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Order',row,data:rowData})});
-    }
-    // Handle store product status
-    const storeRes = await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
-    if(storeRes.status==='ok') {
-      for(let i=1;i<storeRes.data.length;i++) {
-        const r = storeRes.data[i];
-        if(String(r[8]).trim()==='pending') {
-          if(status==='ยืนยันแล้ว') {
-            await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Store',row:i+1})});
-            break;
-          } else if(status==='ยกเลิก') {
-            const rd=[...r]; rd[8]='available';
-            await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Store',row:i+1,data:rd})});
-          }
+async function updateOrder(row,status){
+  try{
+    const res=await fetch(GAS_URL+'?action=read&sheet=Order').then(r=>r.json());
+    if(res.status==='ok'&&res.data[row-1]){const rd=[...res.data[row-1]];rd[7]=status;await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Order',row,data:rd})});}
+    const storeRes=await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
+    if(storeRes.status==='ok'){
+      for(let i=1;i<storeRes.data.length;i++){
+        const r=storeRes.data[i];
+        if(String(r[8]).trim()==='pending'){
+          if(status==='ยืนยันแล้ว'){await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Store',row:i+1})});break;}
+          else if(status==='ยกเลิก'){const rd=[...r];rd[8]='available';await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Store',row:i+1,data:rd})});}
         }
       }
     }
-    toast(status==='ยืนยันแล้ว'?'✅ ยืนยันออเดอร์แล้ว สินค้าหายจากร้านแล้ว':status==='ยกเลิก'?'❌ ยกเลิกแล้ว สินค้ากลับมาขายได้':'📮 อัพเดทสถานะแล้ว');
+    toast(status==='ยืนยันแล้ว'?'✅ ยืนยันออเดอร์แล้ว':status==='ยกเลิก'?'❌ ยกเลิกแล้ว คืนสต็อก':'📮 อัพเดทสถานะแล้ว');
     loadOrders();
-  } catch(e) { toast('⚠️ เกิดข้อผิดพลาด'); }
+  }catch(e){toast('⚠️ เกิดข้อผิดพลาด');}
 }
 
-// ===== STORE MANAGEMENT =====
-let sheet1Products = [];
-let storeProducts_list = [];
-let storeProducts_raw = [];
+// ── STORE MANAGEMENT ──────────────────────────────────────────────
+let sheet1Products=[], storeProducts_raw=[], storeProducts_list=[];
 
-async function loadSheet1Products() {
-  const tb = document.getElementById('store-manage-table');
-  tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--earth-muted)">⏳ กำลังโหลด...</td></tr>';
-  try {
-    const [r1, r2] = await Promise.all([
+async function loadSheet1Products(){
+  const tb=document.getElementById('store-manage-table');
+  tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--earth-muted)">⏳ กำลังโหลด...</td></tr>';
+  try{
+    const [r1,r2]=await Promise.all([
       fetch(GAS_URL+'?action=read&sheet=Sheet1').then(r=>r.json()),
       fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json()).catch(()=>({status:'ok',data:[]}))
     ]);
-    // Parse Sheet1 products
-    if(r1.status==='ok') {
+    if(r1.status==='ok'){
       let dataStart=0;
-      for(let i=0;i<r1.data.length;i++){
-        const v=String(r1.data[i][0]).toUpperCase().trim();
-        if(v==='TRUE'||v==='FALSE'){dataStart=i;break;}
-      }
-      sheet1Products = r1.data.slice(dataStart)
+      for(let i=0;i<r1.data.length;i++){const v=String(r1.data[i][0]).toUpperCase().trim();if(v==='TRUE'||v==='FALSE'){dataStart=i;break;}}
+      sheet1Products=r1.data.slice(dataStart)
         .filter(r=>r[1]&&String(r[1]).trim()&&String(r[0]).toUpperCase().trim()==='TRUE')
         .map((r,i)=>({
-          _row: dataStart+i+1,
-          name: String(r[1]||'').trim(),
-          cost: parseFloat(r[2])||0,
-          sell: parseFloat(r[3])>0 ? parseFloat(r[3]) : parseFloat(r[2])||0,
-          soldPrice: parseFloat(r[3])||0,
-          sold: parseFloat(r[3])>0,
-          ship: parseFloat(r[5])||0,
-          note: String(r[6]||'').trim()
+          _row:dataStart+i+1,name:String(r[1]||'').trim(),cost:parseFloat(r[2])||0,
+          sell:parseFloat(r[3])>0?parseFloat(r[3]):parseFloat(r[2])||0,
+          soldPrice:parseFloat(r[3])||0,sold:parseFloat(r[3])>0,ship:parseFloat(r[5])||0,note:String(r[6]||'').trim()
         }));
     }
-    // Parse Store products (already in store)
-    if(r2.status==='ok' && r2.data.length>1) {
-      storeProducts_raw = r2.data.slice(1).filter(r=>r[0]);
-      storeProducts_list = storeProducts_raw.map(r=>String(r[1]||'').trim());
-    } else {
-      storeProducts_raw = [];
-      storeProducts_list = [];
-    }
-  } catch(e) { sheet1Products = []; }
+    if(r2.status==='ok'&&r2.data.length>1){
+      storeProducts_raw=r2.data.slice(1).filter(r=>r[0]);
+      storeProducts_list=storeProducts_raw.map(r=>String(r[1]||'').trim());
+    }else{storeProducts_raw=[];storeProducts_list=[];}
+  }catch(e){sheet1Products=[];}
   renderStoreManage();
 }
 
-function renderStoreManage() {
-  const tb = document.getElementById('store-manage-table');
-  const soldTb = document.getElementById('store-sold-table');
-
-  // Render sold items on top
-  const soldItems = sheet1Products.filter(p=>p.sold);
-  if(soldTb) {
-    if(!soldItems.length) {
-      soldTb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:16px;color:var(--earth-muted)">ยังไม่มีรายการขาย</td></tr>';
-    } else {
-      soldTb.innerHTML = soldItems.map((p,i)=>{
-        const profit = p.soldPrice - p.cost;
-        return `<tr>
-          <td style="color:var(--earth-muted);font-size:11px">${i+1}</td>
-          <td><strong>${p.name}</strong></td>
-          <td>฿${p.cost.toLocaleString()}</td>
-          <td style="color:var(--earth-accent)">฿${p.soldPrice.toLocaleString()}</td>
-          <td style="font-weight:600;color:${profit>=0?'var(--earth-green)':'var(--earth-red)'}">฿${profit.toLocaleString()}</td>
-          <td style="color:var(--earth-muted);font-size:12px">${p.ship>0?'฿'+p.ship:'—'}</td>
-          <td style="color:var(--earth-muted);font-size:12px">${p.note||'—'}</td>
-        </tr>`;
-      }).join('');
-    }
-  }
-
-  // Only show unsold items
-  const available = sheet1Products.filter(p=>!p.sold);
-  if(!available.length) {
-    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--earth-muted)">ไม่พบสินค้าในสต็อก</td></tr>';
-    return;
-  }
-  tb.innerHTML = available.map((p,i)=>{
-    const storeItem = storeProducts_raw ? storeProducts_raw.find(r=>String(r[1]).trim()===p.name) : null;
-    const inStore = !!storeItem;
-    const isPending = storeItem && String(storeItem[8]).trim()==='pending';
-    return `<tr>
+function renderStoreManage(){
+  const tb=document.getElementById('store-manage-table');
+  const available=sheet1Products.filter(p=>!p.sold);
+  if(!available.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--earth-muted)">ไม่พบสินค้าในสต็อก</td></tr>';return;}
+  tb.innerHTML=available.map((p,i)=>{
+    const storeItem=storeProducts_raw?storeProducts_raw.find(r=>String(r[1]).trim()===p.name):null;
+    const inStore=!!storeItem,isPending=storeItem&&String(storeItem[8]).trim()==='pending';
+    // แสดง qty ที่มีใน Store
+    const qtyRaw=storeItem?storeItem[9]:'';
+    let qtyDisplay='—';
+    if(qtyRaw){try{const q=JSON.parse(qtyRaw);qtyDisplay=Object.entries(q).filter(([k,v])=>v>0).map(([k,v])=>k+':'+v).join(', ')||'หมด';}catch(e){qtyDisplay=qtyRaw;}}
+    return`<tr>
       <td style="color:var(--earth-muted);font-size:11px">${i+1}</td>
-      <td><strong>${p.name}</strong></td>
+      <td><strong>${p.name}</strong>${inStore?'<br><span style="font-size:11px;color:var(--earth-muted)">qty: '+qtyDisplay+'</span>':''}</td>
       <td style="font-family:Kanit,sans-serif;color:var(--earth-accent)">฿${p.cost.toLocaleString()}</td>
-      <td><span class="badge ${p.sold?'badge-sold':'badge-available'}">${p.sold?'ขายแล้ว':'ในสต็อก'}</span></td>
-      <td><span class="badge ${isPending?'badge-unposted':inStore?'badge-available':'badge-stock'}">${isPending?'⏳ Sold Out':inStore?'✅ แสดงอยู่':'ซ่อน'}</span></td>
+      <td><span class="badge ${p.sold?'badge-sold':'badge-stock'}">${p.sold?'ขายแล้ว':'ในสต็อก'}</span></td>
+      <td><span class="badge ${isPending?'badge-unposted':inStore?'badge-posted':'badge-stock'}">${isPending?'⏳ Sold Out':inStore?'✅ แสดงอยู่':'ซ่อน'}</span></td>
       <td><div class="row-action">
         ${isPending
-          ? `<button class="btn btn-success btn-sm" onclick="restoreProduct('${p.name.replace(/'/g,"\'")}')">🔄 คืนสต็อก</button>
-             <button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\'")}')">🗑️ ลบออก</button>`
-          : inStore
-          ? `<button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\'")}')">🙈 ซ่อน</button>`
-          : `<button class="btn btn-success btn-sm" onclick="openStoreForm('${p.name.replace(/'/g,"\'")}',${p.sell})">🛍️ แสดงในร้าน</button>`
+          ?`<button class="btn btn-success btn-sm" onclick="restoreProduct('${p.name.replace(/'/g,"\\'")}')">🔄 คืนสต็อก</button>
+             <button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\\'")}')">🗑️ ลบออก</button>`
+          :inStore
+          ?`<button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\\'")}')">🙈 ซ่อน</button>`
+          :`<button class="btn btn-success btn-sm" onclick="openStoreForm('${p.name.replace(/'/g,"\\'")}',${p.sell})">🛍️ แสดงในร้าน</button>`
         }
       </div></td>
     </tr>`;
   }).join('');
 }
 
-function openStoreForm(name, price) {
-  document.getElementById('store-form-name').textContent = name;
-  document.getElementById('sf-id').value = 'RJ'+Date.now();
-  document.getElementById('sf-size').value = '';
-  document.getElementById('sf-desc').value = '';
-  document.getElementById('sf-defect').value = '';
-  document.getElementById('sf-imgs').value = '';
-  document.getElementById('store-form-box').dataset.name = name;
-  document.getElementById('store-form-box').dataset.price = price;
-  document.getElementById('store-form-box').style.display = 'block';
+// ── qty preview ───────────────────────────────────────────────────
+function updateQtyPreview(){
+  const s=parseInt(document.getElementById('sf-qty-s').value)||0;
+  const m=parseInt(document.getElementById('sf-qty-m').value)||0;
+  const l=parseInt(document.getElementById('sf-qty-l').value)||0;
+  const xl=parseInt(document.getElementById('sf-qty-xl').value)||0;
+  const el=document.getElementById('sf-qty-preview');
+  if(el) el.textContent=JSON.stringify({S:s,M:m,L:l,XL:xl});
+}
+
+function openStoreForm(name,price){
+  document.getElementById('store-form-name').textContent=name;
+  document.getElementById('sf-id').value='RJ'+Date.now();
+  document.getElementById('sf-desc').value='';
+  document.getElementById('sf-defect').value='';
+  document.getElementById('sf-imgs').value='';
+  document.getElementById('sf-league').value='';
+  // reset qty
+  ['sf-qty-s','sf-qty-m','sf-qty-l','sf-qty-xl'].forEach(id=>{document.getElementById(id).value='0';});
+  updateQtyPreview();
+  document.getElementById('store-form-box').dataset.name=name;
+  document.getElementById('store-form-box').dataset.price=price;
+  document.getElementById('store-form-box').style.display='block';
   document.getElementById('store-form-box').scrollIntoView({behavior:'smooth'});
 }
 
-async function restoreProduct(name) {
-  try {
-    const res = await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
-    if(res.status==='ok') {
-      const rowIdx = res.data.findIndex((r,i)=>i>0&&String(r[1]).trim()===name);
-      if(rowIdx>0) {
-        const rd = [...res.data[rowIdx]];
-        rd[8] = 'available';
-        await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Store',row:rowIdx+1,data:rd})});
-        toast('🔄 คืนสต็อกแล้ว สินค้ากลับมาขายได้');
-        loadSheet1Products();
-      }
-    }
-  } catch(e) { toast('⚠️ เกิดข้อผิดพลาด'); }
-}
+async function saveToStore(){
+  const box=document.getElementById('store-form-box');
+  const name=box.dataset.name, price=box.dataset.price;
+  const id=document.getElementById('sf-id').value;
+  const type=document.getElementById('sf-type').value;
 
-async function saveToStore() {
-  const box = document.getElementById('store-form-box');
-  const name = box.dataset.name;
-  const price = box.dataset.price;
-  const id = document.getElementById('sf-id').value;
-  const type = document.getElementById('sf-type').value;
-  const size = document.getElementById('sf-size').value.trim();
-  const desc = document.getElementById('sf-desc').value.trim();
-  const defect = document.getElementById('sf-defect').value.trim();
-  const imgs = document.getElementById('sf-imgs').value.trim();
-  if(!size){toast('กรุณาใส่ Size ก่อนครับ');return;}
-  const league = document.getElementById('sf-league').value;
-  const data = [id, name, type, size, price, desc, defect, imgs, 'available', league];
-  try {
+  // สร้าง qty JSON จาก input
+  const qS =parseInt(document.getElementById('sf-qty-s').value)||0;
+  const qM =parseInt(document.getElementById('sf-qty-m').value)||0;
+  const qL =parseInt(document.getElementById('sf-qty-l').value)||0;
+  const qXL=parseInt(document.getElementById('sf-qty-xl').value)||0;
+  const qtyObj={S:qS,M:qM,L:qL,XL:qXL};
+  const availSizes=Object.entries(qtyObj).filter(([k,v])=>v>0).map(([k])=>k);
+  const sizeStr=availSizes.join('/')||'Free Size';
+  const qtyJSON=JSON.stringify(qtyObj);
+
+  if(availSizes.length===0){toast('กรุณาใส่จำนวนอย่างน้อย 1 size ครับ');return;}
+
+  const desc=document.getElementById('sf-desc').value.trim();
+  const defect=document.getElementById('sf-defect').value.trim();
+  const imgs=document.getElementById('sf-imgs').value.trim();
+  const league=document.getElementById('sf-league').value;
+
+  // col: A=id, B=name, C=type, D=size, E=price, F=desc, G=defect, H=imgs, I=status, J=qty, K=league
+  const data=[id,name,type,sizeStr,price,desc,defect,imgs,'available',qtyJSON,league];
+
+  try{
     await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'append',sheet:'Store',data})});
-    toast('✅ เพิ่มสินค้าเข้าร้านแล้ว!');
+    toast('✅ เพิ่มสินค้าเข้าร้านแล้ว! qty: '+qtyJSON);
     box.style.display='none';
     loadSheet1Products();
-  } catch(e) { toast('⚠️ บันทึกไม่สำเร็จ'); }
+  }catch(e){toast('⚠️ บันทึกไม่สำเร็จ');}
 }
 
-async function removeFromStore(name) {
-  if(!confirm('ซ่อนสินค้า "'+name+'" จากร้านไหมครับ?')) return;
-  try {
-    const res = await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
-    if(res.status==='ok') {
-      const row = res.data.findIndex((r,i)=>i>0&&String(r[1]).trim()===name);
-      if(row>0) {
-        await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Store',row:row+1})});
-        toast('🙈 ซ่อนสินค้าแล้ว');
-        loadSheet1Products();
-      }
+async function restoreProduct(name){
+  try{
+    const res=await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
+    if(res.status==='ok'){
+      const rowIdx=res.data.findIndex((r,i)=>i>0&&String(r[1]).trim()===name);
+      if(rowIdx>0){const rd=[...res.data[rowIdx]];rd[8]='available';await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Store',row:rowIdx+1,data:rd})});toast('🔄 คืนสต็อกแล้ว');loadSheet1Products();}
     }
-  } catch(e) { toast('⚠️ เกิดข้อผิดพลาด'); }
+  }catch(e){toast('⚠️ เกิดข้อผิดพลาด');}
 }
 
-window.addEventListener("load",loadData);
+async function removeFromStore(name){
+  if(!confirm('ซ่อนสินค้า "'+name+'" จากร้านไหมครับ?'))return;
+  try{
+    const res=await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
+    if(res.status==='ok'){
+      const row=res.data.findIndex((r,i)=>i>0&&String(r[1]).trim()===name);
+      if(row>0){await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Store',row:row+1})});toast('🙈 ซ่อนสินค้าแล้ว');loadSheet1Products();}
+    }
+  }catch(e){toast('⚠️ เกิดข้อผิดพลาด');}
+}
+
+window.addEventListener("load",()=>{});
 </script>
 </div>
 
 <script>
-const ADMIN_USER = "Wongsapat";
-const ADMIN_PASS = ".Wongsapat9pipe";
-
-function doLogin() {
-  const u = document.getElementById('login-user').value;
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-error');
-  if(u === ADMIN_USER && p === ADMIN_PASS) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('dashboard-screen').style.display = 'block';
+const ADMIN_USER="Wongsapat",ADMIN_PASS=".Wongsapat9pipe";
+function doLogin(){
+  const u=document.getElementById('login-user').value,p=document.getElementById('login-pass').value;
+  const err=document.getElementById('login-error');
+  if(u===ADMIN_USER&&p===ADMIN_PASS){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard-screen').style.display='block';
     loadData();
-  } else {
-    err.style.display = 'block';
-    setTimeout(()=>err.style.display='none', 3000);
-  }
+  }else{err.style.display='block';setTimeout(()=>err.style.display='none',3000);}
 }
-
-// Add logout button to topbar after login
-window.addEventListener('load', () => {
-  const topbarActions = document.querySelector('.topbar-actions');
-  if(topbarActions) {
-    const logoutBtn = document.createElement('button');
-    logoutBtn.className = 'logout-btn';
-    logoutBtn.textContent = '🚪 ออกจากระบบ';
-    logoutBtn.onclick = () => {
-      document.getElementById('dashboard-screen').style.display = 'none';
-      document.getElementById('login-screen').style.display = 'flex';
-    };
-    topbarActions.appendChild(logoutBtn);
-  }
+window.addEventListener('load',()=>{
+  const ta=document.querySelector('.topbar-actions');
+  if(ta){const b=document.createElement('button');b.className='logout-btn';b.textContent='🚪 ออกจากระบบ';b.onclick=()=>{document.getElementById('dashboard-screen').style.display='none';document.getElementById('login-screen').style.display='flex';};ta.appendChild(b);}
 });
 </script>
 </body>

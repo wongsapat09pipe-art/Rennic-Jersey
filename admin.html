@@ -878,6 +878,7 @@ async function saveToStore(){
   const data=[id,name,type,sizeStr,price,desc,defect,imgs,'available',qtyJSON,league];
   try{
     await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'append',sheet:'Store',data})});
+    localStorage.removeItem('rj_products_cache');
     toast('✅ เพิ่มสินค้าเข้าร้านแล้ว!');
     box.style.display='none';
     loadSheet1Products();
@@ -889,7 +890,7 @@ async function restoreProduct(name){
     const res=await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
     if(res.status==='ok'){
       const rowIdx=res.data.findIndex((r,i)=>i>0&&String(r[1]).trim()===name);
-      if(rowIdx>0){const rd=[...res.data[rowIdx]];rd[8]='available';await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Store',row:rowIdx+1,data:rd})});toast('🔄 คืนสต็อกแล้ว');loadSheet1Products();}
+      if(rowIdx>0){const rd=[...res.data[rowIdx]];rd[8]='available';await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Store',row:rowIdx+1,data:rd})});localStorage.removeItem('rj_products_cache');toast('🔄 คืนสต็อกแล้ว');loadSheet1Products();}
     }
   }catch(e){toast('⚠️ เกิดข้อผิดพลาด');}
 }
@@ -900,7 +901,12 @@ async function removeFromStore(name){
     const res=await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
     if(res.status==='ok'){
       const row=res.data.findIndex((r,i)=>i>0&&String(r[1]).trim()===name);
-      if(row>0){await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Store',row:row+1})});toast('🙈 ซ่อนสินค้าแล้ว');loadSheet1Products();}
+      if(row>0){
+        await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Store',row:row+1})});
+        localStorage.removeItem('rj_products_cache'); // ล้าง cache หน้าร้าน
+        toast('🙈 ซ่อนสินค้าแล้ว — หน้าร้านจะอัปเดตเองครับ');
+        loadSheet1Products();
+      }
     }
   }catch(e){toast('⚠️ เกิดข้อผิดพลาด');}
 }

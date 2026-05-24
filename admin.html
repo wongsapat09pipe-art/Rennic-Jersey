@@ -115,6 +115,9 @@
   .qty-col-label{font-size:12px;font-weight:600;color:var(--earth-muted);margin-bottom:4px;}
   .qty-col input{width:100%;text-align:center;padding:8px 4px;}
   .qty-preview{font-size:12px;font-family:monospace;color:var(--earth-accent);background:var(--earth-surface);padding:5px 9px;border-radius:6px;margin-top:6px;}
+  .sf-size-pick{padding:7px 16px;border:1px solid var(--earth-border);border-radius:8px;background:var(--earth-bg);color:var(--earth-muted);font-family:'Sarabun',sans-serif;font-size:13px;cursor:pointer;transition:all 0.15s;}
+  .sf-size-pick:hover{border-color:var(--earth-accent);color:var(--earth-accent);}
+  .sf-size-pick.selected{background:var(--earth-dark);color:#E8C98A;border-color:var(--earth-dark);}
 </style>
 </head>
 <body>
@@ -286,7 +289,7 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
 
           <div class="form-group"><label>ประเภท</label>
-            <select id="sf-type"><option value="มือ1">มือ 1</option><option value="มือ2">มือ 2</option></select>
+            <select id="sf-type" onchange="toggleQtyGrid(this.value)"><option value="มือ1">มือ 1</option><option value="มือ2">มือ 2</option></select>
           </div>
           <div class="form-group"><label>ลีก</label>
             <select id="sf-league">
@@ -300,29 +303,40 @@
             </select>
           </div>
 
-          <!-- QTY ตาม Size -->
-          <div class="form-group" style="grid-column:1/-1">
+          <!-- มือ 1: qty grid S/M/L/XL -->
+          <div class="form-group" id="qty-grid-box" style="grid-column:1/-1">
             <label>จำนวนสินค้าตาม Size (ใส่ 0 ถ้าไม่มี size นั้น)</label>
             <div class="qty-grid">
-              <div class="qty-col">
-                <div class="qty-col-label">S</div>
-                <input type="number" id="sf-qty-s" value="0" min="0" oninput="updateQtyPreview()">
-              </div>
-              <div class="qty-col">
-                <div class="qty-col-label">M</div>
-                <input type="number" id="sf-qty-m" value="0" min="0" oninput="updateQtyPreview()">
-              </div>
-              <div class="qty-col">
-                <div class="qty-col-label">L</div>
-                <input type="number" id="sf-qty-l" value="0" min="0" oninput="updateQtyPreview()">
-              </div>
-              <div class="qty-col">
-                <div class="qty-col-label">XL</div>
-                <input type="number" id="sf-qty-xl" value="0" min="0" oninput="updateQtyPreview()">
-              </div>
+              <div class="qty-col"><div class="qty-col-label">S</div><input type="number" id="sf-qty-s" value="0" min="0" oninput="updateQtyPreview()"></div>
+              <div class="qty-col"><div class="qty-col-label">M</div><input type="number" id="sf-qty-m" value="0" min="0" oninput="updateQtyPreview()"></div>
+              <div class="qty-col"><div class="qty-col-label">L</div><input type="number" id="sf-qty-l" value="0" min="0" oninput="updateQtyPreview()"></div>
+              <div class="qty-col"><div class="qty-col-label">XL</div><input type="number" id="sf-qty-xl" value="0" min="0" oninput="updateQtyPreview()"></div>
             </div>
             <div style="font-size:11px;color:var(--earth-muted);margin-top:6px;">JSON ที่จะบันทึกใน Sheet (คอลัมน์ J):</div>
             <div class="qty-preview" id="sf-qty-preview">{"S":0,"M":0,"L":0,"XL":0}</div>
+          </div>
+
+          <!-- มือ 2: เลือก size + กรอกอก/ยาว -->
+          <div class="form-group" id="size-single-box" style="grid-column:1/-1;display:none;">
+            <label>Size</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+              <button type="button" class="sf-size-pick" data-sz="S" onclick="pickSize2('S')">S</button>
+              <button type="button" class="sf-size-pick" data-sz="M" onclick="pickSize2('M')">M</button>
+              <button type="button" class="sf-size-pick" data-sz="L" onclick="pickSize2('L')">L</button>
+              <button type="button" class="sf-size-pick" data-sz="XL" onclick="pickSize2('XL')">XL</button>
+              <button type="button" class="sf-size-pick" data-sz="XXL" onclick="pickSize2('XXL')">XXL</button>
+            </div>
+            <input type="hidden" id="sf-size2" value="">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+              <div class="form-group" style="margin:0;">
+                <label>อก (นิ้ว)</label>
+                <input type="text" id="sf-chest" placeholder='เช่น 46"'>
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label>ความยาว (นิ้ว)</label>
+                <input type="text" id="sf-length" placeholder='เช่น 28"'>
+              </div>
+            </div>
           </div>
 
           <div class="form-group" style="grid-column:1/-1">
@@ -693,6 +707,17 @@ function renderStoreManage(){
 }
 
 // ── qty preview ───────────────────────────────────────────────────
+function toggleQtyGrid(type){
+  document.getElementById('qty-grid-box').style.display  = (type==='มือ2') ? 'none' : '';
+  document.getElementById('size-single-box').style.display = (type==='มือ2') ? '' : 'none';
+}
+
+function pickSize2(sz){
+  document.getElementById('sf-size2').value = sz;
+  document.querySelectorAll('.sf-size-pick').forEach(b=>b.classList.remove('selected'));
+  document.querySelector('.sf-size-pick[data-sz="'+sz+'"]').classList.add('selected');
+}
+
 function updateQtyPreview(){
   const s=parseInt(document.getElementById('sf-qty-s').value)||0;
   const m=parseInt(document.getElementById('sf-qty-m').value)||0;
@@ -709,9 +734,16 @@ function openStoreForm(name,price){
   document.getElementById('sf-defect').value='';
   document.getElementById('sf-imgs').value='';
   document.getElementById('sf-league').value='';
-  // reset qty
+  document.getElementById('sf-type').value='มือ2';
+  // reset มือ1 qty
   ['sf-qty-s','sf-qty-m','sf-qty-l','sf-qty-xl'].forEach(id=>{document.getElementById(id).value='0';});
   updateQtyPreview();
+  // reset มือ2 fields
+  document.getElementById('sf-size2').value='';
+  document.getElementById('sf-chest').value='';
+  document.getElementById('sf-length').value='';
+  document.querySelectorAll('.sf-size-pick').forEach(b=>b.classList.remove('selected'));
+  toggleQtyGrid('มือ2');
   document.getElementById('store-form-box').dataset.name=name;
   document.getElementById('store-form-box').dataset.price=price;
   document.getElementById('store-form-box').style.display='block';
@@ -723,30 +755,38 @@ async function saveToStore(){
   const name=box.dataset.name, price=box.dataset.price;
   const id=document.getElementById('sf-id').value;
   const type=document.getElementById('sf-type').value;
-
-  // สร้าง qty JSON จาก input
-  const qS =parseInt(document.getElementById('sf-qty-s').value)||0;
-  const qM =parseInt(document.getElementById('sf-qty-m').value)||0;
-  const qL =parseInt(document.getElementById('sf-qty-l').value)||0;
-  const qXL=parseInt(document.getElementById('sf-qty-xl').value)||0;
-  const qtyObj={S:qS,M:qM,L:qL,XL:qXL};
-  const availSizes=Object.entries(qtyObj).filter(([k,v])=>v>0).map(([k])=>k);
-  const sizeStr=availSizes.join('/')||'Free Size';
-  const qtyJSON=JSON.stringify(qtyObj);
-
-  if(availSizes.length===0){toast('กรุณาใส่จำนวนอย่างน้อย 1 size ครับ');return;}
-
   const desc=document.getElementById('sf-desc').value.trim();
   const defect=document.getElementById('sf-defect').value.trim();
   const imgs=document.getElementById('sf-imgs').value.trim();
   const league=document.getElementById('sf-league').value;
 
-  // col: A=id, B=name, C=type, D=size, E=price, F=desc, G=defect, H=imgs, I=status, J=qty, K=league
-  const data=[id,name,type,sizeStr,price,desc,defect,imgs,'available',qtyJSON,league];
+  let sizeStr='', qtyJSON='{}';
 
+  if(type==='มือ2'){
+    const sz=document.getElementById('sf-size2').value;
+    const chest=document.getElementById('sf-chest').value.trim();
+    const length=document.getElementById('sf-length').value.trim();
+    if(!sz){toast('กรุณาเลือก Size ก่อนครับ');return;}
+    sizeStr=sz;
+    // เก็บ qty=1 + ขนาด อก/ยาว ใน JSON
+    const dim=(chest||length) ? (chest?'อก'+chest:'')+(chest&&length?' ':'' )+(length?'ยาว'+length:'') : '';
+    qtyJSON=JSON.stringify({[sz]:{qty:1,dim}});
+  } else {
+    const qS=parseInt(document.getElementById('sf-qty-s').value)||0;
+    const qM=parseInt(document.getElementById('sf-qty-m').value)||0;
+    const qL=parseInt(document.getElementById('sf-qty-l').value)||0;
+    const qXL=parseInt(document.getElementById('sf-qty-xl').value)||0;
+    const qtyObj={S:qS,M:qM,L:qL,XL:qXL};
+    const availSizes=Object.entries(qtyObj).filter(([k,v])=>v>0).map(([k])=>k);
+    if(availSizes.length===0){toast('กรุณาใส่จำนวนอย่างน้อย 1 size ครับ');return;}
+    sizeStr=availSizes.join('/');
+    qtyJSON=JSON.stringify(qtyObj);
+  }
+
+  const data=[id,name,type,sizeStr,price,desc,defect,imgs,'available',qtyJSON,league];
   try{
     await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'append',sheet:'Store',data})});
-    toast('✅ เพิ่มสินค้าเข้าร้านแล้ว! qty: '+qtyJSON);
+    toast('✅ เพิ่มสินค้าเข้าร้านแล้ว!');
     box.style.display='none';
     loadSheet1Products();
   }catch(e){toast('⚠️ บันทึกไม่สำเร็จ');}

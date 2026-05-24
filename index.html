@@ -400,14 +400,34 @@ let filterType='all', filterLeague='all', filterTeam='all', searchQ='';
 // ── PARSE qty field ──────────────────────────────────────────────
 // qty ใน Sheet เก็บเป็น JSON string: {"S":5,"M":3,"L":0,"XL":2}
 // ถ้าไม่มีหรือ parse ไม่ได้ → return {}
+// qty format มือ1: {"S":5,"M":3,"L":2,"XL":0}
+// qty format มือ2: {"M":{"qty":1,"dim":"อก46\" ยาว28\""}}
 function parseQty(raw) {
   if(!raw) return {};
   try { return JSON.parse(raw); } catch(e) { return {}; }
 }
 
+// ดึง qty ตัวเลขของ size นั้น (รองรับทั้ง 2 format)
+function getQtyNum(qtyObj, sz) {
+  const v = qtyObj[sz];
+  if(v === undefined || v === null) return 0;
+  if(typeof v === 'object') return parseInt(v.qty)||0;
+  return parseInt(v)||0;
+}
+
+// ดึงข้อมูลขนาด dim ของ size (เฉพาะมือ2)
+function getQtyDim(qtyObj, sz) {
+  const v = qtyObj[sz];
+  if(v && typeof v === 'object') return v.dim||'';
+  return '';
+}
+
 // รวม qty ทุก size
 function totalQty(qtyObj) {
-  return Object.values(qtyObj).reduce((s,v)=>s+(parseInt(v)||0),0);
+  return Object.values(qtyObj).reduce((s,v)=>{
+    if(typeof v === 'object') return s+(parseInt(v.qty)||0);
+    return s+(parseInt(v)||0);
+  },0);
 }
 
 // ── LOAD PRODUCTS ────────────────────────────────────────────────
@@ -466,24 +486,24 @@ function cardHTML(p){
   // size buttons บนการ์ด
   let sizesHTML = '';
   if(p.type === 'มือ2'){
-    // มือ2 — แสดง size เดียว ไม่มีตัวเลือก (auto-select)
-    const availEntry = hasQty ? Object.entries(p.qty).find(([sz,q])=>parseInt(q)>0) : null;
+    const availEntry = hasQty ? Object.entries(p.qty).find(([sz])=>getQtyNum(p.qty,sz)>0) : null;
     const sizeLabel = availEntry ? availEntry[0] : p.size;
+    const dim = availEntry ? getQtyDim(p.qty, availEntry[0]) : '';
     if(!p._selectedSize && availEntry) p._selectedSize = availEntry[0];
-    sizesHTML = `<div class="card-meta" style="margin-bottom:8px;">Size: <strong>${sizeLabel}</strong></div>`;
+    sizesHTML = `<div class="card-meta" style="margin-bottom:4px;">Size: <strong>${sizeLabel}</strong></div>
+    ${dim?`<div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${dim}</div>`:''}`;
   } else if(hasQty){
     sizesHTML = `<div class="size-selector" onclick="event.stopPropagation()">` +
-      Object.entries(p.qty).filter(([sz,q])=>parseInt(q)>0).map(([sz,q])=>{
+      Object.entries(p.qty).filter(([sz])=>getQtyNum(p.qty,sz)>0).map(([sz])=>{
         const sel = (p._selectedSize||'')=== sz;
         return `<button class="size-btn${sel?' selected':''}" 
           onclick="selectCardSize('${p.id}','${sz}',this)">${sz}</button>`;
       }).join('') +
     `</div>
-    <div class="qty-badge${(p._selectedSize&&parseInt(p.qty[p._selectedSize])<=3&&parseInt(p.qty[p._selectedSize])>0)?' low':''}" id="qbadge-${p.id}">
-      ${p._selectedSize ? qtyText(parseInt(p.qty[p._selectedSize])) : 'กรุณาเลือก size'}
+    <div class="qty-badge${(p._selectedSize&&getQtyNum(p.qty,p._selectedSize)<=3&&getQtyNum(p.qty,p._selectedSize)>0)?' low':''}" id="qbadge-${p.id}">
+      ${p._selectedSize ? qtyText(getQtyNum(p.qty,p._selectedSize)) : 'กรุณาเลือก size'}
     </div>`;
   } else {
-    // ไม่มี qty JSON — แสดง size เดิม
     sizesHTML = `<div class="card-meta" style="margin-bottom:8px;">Size: ${p.size}</div>`;
   }
 
@@ -529,13 +549,11 @@ function qtyText(q){
 function selectCardSize(id, sz, el){
   const p = products.find(x=>x.id===id); if(!p) return;
   p._selectedSize = sz;
-  // อัปเดต button states
   const card = document.getElementById('card-'+id);
   card.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('selected'));
   el.classList.add('selected');
-  // อัปเดต qty badge
   const badge = document.getElementById('qbadge-'+id);
-  const q = parseInt(p.qty[sz])||0;
+  const q = getQtyNum(p.qty, sz);
   const isLow = q<=3 && q>0;
   badge.className='qty-badge'+(isLow?' low':'');
   badge.innerHTML = qtyText(q);
@@ -545,17 +563,12 @@ function selectCardSize(id, sz, el){
 function addToCartFromCard(id){
   const p = products.find(x=>x.id===id); if(!p) return;
   const hasQty = Object.keys(p.qty).length > 0;
-  // มือ2 — auto-select size แรกที่มีของ
   if(p.type === 'มือ2' && hasQty && !p._selectedSize){
-    const first = Object.entries(p.qty).find(([sz,q])=>parseInt(q)>0);
+    const first = Object.entries(p.qty).find(([sz])=>getQtyNum(p.qty,sz)>0);
     if(first) p._selectedSize = first[0];
   }
-  if(hasQty && !p._selectedSize){
-    toastStore('กรุณาเลือก size ก่อนครับ'); return;
-  }
-  if(hasQty && parseInt(p.qty[p._selectedSize]||0)===0){
-    toastStore('size นี้หมดแล้วครับ'); return;
-  }
+  if(hasQty && !p._selectedSize){ toastStore('กรุณาเลือก size ก่อนครับ'); return; }
+  if(hasQty && getQtyNum(p.qty, p._selectedSize)===0){ toastStore('size นี้หมดแล้วครับ'); return; }
   addToCart(id, p._selectedSize || p.size);
 }
 
@@ -589,16 +602,18 @@ function openProduct(id){
 
   const hasQty = Object.keys(p.qty).length > 0;
   if(p.type === 'มือ2'){
-    // มือ2 — แสดง size เดียว auto-select ไม่ต้องเลือก
-    const availEntry = hasQty ? Object.entries(p.qty).find(([sz,q])=>parseInt(q)>0) : null;
+    const availEntry = hasQty ? Object.entries(p.qty).find(([sz])=>getQtyNum(p.qty,sz)>0) : null;
     const sizeLabel = availEntry ? availEntry[0] : p.size;
+    const dim = availEntry ? getQtyDim(p.qty, availEntry[0]) : '';
     currentSize = sizeLabel;
     selectorEl.innerHTML=`<div class="modal-size-btn selected" style="pointer-events:none">${sizeLabel}</div>`;
-    qtyInfoEl.textContent='';
+    qtyInfoEl.innerHTML = dim ? `<span style="color:var(--muted)">${dim}</span>` : '';
+    qtyInfoEl.className='modal-qty-info';
     addBtn.disabled=(p.status==='pending');
     addBtn.textContent=p.status==='pending'?'Sold Out':'🛒 เพิ่มลงตะกร้า';
   } else if(hasQty){
-    selectorEl.innerHTML = Object.entries(p.qty).filter(([sz,q])=>parseInt(q)>0).map(([sz,q])=>{
+    selectorEl.innerHTML = Object.entries(p.qty).filter(([sz])=>getQtyNum(p.qty,sz)>0).map(([sz])=>{
+      const q = getQtyNum(p.qty, sz);
       return `<button class="modal-size-btn" 
         data-size="${sz}" data-qty="${q}"
         onclick="selectModalSize('${sz}',${q},this)">${sz}</button>`;
@@ -608,7 +623,6 @@ function openProduct(id){
     addBtn.disabled=true;
     addBtn.textContent='🛒 เพิ่มลงตะกร้า';
   } else {
-    // fallback — ใช้ size เดิม
     selectorEl.innerHTML=`<div class="modal-size-btn selected" style="pointer-events:none">${p.size}</div>`;
     qtyInfoEl.textContent='';
     currentSize=p.size;

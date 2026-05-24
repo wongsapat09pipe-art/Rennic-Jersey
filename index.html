@@ -467,11 +467,9 @@ function cardHTML(p){
   let sizesHTML = '';
   if(hasQty){
     sizesHTML = `<div class="size-selector" onclick="event.stopPropagation()">` +
-      Object.entries(p.qty).map(([sz,q])=>{
-        const out = parseInt(q)===0;
+      Object.entries(p.qty).filter(([sz,q])=>parseInt(q)>0).map(([sz,q])=>{
         const sel = (p._selectedSize||'')=== sz;
-        return `<button class="size-btn${out?' size-out':''}${sel?' selected':''}" 
-          ${out?'disabled':''} 
+        return `<button class="size-btn${sel?' selected':''}" 
           onclick="selectCardSize('${p.id}','${sz}',this)">${sz}</button>`;
       }).join('') +
     `</div>
@@ -580,10 +578,8 @@ function openProduct(id){
 
   const hasQty = Object.keys(p.qty).length > 0;
   if(hasQty){
-    selectorEl.innerHTML = Object.entries(p.qty).map(([sz,q])=>{
-      const out = parseInt(q)===0;
-      return `<button class="modal-size-btn${out?' size-out':''}" 
-        ${out?'disabled':''} 
+    selectorEl.innerHTML = Object.entries(p.qty).filter(([sz,q])=>parseInt(q)>0).map(([sz,q])=>{
+      return `<button class="modal-size-btn" 
         data-size="${sz}" data-qty="${q}"
         onclick="selectModalSize('${sz}',${q},this)">${sz}</button>`;
     }).join('');

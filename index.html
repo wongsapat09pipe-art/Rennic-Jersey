@@ -465,7 +465,13 @@ function cardHTML(p){
 
   // size buttons บนการ์ด
   let sizesHTML = '';
-  if(hasQty){
+  if(p.type === 'มือ2'){
+    // มือ2 — แสดง size เดียว ไม่มีตัวเลือก (auto-select)
+    const availEntry = hasQty ? Object.entries(p.qty).find(([sz,q])=>parseInt(q)>0) : null;
+    const sizeLabel = availEntry ? availEntry[0] : p.size;
+    if(!p._selectedSize && availEntry) p._selectedSize = availEntry[0];
+    sizesHTML = `<div class="card-meta" style="margin-bottom:8px;">Size: <strong>${sizeLabel}</strong></div>`;
+  } else if(hasQty){
     sizesHTML = `<div class="size-selector" onclick="event.stopPropagation()">` +
       Object.entries(p.qty).filter(([sz,q])=>parseInt(q)>0).map(([sz,q])=>{
         const sel = (p._selectedSize||'')=== sz;
@@ -539,6 +545,11 @@ function selectCardSize(id, sz, el){
 function addToCartFromCard(id){
   const p = products.find(x=>x.id===id); if(!p) return;
   const hasQty = Object.keys(p.qty).length > 0;
+  // มือ2 — auto-select size แรกที่มีของ
+  if(p.type === 'มือ2' && hasQty && !p._selectedSize){
+    const first = Object.entries(p.qty).find(([sz,q])=>parseInt(q)>0);
+    if(first) p._selectedSize = first[0];
+  }
   if(hasQty && !p._selectedSize){
     toastStore('กรุณาเลือก size ก่อนครับ'); return;
   }
@@ -577,7 +588,16 @@ function openProduct(id){
   const addBtn     = document.getElementById('modal-add-btn');
 
   const hasQty = Object.keys(p.qty).length > 0;
-  if(hasQty){
+  if(p.type === 'มือ2'){
+    // มือ2 — แสดง size เดียว auto-select ไม่ต้องเลือก
+    const availEntry = hasQty ? Object.entries(p.qty).find(([sz,q])=>parseInt(q)>0) : null;
+    const sizeLabel = availEntry ? availEntry[0] : p.size;
+    currentSize = sizeLabel;
+    selectorEl.innerHTML=`<div class="modal-size-btn selected" style="pointer-events:none">${sizeLabel}</div>`;
+    qtyInfoEl.textContent='';
+    addBtn.disabled=(p.status==='pending');
+    addBtn.textContent=p.status==='pending'?'Sold Out':'🛒 เพิ่มลงตะกร้า';
+  } else if(hasQty){
     selectorEl.innerHTML = Object.entries(p.qty).filter(([sz,q])=>parseInt(q)>0).map(([sz,q])=>{
       return `<button class="modal-size-btn" 
         data-size="${sz}" data-qty="${q}"

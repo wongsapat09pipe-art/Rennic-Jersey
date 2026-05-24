@@ -118,6 +118,10 @@
   .sf-size-pick{padding:7px 16px;border:1px solid var(--earth-border);border-radius:8px;background:var(--earth-bg);color:var(--earth-muted);font-family:'Sarabun',sans-serif;font-size:13px;cursor:pointer;transition:all 0.15s;}
   .sf-size-pick:hover{border-color:var(--earth-accent);color:var(--earth-accent);}
   .sf-size-pick.selected{background:var(--earth-dark);color:#E8C98A;border-color:var(--earth-dark);}
+  #upload-zone:hover{border-color:var(--earth-accent);background:var(--earth-highlight);}
+  .img-thumb{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--earth-border);cursor:pointer;position:relative;}
+  .img-thumb-wrap{position:relative;display:inline-block;}
+  .img-thumb-del{position:absolute;top:-6px;right:-6px;background:var(--earth-red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
 </style>
 </head>
 <body>
@@ -348,9 +352,25 @@
             <input type="text" id="sf-defect" placeholder="เช่น มีรอยเหลืองเล็กน้อยที่ปก">
           </div>
           <div class="form-group" style="grid-column:1/-1">
-            <label>URL รูปภาพ (คั่นด้วย , ถ้ามีหลายรูป)</label>
-            <input type="text" id="sf-imgs" placeholder="https://... , https://...">
-            <div style="font-size:11px;color:var(--earth-muted);margin-top:4px;">💡 อัพรูปขึ้น Google Drive → Share → Copy link แล้ววางที่นี่</div>
+            <label>รูปภาพสินค้า</label>
+            <!-- Upload zone -->
+            <div id="upload-zone" onclick="document.getElementById('sf-img-file').click()" style="border:2px dashed var(--earth-border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:8px;">
+              <input type="file" id="sf-img-file" accept="image/*" multiple style="display:none" onchange="uploadToCloudinary(this.files)">
+              <div id="upload-placeholder">
+                <div style="font-size:28px;margin-bottom:6px;">📷</div>
+                <div style="font-size:13px;font-weight:500;color:var(--earth-brown);">คลิกเพื่อเลือกรูป</div>
+                <div style="font-size:11px;color:var(--earth-muted);margin-top:3px;">เลือกได้หลายรูป • JPG, PNG, WEBP</div>
+              </div>
+              <div id="upload-progress" style="display:none;">
+                <div style="font-size:13px;color:var(--earth-accent);">⏳ กำลังอัปโหลด...</div>
+              </div>
+            </div>
+            <!-- Preview thumbnails -->
+            <div id="img-preview-row" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;"></div>
+            <!-- URL field (auto-filled) -->
+            <input type="text" id="sf-imgs" placeholder="URL จะถูกใส่อัตโนมัติหลังอัปโหลด" style="font-size:12px;color:var(--earth-muted);" readonly>
+            <div style="font-size:11px;color:var(--earth-muted);margin-top:4px;">หรือวาง URL ตรงๆ ก็ได้ — คั่นด้วย , ถ้ามีหลายรูป</div>
+            <button type="button" onclick="document.getElementById('sf-imgs').removeAttribute('readonly');document.getElementById('sf-imgs').focus();" style="background:none;border:none;color:var(--earth-accent);font-size:11px;cursor:pointer;padding:0;font-family:Sarabun,sans-serif;margin-top:2px;">✏️ แก้ไข URL เอง</button>
           </div>
         </div>
         <div style="display:flex;gap:10px;">
@@ -706,7 +726,74 @@ function renderStoreManage(){
   }).join('');
 }
 
-// ── qty preview ───────────────────────────────────────────────────
+// ── Cloudinary Upload ─────────────────────────────────────────────
+const CLOUD_NAME = 'dfqwla01w';
+const UPLOAD_PRESET = 'rennic_jersey'; // unsigned preset — ตั้งใน Cloudinary dashboard
+
+let uploadedUrls = [];
+
+async function uploadToCloudinary(files){
+  if(!files||!files.length) return;
+  const zone = document.getElementById('upload-zone');
+  const prog = document.getElementById('upload-progress');
+  const placeholder = document.getElementById('upload-placeholder');
+  placeholder.style.display='none';
+  prog.style.display='block';
+  zone.style.pointerEvents='none';
+
+  const newUrls = [];
+  for(const file of files){
+    try{
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', UPLOAD_PRESET);
+      fd.append('folder', 'rennic-jersey');
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {method:'POST', body:fd});
+      const data = await res.json();
+      if(data.secure_url){
+        // ใช้ URL แบบ transform: w_800 เพื่อ optimize
+        const url = data.secure_url.replace('/upload/', '/upload/w_800,q_auto,f_auto/');
+        newUrls.push(url);
+        uploadedUrls.push(url);
+        addImgThumb(url);
+      }
+    }catch(e){ toast('⚠️ อัปโหลดรูปไม่สำเร็จ: '+e.message); }
+  }
+
+  prog.style.display='none';
+  placeholder.style.display='block';
+  zone.style.pointerEvents='auto';
+
+  // อัปเดต URL field
+  document.getElementById('sf-imgs').value = uploadedUrls.join(', ');
+}
+
+function addImgThumb(url){
+  const row = document.getElementById('img-preview-row');
+  const wrap = document.createElement('div');
+  wrap.className='img-thumb-wrap';
+  wrap.innerHTML=`<img src="${url}" class="img-thumb"><button class="img-thumb-del" onclick="removeThumb(this,'${url}')">×</button>`;
+  row.appendChild(wrap);
+}
+
+function removeThumb(btn, url){
+  btn.parentElement.remove();
+  uploadedUrls = uploadedUrls.filter(u=>u!==url);
+  document.getElementById('sf-imgs').value = uploadedUrls.join(', ');
+}
+
+// drag & drop support
+document.addEventListener('DOMContentLoaded', ()=>{
+  const zone = document.getElementById('upload-zone');
+  if(!zone) return;
+  zone.addEventListener('dragover', e=>{e.preventDefault();zone.style.borderColor='var(--earth-accent)';});
+  zone.addEventListener('dragleave', ()=>zone.style.borderColor='');
+  zone.addEventListener('drop', e=>{
+    e.preventDefault();zone.style.borderColor='';
+    uploadToCloudinary(e.dataTransfer.files);
+  });
+});
+
 function toggleQtyGrid(type){
   document.getElementById('qty-grid-box').style.display  = (type==='มือ2') ? 'none' : '';
   document.getElementById('size-single-box').style.display = (type==='มือ2') ? '' : 'none';
@@ -733,6 +820,11 @@ function openStoreForm(name,price){
   document.getElementById('sf-desc').value='';
   document.getElementById('sf-defect').value='';
   document.getElementById('sf-imgs').value='';
+  document.getElementById('sf-imgs').setAttribute('readonly','');
+  document.getElementById('img-preview-row').innerHTML='';
+  uploadedUrls=[];
+  document.getElementById('upload-placeholder').style.display='block';
+  document.getElementById('upload-progress').style.display='none';
   document.getElementById('sf-league').value='';
   document.getElementById('sf-type').value='มือ2';
   // reset มือ1 qty

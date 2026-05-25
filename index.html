@@ -34,11 +34,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--dark);paddi
 .filter-chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 .chip{padding:6px 14px;border:1px solid var(--border);border-radius:20px;font-size:12px;cursor:pointer;transition:all 0.2s;background:transparent;color:var(--muted);font-family:'Sarabun',sans-serif;display:inline-flex;align-items:center;gap:5px;}
 .chip:hover,.chip.active{background:var(--dark);color:var(--gold-light);border-color:var(--dark);}
-.team-chip{font-size:11px;padding:4px 10px;}
+.team-chip{font-size:11px;padding:4px 10px;white-space:nowrap;}
 .search-input{margin-left:auto;padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:13px;background:var(--cream);color:var(--text);width:220px;}
 .search-input:focus{outline:none;border-color:var(--gold);}
-#team-submenu{display:none;background:var(--white);border-bottom:1px solid var(--border);padding:8px 40px;overflow-x:auto;}
-#team-chips{display:flex;gap:6px;}
+#team-submenu{display:none;background:var(--white);border-bottom:1px solid var(--border);padding:8px 40px 10px;}
+#team-chips{display:flex;gap:6px;flex-wrap:wrap;}
 .products-section{padding:40px;}
 .section-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px;}
 .section-title{font-family:'Playfair Display',serif;font-size:28px;color:var(--brown);}

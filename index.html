@@ -386,12 +386,12 @@ footer strong{color:var(--gold-light);}
 const GAS_URL = "https://script.google.com/macros/s/AKfycbyuo7lmF5F69frhcBC_ED5gadgSiTR_Jl1cI0fEfe09y5mUAxfyiHE_iXayV3g_xwP5/exec";
 const STORE_SHEET = "Store";
 const LEAGUE_TEAMS = {
-  'Premier League':['All','Arsenal','Chelsea','Liverpool','Man City','Man United','Tottenham','Newcastle','West Ham','Aston Villa'],
-  'La Liga':['All','Real Madrid','Barcelona','Atletico Madrid','Sevilla','Valencia','Villarreal'],
-  'Serie A':['All','AC Milan','Inter Milan','Juventus','Roma','Napoli','Lazio','Atalanta'],
-  'Bundesliga':['All','Bayern Munich','Dortmund','Leipzig','Leverkusen','Frankfurt'],
-  'Ligue 1':['All','PSG','Marseille','Lyon','Monaco','Lens','Nice'],
-  'National Team':['All','England','France','Germany','Brazil','Argentina','Italy','Spain','Portugal','Thailand','Japan']
+  'Premier League':['All','Arsenal','Aston Villa','Bournemouth','Brentford','Brighton','Chelsea','Crystal Palace','Everton','Fulham','Ipswich','Leicester','Liverpool','Man City','Man United','Newcastle','Nottm Forest','Southampton','Tottenham','West Ham','Wolves'],
+  'La Liga':['All','Alaves','Almeria','Athletic Club','Atletico Madrid','Barcelona','Betis','Celta Vigo','Espanyol','Getafe','Girona','Las Palmas','Leganes','Mallorca','Osasuna','Rayo Vallecano','Real Madrid','Real Sociedad','Sevilla','Valencia','Valladolid','Villarreal'],
+  'Serie A':['All','AC Milan','Atalanta','Bologna','Cagliari','Como','Empoli','Fiorentina','Genoa','Inter Milan','Juventus','Lazio','Lecce','Monza','Napoli','Parma','Roma','Torino','Udinese','Venezia','Verona'],
+  'Bundesliga':['All','Augsburg','Bayern Munich','Bochum','Dortmund','Frankfurt','Freiburg','Hamburg','Hoffenheim','Heidenheim','Holstein Kiel','Leverkusen','Leipzig','Mainz','Monchengladbach','St Pauli','Stuttgart','Union Berlin','Werder Bremen','Wolfsburg'],
+  'Ligue 1':['All','Angers','Auxerre','Brest','Le Havre','Lens','Lille','Lyon','Marseille','Monaco','Montpellier','Nantes','Nice','PSG','Reims','Rennes','Saint-Etienne','Strasbourg','Toulouse'],
+  'National Team':['All','Argentina','Belgium','Brazil','Croatia','Denmark','England','France','Germany','Italy','Japan','Netherlands','Poland','Portugal','Saudi Arabia','Senegal','South Korea','Spain','Thailand','Uruguay','USA']
 };
 let products=[], cart=JSON.parse(localStorage.getItem('rj_cart')||'[]');
 let currentProduct=null, currentSize=null;

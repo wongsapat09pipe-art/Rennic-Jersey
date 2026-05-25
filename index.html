@@ -222,7 +222,10 @@ footer strong{color:var(--gold-light);}
     <button class="chip" data-type="league" onclick="setFilter('league','Ligue 1',this)"><svg width="16" height="11" viewBox="0 0 16 11" style="flex-shrink:0;border-radius:2px;"><rect width="16" height="11" fill="#ED2939"/><rect width="10.7" height="11" fill="#fff"/><rect width="5.3" height="11" fill="#002395"/></svg>Ligue 1</button>
     <button class="chip" data-type="league" onclick="setFilter('league','National Team',this)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" style="flex-shrink:0;"><circle cx="8" cy="8" r="6"/><ellipse cx="8" cy="8" rx="3" ry="6"/><line x1="2" y1="8" x2="14" y2="8"/></svg>National Team</button>
   </div>
-  <input type="text" class="search-input" placeholder="🔍 ค้นหาเสื้อ..." oninput="searchProducts(this.value)">
+  <div style="position:relative;margin-left:auto;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+    <input type="text" class="search-input" placeholder="Search jerseys..." oninput="searchProducts(this.value)" style="padding-left:30px;margin-left:0;">
+  </div>
 </div>
 <div id="team-submenu"><div id="team-chips-wrap"><div id="team-all-btn"></div><div id="team-divider"></div><div id="team-chips"></div></div></div>
 

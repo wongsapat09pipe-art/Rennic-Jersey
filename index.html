@@ -200,23 +200,23 @@ footer strong{color:var(--gold-light);}
   <div class="hero-content">
     <div class="hero-badge">Est. 2021 • Vintage Collection</div>
     <h1 class="hero-title">Rennic Jersey<br><em>Football Jerseys</em></h1>
-    <p class="hero-sub">มือ 1 & มือ 2</p>
-    <button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">ดูสินค้าทั้งหมด</button>
+    <p class="hero-sub">BNWT & Pre-owned</p>
+    <button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop All</button>
   </div>
 </section>
 
 <div class="filter-section">
   <div class="filter-chips">
-    <button class="chip active" data-type="all" onclick="setFilter('all','all',this)">ทั้งหมด</button>
-    <button class="chip" data-type="type" onclick="setFilter('type','มือ1',this)">มือ 1</button>
-    <button class="chip" data-type="type" onclick="setFilter('type','มือ2',this)">มือ 2</button>
+    <button class="chip active" data-type="all" onclick="setFilter('all','all',this)">All</button>
+    <button class="chip" data-type="type" onclick="setFilter('type','BNWT',this)">BNWT</button>
+    <button class="chip" data-type="type" onclick="setFilter('type','Pre-owned',this)">Pre-owned</button>
     <span style="color:var(--border);margin:0 2px;">|</span>
-    <button class="chip" data-type="league" onclick="setFilter('league','Premier League',this)"><span style="width:10px;height:10px;border-radius:50%;background:#38003c;display:inline-block;"></span>Premier League</button>
-    <button class="chip" data-type="league" onclick="setFilter('league','La Liga',this)"><span style="width:10px;height:10px;border-radius:50%;background:#ff4b44;display:inline-block;"></span>La Liga</button>
-    <button class="chip" data-type="league" onclick="setFilter('league','Serie A',this)"><span style="width:10px;height:10px;border-radius:50%;background:#00529c;display:inline-block;"></span>Serie A</button>
-    <button class="chip" data-type="league" onclick="setFilter('league','Bundesliga',this)"><span style="width:10px;height:10px;border-radius:50%;background:#d20515;display:inline-block;"></span>Bundesliga</button>
-    <button class="chip" data-type="league" onclick="setFilter('league','Ligue 1',this)"><span style="width:10px;height:10px;border-radius:50%;background:#dba111;display:inline-block;"></span>Ligue 1</button>
-    <button class="chip" data-type="league" onclick="setFilter('league','National Team',this)">🌍 National Team</button>
+    <button class="chip" data-type="league" onclick="setFilter('league','Premier League',this)"><svg width="16" height="11" viewBox="0 0 16 11" style="flex-shrink:0;border-radius:2px;"><rect width="16" height="11" fill="#fff"/><rect x="6.5" width="3" height="11" fill="#CF142B"/><rect y="4" width="16" height="3" fill="#CF142B"/></svg>Premier League</button>
+    <button class="chip" data-type="league" onclick="setFilter('league','La Liga',this)"><svg width="16" height="11" viewBox="0 0 16 11" style="flex-shrink:0;border-radius:2px;"><rect width="16" height="11" fill="#AA151B"/><rect y="2.5" width="16" height="6" fill="#F1BF00"/></svg>La Liga</button>
+    <button class="chip" data-type="league" onclick="setFilter('league','Serie A',this)"><svg width="16" height="11" viewBox="0 0 16 11" style="flex-shrink:0;border-radius:2px;"><rect width="16" height="11" fill="#fff"/><rect width="5.3" height="11" fill="#009246"/><rect x="10.7" width="5.3" height="11" fill="#CE2B37"/></svg>Serie A</button>
+    <button class="chip" data-type="league" onclick="setFilter('league','Bundesliga',this)"><svg width="16" height="11" viewBox="0 0 16 11" style="flex-shrink:0;border-radius:2px;"><rect width="16" height="11" fill="#FFCE00"/><rect width="16" height="7.3" fill="#DD0000"/><rect width="16" height="3.7" fill="#000"/></svg>Bundesliga</button>
+    <button class="chip" data-type="league" onclick="setFilter('league','Ligue 1',this)"><svg width="16" height="11" viewBox="0 0 16 11" style="flex-shrink:0;border-radius:2px;"><rect width="16" height="11" fill="#ED2939"/><rect width="10.7" height="11" fill="#fff"/><rect width="5.3" height="11" fill="#002395"/></svg>Ligue 1</button>
+    <button class="chip" data-type="league" onclick="setFilter('league','National Team',this)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" style="flex-shrink:0;"><circle cx="8" cy="8" r="6"/><ellipse cx="8" cy="8" rx="3" ry="6"/><line x1="2" y1="8" x2="14" y2="8"/></svg>International</button>
   </div>
   <input type="text" class="search-input" placeholder="🔍 ค้นหาเสื้อ..." oninput="searchProducts(this.value)">
 </div>
@@ -224,7 +224,7 @@ footer strong{color:var(--gold-light);}
 
 <section class="products-section" id="products">
   <div class="section-header">
-    <h2 class="section-title">สินค้าทั้งหมด</h2>
+    <h2 class="section-title">All Items</h2>
     <span class="product-count" id="product-count">กำลังโหลด...</span>
   </div>
   <div class="products-grid" id="products-grid">
@@ -386,12 +386,12 @@ footer strong{color:var(--gold-light);}
 const GAS_URL = "https://script.google.com/macros/s/AKfycbyuo7lmF5F69frhcBC_ED5gadgSiTR_Jl1cI0fEfe09y5mUAxfyiHE_iXayV3g_xwP5/exec";
 const STORE_SHEET = "Store";
 const LEAGUE_TEAMS = {
-  'Premier League':['ทั้งหมด','Arsenal','Chelsea','Liverpool','Man City','Man United','Tottenham','Newcastle','West Ham','Aston Villa'],
-  'La Liga':['ทั้งหมด','Real Madrid','Barcelona','Atletico Madrid','Sevilla','Valencia','Villarreal'],
-  'Serie A':['ทั้งหมด','AC Milan','Inter Milan','Juventus','Roma','Napoli','Lazio','Atalanta'],
-  'Bundesliga':['ทั้งหมด','Bayern Munich','Dortmund','Leipzig','Leverkusen','Frankfurt'],
-  'Ligue 1':['ทั้งหมด','PSG','Marseille','Lyon','Monaco','Lens','Nice'],
-  'National Team':['ทั้งหมด','England','France','Germany','Brazil','Argentina','Italy','Spain','Portugal','Thailand','Japan']
+  'Premier League':['All','Arsenal','Chelsea','Liverpool','Man City','Man United','Tottenham','Newcastle','West Ham','Aston Villa'],
+  'La Liga':['All','Real Madrid','Barcelona','Atletico Madrid','Sevilla','Valencia','Villarreal'],
+  'Serie A':['All','AC Milan','Inter Milan','Juventus','Roma','Napoli','Lazio','Atalanta'],
+  'Bundesliga':['All','Bayern Munich','Dortmund','Leipzig','Leverkusen','Frankfurt'],
+  'Ligue 1':['All','PSG','Marseille','Lyon','Monaco','Lens','Nice'],
+  'National Team':['All','England','France','Germany','Brazil','Argentina','Italy','Spain','Portugal','Thailand','Japan']
 };
 let products=[], cart=JSON.parse(localStorage.getItem('rj_cart')||'[]');
 let currentProduct=null, currentSize=null;
@@ -463,7 +463,7 @@ async function loadProducts(){
 // ── RENDER PRODUCTS ──────────────────────────────────────────────
 function renderProducts(){
   let filtered=products.filter(p=>{
-    const mt=filterType==='all'||p.type===filterType;
+    const mt=filterType==='all'||(filterType==='BNWT'?(p.type==='BNWT'||p.type==='มือ1'):(filterType==='Pre-owned'?(p.type==='Pre-owned'||p.type==='มือ2'):p.type===filterType));
     const ml=filterLeague==='all'||(p.league||'')===filterLeague;
     const mteam=filterTeam==='all'||p.name.toLowerCase().includes(filterTeam.toLowerCase());
     const ms=!searchQ||p.name.toLowerCase().includes(searchQ.toLowerCase());
@@ -485,7 +485,7 @@ function cardHTML(p){
 
   // size buttons บนการ์ด
   let sizesHTML = '';
-  if(p.type === 'มือ2'){
+  if(p.type === 'Pre-owned' || p.type === 'มือ2'){
     const availEntry = hasQty ? Object.entries(p.qty).find(([sz])=>getQtyNum(p.qty,sz)>0) : null;
     const sizeLabel = availEntry ? availEntry[0] : p.size;
     const dim = availEntry ? getQtyDim(p.qty, availEntry[0]) : '';
@@ -511,15 +511,12 @@ function cardHTML(p){
   <div class="product-card" onclick="openProduct('${p.id}')" id="card-${p.id}">
     <div class="card-img">
       ${p.img?`<img src="${p.img}" alt="${p.name}" loading="lazy">`:'<div class="card-img-placeholder">👕</div>'}
-      <div class="card-badge ${p.type==='มือ1'?'new':''}">${p.type}</div>
+      <div class="card-badge ${p.type==='BNWT'||p.type==='มือ1'?'new':''}">${p.type}</div>
       ${isSoldOut?'<div class="sold-out-badge"><div class="sold-out-tag">Sold Out</div></div>':''}
     </div>
     <div class="card-body">
       <div class="card-name">${p.name}</div>
-      ${p.league?`<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;">
-        <span style="width:8px;height:8px;border-radius:50%;background:${leagueColor(p.league)};display:inline-block;flex-shrink:0;"></span>
-        <span style="font-size:11px;color:var(--muted)">${p.league}</span>
-      </div>`:''}
+      ${p.league?`<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;">${leagueFlag(p.league)}<span style="font-size:11px;color:var(--muted)">${p.league==='National Team'?'International':p.league}</span></div>`:''}
       ${sizesHTML}
       <div class="card-footer">
         <div class="card-price">฿${p.price.toLocaleString()}</div>
@@ -534,6 +531,17 @@ function cardHTML(p){
   </div>`;
 }
 
+function leagueFlag(league){
+  const flags={
+    'Premier League':'<svg width="16" height="11" viewBox="0 0 16 11" style="flex-shrink:0;border-radius:2px;"><rect width="16" height="11" fill="#fff"/><rect x="6.5" width="3" height="11" fill="#CF142B"/><rect y="4" width="16" height="3" fill="#CF142B"/></svg>',
+    'La Liga':'<svg width="16" height="11" viewBox="0 0 16 11" style="flex-shrink:0;border-radius:2px;"><rect width="16" height="11" fill="#AA151B"/><rect y="2.5" width="16" height="6" fill="#F1BF00"/></svg>',
+    'Serie A':'<svg width="16" height="11" viewBox="0 0 16 11" style="flex-shrink:0;border-radius:2px;"><rect width="16" height="11" fill="#fff"/><rect width="5.3" height="11" fill="#009246"/><rect x="10.7" width="5.3" height="11" fill="#CE2B37"/></svg>',
+    'Bundesliga':'<svg width="16" height="11" viewBox="0 0 16 11" style="flex-shrink:0;border-radius:2px;"><rect width="16" height="11" fill="#FFCE00"/><rect width="16" height="7.3" fill="#DD0000"/><rect width="16" height="3.7" fill="#000"/></svg>',
+    'Ligue 1':'<svg width="16" height="11" viewBox="0 0 16 11" style="flex-shrink:0;border-radius:2px;"><rect width="16" height="11" fill="#ED2939"/><rect width="10.7" height="11" fill="#fff"/><rect width="5.3" height="11" fill="#002395"/></svg>',
+    'National Team':'<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" style="flex-shrink:0;"><circle cx="8" cy="8" r="6"/><ellipse cx="8" cy="8" rx="3" ry="6"/><line x1="2" y1="8" x2="14" y2="8"/></svg>'
+  };
+  return flags[league]||'';
+}
 function leagueColor(league){
   const map={'Premier League':'#38003c','La Liga':'#ff4b44','Serie A':'#00529c','Bundesliga':'#d20515','Ligue 1':'#dba111'};
   return map[league]||'#555';
@@ -563,7 +571,7 @@ function selectCardSize(id, sz, el){
 function addToCartFromCard(id){
   const p = products.find(x=>x.id===id); if(!p) return;
   const hasQty = Object.keys(p.qty).length > 0;
-  if(p.type === 'มือ2' && hasQty && !p._selectedSize){
+  if(p.type === 'Pre-owned' || p.type === 'มือ2' && hasQty && !p._selectedSize){
     const first = Object.entries(p.qty).find(([sz])=>getQtyNum(p.qty,sz)>0);
     if(first) p._selectedSize = first[0];
   }
@@ -601,7 +609,7 @@ function openProduct(id){
   const addBtn     = document.getElementById('modal-add-btn');
 
   const hasQty = Object.keys(p.qty).length > 0;
-  if(p.type === 'มือ2'){
+  if(p.type === 'Pre-owned' || p.type === 'มือ2'){
     const availEntry = hasQty ? Object.entries(p.qty).find(([sz])=>getQtyNum(p.qty,sz)>0) : null;
     const sizeLabel = availEntry ? availEntry[0] : p.size;
     const dim = availEntry ? getQtyDim(p.qty, availEntry[0]) : '';
@@ -822,7 +830,7 @@ function setFilter(type,val,el){
     if(filterLeague===val){filterLeague='all';filterTeam='all';document.querySelectorAll('.chip[data-type="league"]').forEach(c=>c.classList.remove('active'));hideTeamMenu();}
     else{filterLeague=val;filterTeam='all';document.querySelectorAll('.chip[data-type="league"]').forEach(c=>c.classList.remove('active'));el.classList.add('active');document.querySelector('.chip[data-type="all"]').classList.remove('active');showTeamMenu(val);}
   }
-  else if(type==='team'){filterTeam=val==='ทั้งหมด'?'all':val;document.querySelectorAll('.team-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
+  else if(type==='team'){filterTeam=val==='All'?'all':val==='ทั้งหมด'?'all':val;document.querySelectorAll('.team-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
   if(filterType==='all'&&filterLeague==='all')document.querySelector('.chip[data-type="all"]').classList.add('active');
   renderProducts();
 }

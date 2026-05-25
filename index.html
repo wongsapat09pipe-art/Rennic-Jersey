@@ -38,8 +38,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--dark);paddi
 .search-input{margin-left:auto;padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:13px;background:var(--cream);color:var(--text);width:220px;}
 .search-input:focus{outline:none;border-color:var(--gold);}
 #team-submenu{display:none;background:var(--white);border-bottom:1px solid var(--border);padding:10px 40px;}
-#team-chips-wrap{display:flex;align-items:flex-start;gap:12px;}
-#team-all-btn{flex-shrink:0;}
+#team-chips-wrap{display:flex;align-items:center;gap:12px;}
+#team-all-btn{flex-shrink:0;align-self:center;}
 #team-divider{width:1px;background:var(--border);align-self:stretch;min-height:28px;flex-shrink:0;}
 #team-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
 .products-section{padding:40px;}
@@ -211,6 +211,7 @@ footer strong{color:var(--gold-light);}
 <div class="filter-section">
   <div class="filter-chips">
     <button class="chip active" data-type="all" onclick="setFilter('all','all',this)">All</button>
+    <span style="width:1px;height:20px;background:var(--border);display:inline-block;margin:0 2px;"></span>
     <button class="chip" data-type="type" onclick="setFilter('type','BNWT',this)">BNWT</button>
     <button class="chip" data-type="type" onclick="setFilter('type','Pre-owned',this)">Pre-owned</button>
     <span style="color:var(--border);margin:0 2px;">|</span>

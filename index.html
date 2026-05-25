@@ -459,7 +459,8 @@ async function loadProducts(){
         img:   r[7]?String(r[7]).split(',')[0].trim():'',
         status:r[8]||'available',
         qty:   parseQty(r[9]),   // คอลัมน์ J — qty JSON
-        league:r[10]||''         // คอลัมน์ K — league
+        league:r[10]||'',        // คอลัมน์ K — league
+        season:r[11]||''           // คอลัมน์ L — season
       }));
       localStorage.setItem('rj_products_cache',JSON.stringify(products));
     }
@@ -497,8 +498,7 @@ function cardHTML(p){
     const sizeLabel = availEntry ? availEntry[0] : p.size;
     const dim = availEntry ? getQtyDim(p.qty, availEntry[0]) : '';
     if(!p._selectedSize && availEntry) p._selectedSize = availEntry[0];
-    sizesHTML = `<div class="card-meta" style="margin-bottom:4px;">Size: <strong>${sizeLabel}</strong></div>
-    ${dim?`<div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${dim}</div>`:''}`;
+    sizesHTML = `<div class="card-meta" style="margin-bottom:8px;">Size: <strong>${sizeLabel}</strong>${dim?` <span style="color:var(--muted);font-weight:400;">(${dim})</span>`:''}</div>`;
   } else if(hasQty){
     sizesHTML = `<div class="size-selector" onclick="event.stopPropagation()">` +
       Object.entries(p.qty).filter(([sz])=>getQtyNum(p.qty,sz)>0).map(([sz])=>{
@@ -518,7 +518,7 @@ function cardHTML(p){
   <div class="product-card" onclick="openProduct('${p.id}')" id="card-${p.id}">
     <div class="card-img">
       ${p.img?`<img src="${p.img}" alt="${p.name}" loading="lazy">`:'<div class="card-img-placeholder">👕</div>'}
-      <div class="card-badge ${p.type==='BNWT'||p.type==='มือ1'?'new':''}">${p.type}</div>
+      <div class="card-badge ${p.type==='BNWT'||p.type==='มือ1'?'new':''}">${p.type==="มือ2"?"Pre-owned":p.type==="มือ1"?"BNWT":p.type}</div>
       ${isSoldOut?'<div class="sold-out-badge"><div class="sold-out-tag">Sold Out</div></div>':''}
     </div>
     <div class="card-body">

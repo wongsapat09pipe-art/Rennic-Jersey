@@ -306,6 +306,9 @@
               <option value="National Team">🌍 National Team</option>
             </select>
           </div>
+          <div class="form-group"><label>ฤดูกาล (Season)</label>
+            <input type="text" id="sf-season" placeholder="เช่น 2018-19, 2023-24">
+          </div>
 
           <!-- มือ 1: qty grid S/M/L/XL -->
           <div class="form-group" id="qty-grid-box" style="grid-column:1/-1">
@@ -333,7 +336,7 @@
             <input type="hidden" id="sf-size2" value="">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
               <div class="form-group" style="margin:0;">
-                <label>อก (นิ้ว)</label>
+                <label>รอบอก (นิ้ว)</label>
                 <input type="text" id="sf-chest" placeholder='เช่น 46"'>
               </div>
               <div class="form-group" style="margin:0;">
@@ -826,6 +829,7 @@ function openStoreForm(name,price){
   document.getElementById('upload-placeholder').style.display='block';
   document.getElementById('upload-progress').style.display='none';
   document.getElementById('sf-league').value='';
+  document.getElementById('sf-season').value='';
   document.getElementById('sf-type').value='มือ2';
   // reset มือ1 qty
   ['sf-qty-s','sf-qty-m','sf-qty-l','sf-qty-xl'].forEach(id=>{document.getElementById(id).value='0';});
@@ -851,6 +855,7 @@ async function saveToStore(){
   const defect=document.getElementById('sf-defect').value.trim();
   const imgs=document.getElementById('sf-imgs').value.trim();
   const league=document.getElementById('sf-league').value;
+  const season=document.getElementById('sf-season').value.trim();
 
   let sizeStr='', qtyJSON='{}';
 
@@ -861,7 +866,7 @@ async function saveToStore(){
     if(!sz){toast('กรุณาเลือก Size ก่อนครับ');return;}
     sizeStr=sz;
     // เก็บ qty=1 + ขนาด อก/ยาว ใน JSON
-    const dim=(chest||length) ? (chest?'อก'+chest:'')+(chest&&length?' ':'' )+(length?'ยาว'+length:'') : '';
+    const dim=(chest||length) ? (chest?'รอบอก '+chest:'')+(chest&&length?' ':'' )+(length?'ความยาว '+length:'') : '';
     qtyJSON=JSON.stringify({[sz]:{qty:1,dim}});
   } else {
     const qS=parseInt(document.getElementById('sf-qty-s').value)||0;
@@ -875,7 +880,7 @@ async function saveToStore(){
     qtyJSON=JSON.stringify(qtyObj);
   }
 
-  const data=[id,name,type,sizeStr,price,desc,defect,imgs,'available',qtyJSON,league];
+  const data=[id,name,type,sizeStr,price,desc,defect,imgs,'available',qtyJSON,league,season];
   try{
     await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'append',sheet:'Store',data})});
     localStorage.removeItem('rj_products_cache');

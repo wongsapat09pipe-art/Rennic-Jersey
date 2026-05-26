@@ -587,7 +587,8 @@ function renderProducts(){
 
 function cardHTML(p){
   const inCartItem = cart.find(c=>c.id===p.id);
-  const inCart = !!inCartItem;
+  // มือ1/BNWT มีหลาย size → แสดง Add to Cart เสมอ
+  const inCart = (p.type!=='BNWT' && p.type!=='มือ1') && !!inCartItem;
   const hasQty = Object.keys(p.qty).length > 0;
   const isReserved = p.status==='pending';
   const isSoldOut = !isReserved && (hasQty && totalQty(p.qty)===0);
@@ -836,30 +837,52 @@ function addToCart(id, size){
   document.getElementById('cart-sidebar').classList.add('open');
   document.getElementById('cart-overlay').classList.add('open');
 }
+function changeQty(cartKey, delta){
+  const item = cart.find(x=>x._cartKey===cartKey);
+  if(!item) return;
+  const newQty = (item._qty||1) + delta;
+  if(newQty <= 0){ removeFromCart(cartKey); return; }
+  // เช็ค max qty จาก stock
+  const maxQty = item.qty ? (item._chosenSize ? (item.qty[item._chosenSize]||1) : 1) : 99;
+  item._qty = Math.min(newQty, maxQty);
+  saveCart(); renderCart();
+}
 function removeFromCart(cartKey){
   cart=cart.filter(x=>x._cartKey!==cartKey);
   saveCart(); renderCart(); renderProducts();
 }
 function saveCart(){localStorage.setItem('rj_cart',JSON.stringify(cart));}
 function renderCart(){
-  const total=cart.reduce((s,p)=>s+p.price,0);
-  document.getElementById('cart-badge').textContent=cart.length;
+  const total=cart.reduce((s,p)=>s+(p.price*(p._qty||1)),0);
+  document.getElementById('cart-badge').textContent=cart.reduce((s,p)=>s+(p._qty||1),0);
   document.getElementById('cart-total').textContent='฿'+total.toLocaleString();
   const el=document.getElementById('cart-items');
   if(!cart.length){
     el.innerHTML='<div class="empty-cart"><div style="font-size:48px;margin-bottom:12px;">🛒</div>ตะกร้าว่างเปล่า</div>';
     return;
   }
-  el.innerHTML=cart.map(p=>`
+  el.innerHTML=cart.map(p=>{
+    const isBNWT = p.type==='BNWT'||p.type==='มือ1';
+    const qty = p._qty||1;
+    const itemTotal = p.price * qty;
+    return `
     <div class="cart-item">
       <div class="cart-item-img">${p.img?`<img src="${p.img}">`:'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px;">👕</div>'}</div>
       <div class="cart-item-info">
         <div class="cart-item-name">${p.name}</div>
         <div class="cart-item-size">Size: ${p._chosenSize||p.size}</div>
-        <div class="cart-item-price">฿${p.price.toLocaleString()}</div>
+        <div class="cart-item-price">฿${itemTotal.toLocaleString()}</div>
       </div>
-      <button class="cart-item-remove" onclick="removeFromCart('${p._cartKey}')">×</button>
-    </div>`).join('');
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
+        <button class="cart-item-remove" onclick="removeFromCart('${p._cartKey}')">×</button>
+        ${isBNWT?`<div style="display:flex;align-items:center;gap:6px;">
+          <button onclick="changeQty('${p._cartKey}',-1)" style="background:var(--surface);border:1px solid var(--border);color:var(--text);width:22px;height:22px;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1;">−</button>
+          <span style="font-size:13px;font-weight:500;min-width:14px;text-align:center;">${qty}</span>
+          <button onclick="changeQty('${p._cartKey}',1)" style="background:var(--surface);border:1px solid var(--border);color:var(--text);width:22px;height:22px;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1;">+</button>
+        </div>`:''}
+      </div>
+    </div>`;
+  }).join('');
 }
 function toggleCart(){document.getElementById('cart-sidebar').classList.toggle('open');document.getElementById('cart-overlay').classList.toggle('open');}
 

@@ -261,19 +261,52 @@ footer strong{color:var(--gold-light);}
       <button class="modal-close" onclick="closeProductModal()">✕</button>
     </div>
     <div class="modal-info">
-      <div class="modal-badge" id="modal-badge">Vintage</div>
+      <!-- season · league -->
+      <div id="modal-meta" style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;"></div>
       <h2 class="modal-name" id="modal-name">ชื่อสินค้า</h2>
+      <!-- type badge -->
+      <div class="modal-badge" id="modal-badge" style="margin-bottom:16px;">Vintage</div>
       <div class="modal-price" id="modal-price">฿0</div>
-      <div class="modal-desc" id="modal-desc">รายละเอียดสินค้า</div>
+      <!-- installment -->
+      <div style="font-size:12px;color:var(--muted);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+        ผ่อนชำระได้ภายใน 2 เดือน · <span style="color:var(--gold);">จ่ายครบเมื่อไหร่ จัดส่งวันถัดมาเลย</span>
+      </div>
+      <div class="modal-desc" id="modal-desc" style="margin-bottom:16px;"></div>
       <div id="modal-defect-box" style="background:#FFF5F5;border:1px solid #FFD0D0;border-radius:8px;padding:10px 14px;margin-bottom:16px;display:none;">
         <div style="font-size:11px;font-weight:600;color:#A85252;letter-spacing:1px;margin-bottom:4px;">⚠️ ตำหนิ</div>
         <div id="modal-defect" style="font-size:13px;color:#7A3030;line-height:1.6;"></div>
       </div>
-      <div class="modal-size-label">เลือก Size</div>
-      <!-- SIZE SELECTOR (modal) -->
+      <div class="modal-size-label">SIZE</div>
       <div class="modal-size-selector" id="modal-size-selector"></div>
       <div class="modal-qty-info" id="modal-qty-info"></div>
-      <button class="modal-add-btn" id="modal-add-btn" onclick="addToCartFromModal()">🛒 เพิ่มลงตะกร้า</button>
+      <!-- add btn + heart -->
+      <div style="display:flex;gap:10px;margin-bottom:20px;">
+        <button class="modal-add-btn" id="modal-add-btn" onclick="addToCartFromModal()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg>
+          Add to Cart
+        </button>
+        <button id="modal-heart-btn" onclick="toggleModalLike()" style="width:48px;height:48px;border-radius:10px;border:1px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <!-- details -->
+      <div style="border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          ตรวจสอบคุณภาพก่อนจัดส่งทุกชิ้น
+        </div>
+        <div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          Free Shipping เมื่อสั่งซื้อครบ ฿2,500
+        </div>
+        <div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;margin-top:4px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          ติดต่อสอบถาม:
+          <a href="https://www.instagram.com/rennicjersey?igsh=ejNkdTRjbjkzaG02&utm_source=qr" target="_blank" style="color:var(--gold);text-decoration:none;">Instagram</a>
+          ·
+          <a href="https://www.facebook.com/share/1BZZh4aEJG/?mibextid=wwXIfr" target="_blank" style="color:var(--gold);text-decoration:none;">Facebook</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -621,10 +654,20 @@ function openProduct(id){
   const p=products.find(x=>x.id===id); if(!p) return;
   currentProduct=p;
   currentSize=null;
-  document.getElementById('modal-badge').textContent=p.type;
-  document.getElementById('modal-name').textContent=p.name;
-  document.getElementById('modal-price').textContent='฿'+p.price.toLocaleString();
-  document.getElementById('modal-desc').textContent=p.desc||'ไม่มีรายละเอียด';
+  document.getElementById('modal-badge').textContent = p.type==='มือ2'?'Pre-owned':p.type==='มือ1'?'BNWT':p.type;
+  document.getElementById('modal-name').textContent = p.name;
+  document.getElementById('modal-price').textContent = '฿'+p.price.toLocaleString();
+  document.getElementById('modal-desc').textContent = p.desc||'';
+  // season · league
+  const metaParts = [p.season, p.league].filter(Boolean);
+  document.getElementById('modal-meta').textContent = metaParts.join(' · ');
+  // heart
+  const hb = document.getElementById('modal-heart-btn');
+  if(hb){
+    const sv = hb.querySelector('svg');
+    if(isLiked(p.id)){ sv.style.fill='#A85252'; sv.style.stroke='#A85252'; }
+    else { sv.style.fill='none'; sv.style.stroke='var(--brown)'; }
+  }
 
   // defect
   const db=document.getElementById('modal-defect-box');
@@ -696,6 +739,21 @@ function selectModalSize(sz, q, el){
     qtyInfoEl.className = 'modal-qty-info'+(isLow?' low':'');
     addBtn.disabled=false;
   }
+}
+
+function toggleModalLike(){
+  if(!currentProduct) return;
+  const hb = document.getElementById('modal-heart-btn');
+  const sv = hb.querySelector('svg');
+  if(liked.includes(currentProduct.id)){
+    liked = liked.filter(x=>x!==currentProduct.id);
+    sv.style.fill='none'; sv.style.stroke='var(--brown)';
+  } else {
+    liked.push(currentProduct.id);
+    sv.style.fill='#A85252'; sv.style.stroke='#A85252';
+  }
+  localStorage.setItem('rj_liked', JSON.stringify(liked));
+  renderProducts();
 }
 
 function closeProductModal(){document.getElementById('product-modal').classList.remove('open');}

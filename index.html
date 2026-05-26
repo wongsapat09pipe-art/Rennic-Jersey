@@ -700,7 +700,7 @@ function openProduct(id){
     qtyInfoEl.innerHTML='';
     qtyInfoEl.className='modal-qty-info';
     addBtn.disabled=(p.status==='pending');
-    addBtn.textContent=p.status==='pending'?'Sold Out':'🛒 เพิ่มลงตะกร้า';
+    addBtn.innerHTML=p.status==='pending'?'SOLD OUT':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg> ADD TO CART';
   } else if(hasQty){
     selectorEl.innerHTML = Object.entries(p.qty).filter(([sz])=>getQtyNum(p.qty,sz)>0).map(([sz])=>{
       const q = getQtyNum(p.qty, sz);
@@ -711,13 +711,13 @@ function openProduct(id){
     qtyInfoEl.textContent='กรุณาเลือก size';
     qtyInfoEl.className='modal-qty-info';
     addBtn.disabled=true;
-    addBtn.textContent='🛒 เพิ่มลงตะกร้า';
+    addBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg> ADD TO CART';
   } else {
     selectorEl.innerHTML=`<div class="modal-size-btn selected" style="pointer-events:none">${p.size}</div>`;
     qtyInfoEl.textContent='';
     currentSize=p.size;
     addBtn.disabled=(p.status==='pending');
-    addBtn.textContent=p.status==='pending'?'Sold Out':'🛒 เพิ่มลงตะกร้า';
+    addBtn.innerHTML=p.status==='pending'?'SOLD OUT':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg> ADD TO CART';
   }
 
   document.getElementById('product-modal').classList.add('open');
@@ -736,11 +736,13 @@ function selectModalSize(sz, q, el){
     qtyInfoEl.innerHTML='<span style="color:var(--red)">size นี้หมดแล้ว</span>';
     qtyInfoEl.className='modal-qty-info';
     addBtn.disabled=true;
+    addBtn.innerHTML='SOLD OUT';
   } else {
     const isLow = qty<=3;
     qtyInfoEl.innerHTML = isLow ? `⚠️ เหลือ ${qty} ตัว` : `มี ${qty} ตัว`;
     qtyInfoEl.className = 'modal-qty-info'+(isLow?' low':'');
     addBtn.disabled=false;
+    addBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg> ADD TO CART';
   }
 }
 

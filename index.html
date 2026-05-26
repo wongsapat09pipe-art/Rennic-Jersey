@@ -608,11 +608,14 @@ function cardHTML(p){
       }).join('') +
     `</div>
     <div class="qty-badge${(p._selectedSize&&getQtyNum(p.qty,p._selectedSize)<=3&&getQtyNum(p.qty,p._selectedSize)>0)?' low':''}" id="qbadge-${p.id}">
-      ${p._selectedSize ? qtyText(getQtyNum(p.qty,p._selectedSize)) : 'กรุณาเลือก size'}
+      ${p._selectedSize ? qtyText(getQtyNum(p.qty,p._selectedSize)) : ''}
     </div>`;
   } else {
     sizesHTML = `<div class="card-meta" style="margin-bottom:8px;">Size: ${p.size}</div>`;
   }
+
+  // มือ1 — ปุ่ม Add to Cart แสดงใต้การ์ดเฉพาะตอนเลือก size แล้ว
+  const showCartBtn = p.type!=='BNWT' && p.type!=='มือ1' || p._selectedSize;
 
   return `
   <div class="product-card" onclick="openProduct('${p.id}')" id="card-${p.id}">
@@ -622,20 +625,18 @@ function cardHTML(p){
       <button class="card-heart-btn${isLiked(p.id)?' liked':''}" onclick="event.stopPropagation();toggleLike('${p.id}',this)" aria-label="wishlist">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </button>
-      ${isSoldOut
-        ?'<div class="sold-out-badge"><div class="sold-out-tag">Sold Out</div></div>'
-        :`<div class="card-overlay">
-            ${inCart
-              ?`<button class="card-overlay-btn incart" onclick="event.stopPropagation();removeFromCart('${inCartItem?inCartItem._cartKey:p.id}')">✓ In Cart</button>`
-              :`<button class="card-overlay-btn" onclick="event.stopPropagation();addToCartFromCard('${p.id}')" style="display:flex;align-items:center;justify-content:center;gap:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg> Add to Cart</button>`
-            }
-          </div>`
-      }
+      ${isSoldOut?'<div class="sold-out-badge"><div class="sold-out-tag">Sold Out</div></div>':''}
     </div>
     <div class="card-body">
       <div class="card-name">${p.name}</div>
       ${p.league?`<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;">${leagueFlag(p.league)}<span style="font-size:11px;color:var(--muted)">${p.league==='National Team'?'National Team':p.league}</span></div>`:''}
       ${sizesHTML}
+      <div id="cart-btn-${p.id}" style="${isSoldOut?'display:none':(!showCartBtn?'display:none':'')}margin-top:10px;">
+        ${inCart
+          ?`<button class="card-overlay-btn incart" style="width:100%;padding:9px;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;" onclick="event.stopPropagation();removeFromCart('${inCartItem?inCartItem._cartKey:p.id}')">✓ In Cart</button>`
+          :`<button class="card-overlay-btn" style="width:100%;padding:9px;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;" onclick="event.stopPropagation();addToCartFromCard('${p.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg> Add to Cart</button>`
+        }
+      </div>
       <div class="card-footer">
         <div class="card-price">฿${p.price.toLocaleString()}</div>
       </div>
@@ -669,15 +670,27 @@ function qtyText(q){
 // เลือก size บนการ์ด
 function selectCardSize(id, sz, el){
   const p = products.find(x=>x.id===id); if(!p) return;
-  p._selectedSize = sz;
   const card = document.getElementById('card-'+id);
+  const cartBtn = document.getElementById('cart-btn-'+id);
+
+  // toggle — กด size เดิม = ยกเลิก
+  if(p._selectedSize === sz){
+    p._selectedSize = null;
+    card.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('selected'));
+    const badge = document.getElementById('qbadge-'+id);
+    if(badge){ badge.className='qty-badge'; badge.innerHTML=''; }
+    if(cartBtn) cartBtn.style.display='none';
+    return;
+  }
+
+  p._selectedSize = sz;
   card.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('selected'));
   el.classList.add('selected');
   const badge = document.getElementById('qbadge-'+id);
   const q = getQtyNum(p.qty, sz);
   const isLow = q<=3 && q>0;
-  badge.className='qty-badge'+(isLow?' low':'');
-  badge.innerHTML = qtyText(q);
+  if(badge){ badge.className='qty-badge'+(isLow?' low':''); badge.innerHTML=qtyText(q); }
+  if(cartBtn) cartBtn.style.display='block';
 }
 
 // เพิ่มลงตะกร้าจากการ์ด

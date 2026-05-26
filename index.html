@@ -21,7 +21,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#1A0E06;padding:0
 .nav-cart{background:var(--gold);color:#fff;border:none;padding:9px 18px;border-radius:6px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;display:flex;align-items:center;gap:8px;transition:background 0.2s;}
 .nav-cart:hover{background:#A8692E;}
 .cart-badge{background:#fff;color:var(--gold);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
-.hero{margin-top:64px;background:#F5F0E8;min-height:400px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:60px 40px;border-bottom:1px solid #D4C9B0;}
+.hero{margin-top:64px;background:#F5F0E8;min-height:400px;display:flex;align-items:center;justify-content:flex-start;position:relative;overflow:hidden;padding:60px 40px;border-bottom:1px solid #D4C9B0;}
 .hero::before{content:none;}
 .hero-content{text-align:center;position:relative;z-index:1;}
 .hero-badge{display:inline-block;font-size:10px;letter-spacing:4px;color:#8A7560;margin-bottom:18px;text-transform:uppercase;}
@@ -196,8 +196,8 @@ footer strong{color:var(--gold-light);}
     <span class="nav-logo-text">Rennic Jersey</span>
   </a>
   <div class="nav-links">
-    <a href="#">หน้าแรก</a>
-    <a href="#products">สินค้า</a>
+    <a href="#">Home</a>
+    <a href="#products">Shop</a>
   </div>
   <div style="display:flex;gap:9px;align-items:center;">
     <div style="display:flex;gap:4px;align-items:center;">
@@ -214,11 +214,11 @@ footer strong{color:var(--gold-light);}
 </nav>
 
 <section class="hero">
-  <div class="hero-content">
-    <div style="width:32px;height:1px;background:#8B6F47;margin:0 auto 18px;"></div>
-    <div class="hero-badge">Est. 2021</div>
+  <div class="hero-content" style="text-align:left;max-width:600px;margin-left:10%;">
+    <div style="width:32px;height:1px;background:#8B6F47;margin:0 0 18px;"></div>
+    <div class="hero-badge">Est. 2021 &nbsp;|&nbsp; Bangkok, Thailand</div>
     <h1 class="hero-title" style="font-size:64px;">Rennic Jersey</h1>
-    <div style="width:32px;height:1px;background:#8B6F47;margin:0 auto 18px;"></div>
+    <div style="width:32px;height:1px;background:#8B6F47;margin:0 0 18px;"></div>
     <p class="hero-sub">Authentic 100% &nbsp;·&nbsp; BNWT & Pre-owned &nbsp;·&nbsp; Fast Shipping</p>
     <button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop All</button>
   </div>

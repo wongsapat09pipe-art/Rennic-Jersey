@@ -359,17 +359,33 @@ footer strong{color:var(--gold-light);}
 
 <!-- MY ADDRESS MODAL -->
 <div class="auth-overlay" id="address-modal">
-  <div class="auth-box" style="width:480px;">
-    <div class="auth-head">
-      <h3>📦 My Address</h3>
-      <button style="background:none;border:none;color:rgba(245,240,232,0.6);cursor:pointer;font-size:20px;" onclick="closeAddressModal()">✕</button>
+  <div style="background:var(--white);border-radius:12px;width:460px;max-width:95vw;overflow:hidden;">
+    <div style="padding:18px 22px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);">
+      <div style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--brown);">My Address</div>
+      <button onclick="closeAddressModal()" style="background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    <div class="auth-body">
-      <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px;font-weight:600;color:var(--muted);">ชื่อ-นามสกุล</label><input class="auth-input" type="text" id="addr-name" placeholder="กรอกชื่อ" style="margin-bottom:0;"></div>
-      <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px;font-weight:600;color:var(--muted);">เบอร์โทร</label><input class="auth-input" type="tel" id="addr-phone" placeholder="08x-xxx-xxxx" style="margin-bottom:0;"></div>
-      <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px;font-weight:600;color:var(--muted);">ที่อยู่จัดส่ง</label><textarea class="auth-input" id="addr-address" placeholder="บ้านเลขที่ ถนน แขวง เขต จังหวัด รหัสไปรษณีย์" style="margin-bottom:0;resize:vertical;min-height:80px;"></textarea></div>
-      <div class="form-group" style="margin-bottom:16px;"><label style="font-size:11px;font-weight:600;color:var(--muted);">หมายเหตุ (ถ้ามี)</label><input class="auth-input" type="text" id="addr-note" placeholder="เช่น ฝากไว้ที่ประตู" style="margin-bottom:0;"></div>
-      <button class="auth-btn" onclick="saveMyAddress()">💾 บันทึกที่อยู่</button>
+    <div style="padding:20px 22px;display:flex;flex-direction:column;gap:14px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Name</div>
+          <input id="addr-name" type="text" placeholder="Full name" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-family:Sarabun,sans-serif;font-size:13px;background:var(--cream);color:var(--text);outline:none;">
+        </div>
+        <div>
+          <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Phone</div>
+          <input id="addr-phone" type="tel" placeholder="08x-xxx-xxxx" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-family:Sarabun,sans-serif;font-size:13px;background:var(--cream);color:var(--text);outline:none;">
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Address</div>
+        <textarea id="addr-address" placeholder="บ้านเลขที่ ถนน แขวง เขต จังหวัด รหัสไปรษณีย์" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-family:Sarabun,sans-serif;font-size:13px;background:var(--cream);color:var(--text);outline:none;resize:vertical;min-height:80px;"></textarea>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Note</div>
+        <input id="addr-note" type="text" placeholder="เช่น ฝากไว้ที่ประตู" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-family:Sarabun,sans-serif;font-size:13px;background:var(--cream);color:var(--text);outline:none;">
+      </div>
+      <button onclick="saveMyAddress()" style="width:100%;background:#2C1A0E;color:#E8C98A;border:none;padding:12px;border-radius:6px;font-family:Sarabun,sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:4px;transition:background 0.2s;">Save Address</button>
     </div>
   </div>
 </div>

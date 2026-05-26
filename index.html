@@ -239,6 +239,11 @@ footer strong{color:var(--gold-light);}
   </div>
   <div style="position:relative;margin-left:auto;">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+  <button id="wishlist-btn" onclick="toggleWishlistFilter(this)" title="Wishlist" style="background:none;border:1px solid var(--border);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;flex-shrink:0;margin-left:auto;">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+  </button>
+  <div style="position:relative;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
     <input type="text" class="search-input" placeholder="Search jerseys..." oninput="searchProducts(this.value)" style="padding-left:30px;margin-left:0;">
   </div>
 </div>
@@ -574,7 +579,8 @@ function renderProducts(){
     const ml=filterLeague==='all'||(p.league||'')===filterLeague;
     const mteam=filterTeam==='all'||p.name.toLowerCase().includes(filterTeam.toLowerCase());
     const ms=!searchQ||p.name.toLowerCase().includes(searchQ.toLowerCase());
-    return mt&&ml&&mteam&&ms;
+    const mw=!filterWishlist||liked.includes(p.id);
+    return mt&&ml&&mteam&&ms&&mw;
   });
   document.getElementById('product-count').textContent=filtered.length+' รายการ';
   const grid=document.getElementById('products-grid');
@@ -1073,7 +1079,23 @@ async function saveMyAddress(){
   toastStore('✅ บันทึกที่อยู่แล้วครับ');
 }
 
-// ── WISHLIST ──────────────────────────────────────────────────────
+let filterWishlist = false;
+function toggleWishlistFilter(btn){
+  filterWishlist = !filterWishlist;
+  const svg = btn.querySelector('svg');
+  if(filterWishlist){
+    btn.style.background='#A85252';
+    btn.style.borderColor='#A85252';
+    svg.style.stroke='#fff';
+    svg.style.fill='#fff';
+  } else {
+    btn.style.background='none';
+    btn.style.borderColor='var(--border)';
+    svg.style.stroke='var(--muted)';
+    svg.style.fill='none';
+  }
+  renderProducts();
+}
 let liked = JSON.parse(localStorage.getItem('rj_liked')||'[]');
 function isLiked(id){ return liked.includes(id); }
 function toggleLike(id, btn){

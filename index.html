@@ -357,7 +357,22 @@ footer strong{color:var(--gold-light);}
   </div>
 </div>
 
-<!-- CHECKOUT MODAL -->
+<!-- MY ADDRESS MODAL -->
+<div class="auth-overlay" id="address-modal">
+  <div class="auth-box" style="width:480px;">
+    <div class="auth-head">
+      <h3>📦 My Address</h3>
+      <button style="background:none;border:none;color:rgba(245,240,232,0.6);cursor:pointer;font-size:20px;" onclick="closeAddressModal()">✕</button>
+    </div>
+    <div class="auth-body">
+      <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px;font-weight:600;color:var(--muted);">ชื่อ-นามสกุล</label><input class="auth-input" type="text" id="addr-name" placeholder="กรอกชื่อ" style="margin-bottom:0;"></div>
+      <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px;font-weight:600;color:var(--muted);">เบอร์โทร</label><input class="auth-input" type="tel" id="addr-phone" placeholder="08x-xxx-xxxx" style="margin-bottom:0;"></div>
+      <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px;font-weight:600;color:var(--muted);">ที่อยู่จัดส่ง</label><textarea class="auth-input" id="addr-address" placeholder="บ้านเลขที่ ถนน แขวง เขต จังหวัด รหัสไปรษณีย์" style="margin-bottom:0;resize:vertical;min-height:80px;"></textarea></div>
+      <div class="form-group" style="margin-bottom:16px;"><label style="font-size:11px;font-weight:600;color:var(--muted);">หมายเหตุ (ถ้ามี)</label><input class="auth-input" type="text" id="addr-note" placeholder="เช่น ฝากไว้ที่ประตู" style="margin-bottom:0;"></div>
+      <button class="auth-btn" onclick="saveMyAddress()">💾 บันทึกที่อยู่</button>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="checkout-modal">
   <div class="checkout-modal">
     <div class="checkout-head">
@@ -951,6 +966,47 @@ function showTeamMenu(league){
 function hideTeamMenu(){document.getElementById('team-submenu').style.display='none';filterTeam='all';}
 function searchProducts(q){searchQ=q;renderProducts();}
 
+// ── MY ADDRESS ────────────────────────────────────────────────────
+function openMyAddress(){
+  document.getElementById('user-dropdown')?.classList.remove('open');
+  const uid = window._currentUser?.uid;
+  if(uid){
+    const cached = localStorage.getItem('rj_addr_'+uid);
+    if(cached){
+      const addr = JSON.parse(cached);
+      document.getElementById('addr-name').value    = addr.name||'';
+      document.getElementById('addr-phone').value   = addr.phone||'';
+      document.getElementById('addr-address').value = addr.address||'';
+      document.getElementById('addr-note').value    = addr.note||'';
+    }
+  }
+  document.getElementById('address-modal').classList.add('open');
+}
+function closeAddressModal(){document.getElementById('address-modal').classList.remove('open');}
+async function saveMyAddress(){
+  const name    = document.getElementById('addr-name').value.trim();
+  const phone   = document.getElementById('addr-phone').value.trim();
+  const address = document.getElementById('addr-address').value.trim();
+  const note    = document.getElementById('addr-note').value.trim();
+  if(!name||!phone||!address){toastStore('กรุณากรอกข้อมูลให้ครบครับ');return;}
+  await saveAddressIfNeeded(name,phone,address,note);
+  // force save even without checkout
+  if(window._currentUser){
+    const uid=window._currentUser.uid,email=window._currentUser.email||'',updated=new Date().toLocaleString('th-TH');
+    localStorage.setItem('rj_addr_'+uid,JSON.stringify({name,phone,address,note}));
+    try{
+      const res=await fetch(GAS_URL+'?action=read&sheet=Member').then(r=>r.json());
+      if(res.status==='ok'){
+        const idx=res.data.findIndex((r,i)=>i>0&&String(r[0]).trim()===uid);
+        if(idx>0)await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Member',row:idx+1,data:[uid,name,email,phone,address,note,updated]})});
+        else await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'append',sheet:'Member',data:[uid,name,email,phone,address,note,updated]})});
+      }
+    }catch(e){}
+  }
+  closeAddressModal();
+  toastStore('✅ บันทึกที่อยู่แล้วครับ');
+}
+
 // ── WISHLIST ──────────────────────────────────────────────────────
 let liked = JSON.parse(localStorage.getItem('rj_liked')||'[]');
 function isLiked(id){ return liked.includes(id); }
@@ -1000,7 +1056,7 @@ window.toggleUserDropdown=()=>document.getElementById('user-dropdown')?.classLis
 onAuthStateChanged(auth,user=>{
   const ua=document.getElementById('user-area');if(!ua)return;
   window._currentUser=user;
-  if(user){const name=user.displayName||user.email.split('@')[0];const iconSvg='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(232,201,138,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';ua.innerHTML=`<div class="user-menu"><button style="background:none;border:none;color:var(--gold-light);cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Sarabun',sans-serif;font-size:13px;padding:4px 8px;border-radius:6px;" onclick="toggleUserDropdown()">${iconSvg} ${name} <span style="font-size:10px;opacity:0.5;">▾</span></button><div class="user-dropdown" id="user-dropdown"><button class="dropdown-item" onclick="logoutUser()">🚪 ออกจากระบบ</button></div></div>`;}
+  if(user){const name=user.displayName||user.email.split('@')[0];const iconSvg='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(232,201,138,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';ua.innerHTML=`<div class="user-menu"><button style="background:none;border:none;color:var(--gold-light);cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Sarabun',sans-serif;font-size:13px;padding:4px 8px;border-radius:6px;" onclick="toggleUserDropdown()">${iconSvg} ${name} <span style="font-size:10px;opacity:0.5;">▾</span></button><div class="user-dropdown" id="user-dropdown"><button class="dropdown-item" onclick="openMyAddress()">📦 My Address</button><div style="height:1px;background:var(--border);margin:2px 0;"></div><button class="dropdown-item" onclick="logoutUser()">Sign out</button></div></div>`;}
   else{window._currentUser=null;ua.innerHTML='<button style="background:none;border:none;color:var(--gold-light);cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Sarabun,sans-serif;font-size:13px;padding:4px 8px;border-radius:6px;" onclick="openAuthModal()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(232,201,138,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Sign in</button>';}
 });
 document.addEventListener('click',e=>{const d=document.getElementById('user-dropdown');if(d&&!e.target.closest('.user-menu'))d.classList.remove('open');});

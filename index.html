@@ -244,6 +244,29 @@ footer strong{color:var(--gold-light);}
     <button id="wishlist-btn" onclick="toggleWishlistFilter(this)" title="Wishlist" style="background:none;border:1px solid var(--border);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;flex-shrink:0;">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     </button>
+    <!-- Filter dropdowns -->
+    <select id="filter-price" onchange="applyDropdownFilters()" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--muted);cursor:pointer;outline:none;">
+      <option value="">Price</option>
+      <option value="0-1000">Under ฿1,000</option>
+      <option value="1000-2000">฿1,000 – 2,000</option>
+      <option value="2000-5000">฿2,000 – 5,000</option>
+      <option value="5000-99999">฿5,000+</option>
+    </select>
+    <select id="filter-size" onchange="applyDropdownFilters()" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--muted);cursor:pointer;outline:none;">
+      <option value="">Size</option>
+      <option value="S">S</option>
+      <option value="M">M</option>
+      <option value="L">L</option>
+      <option value="XL">XL</option>
+      <option value="XXL">XXL</option>
+    </select>
+    <select id="filter-season" onchange="applyDropdownFilters()" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--muted);cursor:pointer;outline:none;">
+      <option value="">Season</option>
+      <option value="1990-2000">1990 – 2000</option>
+      <option value="2001-2010">2001 – 2010</option>
+      <option value="2011-2020">2011 – 2020</option>
+      <option value="2021-2099">2021 – Now</option>
+    </select>
     <div style="position:relative;">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
       <input type="text" class="search-input" placeholder="Search jerseys..." oninput="searchProducts(this.value)" style="padding-left:30px;margin-left:0;">
@@ -583,7 +606,28 @@ function renderProducts(){
     const mteam=filterTeam==='all'||p.name.toLowerCase().includes(filterTeam.toLowerCase());
     const ms=!searchQ||p.name.toLowerCase().includes(searchQ.toLowerCase());
     const mw=!filterWishlist||liked.includes(p.id);
-    return mt&&ml&&mteam&&ms&&mw;
+    // price filter
+    let mp=true;
+    if(filterPrice){const [mn,mx]=filterPrice.split('-').map(Number);mp=p.price>=mn&&p.price<=mx;}
+    // size filter
+    let msz=true;
+    if(filterSize){
+      const hasQty=Object.keys(p.qty||{}).length>0;
+      if(hasQty) msz=getQtyNum(p.qty,filterSize)>0;
+      else msz=(p.size||'').includes(filterSize);
+    }
+    // season filter — parse ปีแรกจาก "2015-16" หรือ "1998-99"
+    let mss=true;
+    if(filterSeason){
+      const [rangeMin,rangeMax]=filterSeason.split('-').map(Number);
+      const seasonStr=p.season||'';
+      const yearMatch=seasonStr.match(/(\d{4})/);
+      if(yearMatch){
+        const yr=parseInt(yearMatch[1]);
+        mss=yr>=rangeMin&&yr<=rangeMax;
+      } else { mss=false; }
+    }
+    return mt&&ml&&mteam&&ms&&mw&&mp&&msz&&mss;
   });
   document.getElementById('product-count').textContent=filtered.length+' รายการ';
   const grid=document.getElementById('products-grid');
@@ -1038,6 +1082,22 @@ function showTeamMenu(league){
   document.getElementById('team-submenu').style.display='block';
 }
 function hideTeamMenu(){document.getElementById('team-submenu').style.display='none';filterTeam='all';}
+let filterPrice='', filterSize='', filterSeason='';
+
+function applyDropdownFilters(){
+  filterPrice  = document.getElementById('filter-price').value;
+  filterSize   = document.getElementById('filter-size').value;
+  filterSeason = document.getElementById('filter-season').value;
+  renderProducts();
+}
+
+function populateSeasonDropdown(){
+  const seasons=[...new Set(products.map(p=>p.season).filter(Boolean))].sort().reverse();
+  const sel=document.getElementById('filter-season');
+  if(!sel)return;
+  sel.innerHTML='<option value="">Season</option>'+seasons.map(s=>`<option value="${s}">${s}</option>`).join('');
+}
+
 function searchProducts(q){searchQ=q;renderProducts();}
 
 // ── MY ADDRESS ────────────────────────────────────────────────────

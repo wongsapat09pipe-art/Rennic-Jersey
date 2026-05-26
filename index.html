@@ -15,9 +15,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#1A0E06;padding:0
 .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
 .nav-logo img{width:40px;height:40px;border-radius:50%;border:1px solid var(--gold);object-fit:cover;}
 .nav-logo-text{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold-light);letter-spacing:0.5px;}
-.nav-links{display:flex;gap:32px;align-items:center;}
-.nav-links a{color:rgba(245,240,232,0.7);text-decoration:none;font-size:13px;letter-spacing:1px;text-transform:uppercase;transition:color 0.2s;}
-.nav-links a:hover{color:var(--gold-light);}
+.nav-links{display:flex;gap:0;align-items:center;background:#F5F0E8;border-radius:6px;padding:0;}
+.nav-links a{color:#3D2010;text-decoration:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;transition:all 0.2s;padding:6px 16px;border-radius:5px;}
+.nav-links a:hover{background:#EDE7D9;}
 .nav-cart{background:var(--gold);color:#fff;border:none;padding:9px 18px;border-radius:6px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;display:flex;align-items:center;gap:8px;transition:background 0.2s;}
 .nav-cart:hover{background:#A8692E;}
 .cart-badge{background:#fff;color:var(--gold);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
@@ -193,7 +193,7 @@ footer strong{color:var(--gold-light);}
 <nav>
   <a class="nav-logo" href="#">
     <img src="logo.png" alt="Rennic Jersey">
-    <span class="nav-logo-text">Rennic Jersey</span>
+    <span class="nav-logo-text" style="font-family:'Sarabun',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(245,240,232,0.6);font-style:normal;font-weight:400;">Authentic 100% · BNWT & Pre-owned · Fast Shipping</span>
   </a>
   <div class="nav-links">
     <a href="#">Home</a>
@@ -219,7 +219,7 @@ footer strong{color:var(--gold-light);}
     <div class="hero-badge">Est. 2021 &nbsp;|&nbsp; Bangkok, Thailand</div>
     <h1 class="hero-title" style="font-size:64px;">Rennic Jersey</h1>
     <div style="width:32px;height:1px;background:#8B6F47;margin:0 0 18px;"></div>
-    <p class="hero-sub">Authentic 100% &nbsp;·&nbsp; BNWT & Pre-owned &nbsp;·&nbsp; Fast Shipping</p>
+    <p class="hero-sub" style="font-size:13px;line-height:1.8;letter-spacing:0.5px;text-transform:none;font-style:italic;color:#8A7560;">Some jerseys only matter because of who wore them.<br>We keep those ones.</p>
     <button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop All</button>
   </div>
 </section>

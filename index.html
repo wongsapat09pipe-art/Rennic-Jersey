@@ -116,23 +116,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--dark);paddi
 .cart-sidebar.open{transform:translateX(0);}
 .cart-overlay{display:none;position:fixed;inset:0;background:rgba(28,16,8,0.5);z-index:299;}
 .cart-overlay.open{display:block;}
-.cart-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--dark);}
-.cart-head h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold-light);}
+.cart-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--white);}
+.cart-head h3{font-family:'Kanit',sans-serif;font-size:14px;font-weight:500;color:var(--brown);letter-spacing:1.5px;text-transform:uppercase;}
 .cart-items{flex:1;overflow-y:auto;padding:16px;}
-.cart-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
-.cart-item-img{width:70px;height:90px;background:var(--surface);border-radius:6px;overflow:hidden;flex-shrink:0;}
+.cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid rgba(212,201,176,0.4);}
+.cart-item-img{width:64px;height:80px;background:var(--surface);border-radius:8px;overflow:hidden;flex-shrink:0;}
 .cart-item-img img{width:100%;height:100%;object-fit:cover;}
 .cart-item-info{flex:1;}
-.cart-item-name{font-size:13px;font-weight:500;color:var(--brown);margin-bottom:4px;line-height:1.3;}
-.cart-item-size{font-size:11px;color:var(--muted);margin-bottom:6px;}
-.cart-item-price{font-family:'Kanit',sans-serif;font-size:16px;color:var(--gold);}
-.cart-item-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;}
+.cart-item-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;line-height:1.4;}
+.cart-item-size{font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:0.3px;}
+.cart-item-price{font-family:'Kanit',sans-serif;font-size:15px;font-weight:500;color:var(--text);}
+.cart-item-remove{background:none;border:none;color:var(--border);cursor:pointer;font-size:16px;transition:color 0.2s;padding:4px;}
 .cart-footer{padding:20px 24px;border-top:1px solid var(--border);}
 .cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-.cart-total-label{font-size:14px;color:var(--muted);}
-.cart-total-price{font-family:'Kanit',sans-serif;font-size:24px;font-weight:500;color:var(--gold);}
-.checkout-btn{width:100%;background:var(--gold);color:#fff;border:none;padding:14px;border-radius:10px;font-size:15px;cursor:pointer;font-family:'Sarabun',sans-serif;transition:background 0.2s;}
-.checkout-btn:hover{background:#A8692E;}
+.cart-total-label{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.cart-total-price{font-family:'Kanit',sans-serif;font-size:22px;font-weight:500;color:var(--text);}
+.checkout-btn{width:100%;background:var(--dark);color:var(--gold-light);border:none;padding:13px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'Sarabun',sans-serif;transition:background 0.2s;letter-spacing:1px;text-transform:uppercase;}
+.checkout-btn:hover{background:var(--brown);}
 .empty-cart{text-align:center;padding:60px 20px;color:var(--muted);}
 .auth-overlay{display:none;position:fixed;inset:0;background:rgba(28,16,8,0.75);z-index:400;align-items:center;justify-content:center;padding:20px;}
 .auth-overlay.open{display:flex;}
@@ -315,8 +315,10 @@ footer strong{color:var(--gold-light);}
 <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
 <div class="cart-sidebar" id="cart-sidebar">
   <div class="cart-head">
-    <h3>🛒 ตะกร้าสินค้า</h3>
-    <button style="background:none;border:none;color:rgba(245,240,232,0.6);cursor:pointer;font-size:20px;" onclick="toggleCart()">✕</button>
+    <h3>Cart</h3>
+    <button onclick="toggleCart()" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--muted);">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>
   <div class="cart-items" id="cart-items"></div>
   <div class="cart-footer">
@@ -324,7 +326,7 @@ footer strong{color:var(--gold-light);}
       <span class="cart-total-label">รวมทั้งหมด</span>
       <span class="cart-total-price" id="cart-total">฿0</span>
     </div>
-    <button class="checkout-btn" onclick="openCheckout()">ดำเนินการสั่งซื้อ →</button>
+    <button class="checkout-btn" onclick="openCheckout()">Checkout</button>
   </div>
 </div>
 

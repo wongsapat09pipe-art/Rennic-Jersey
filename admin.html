@@ -395,7 +395,47 @@
 </main>
 </div>
 
-<!-- MODAL เพิ่มสินค้า (Sheet1) -->
+<!-- EDIT STORE MODAL -->
+<div class="modal-overlay" id="edit-store-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>✏️ แก้ไขสินค้าในร้าน</h3>
+      <button class="btn btn-outline btn-sm" onclick="closeEditStoreModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="es-row">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+        <div class="form-group"><label>ลีก</label>
+          <select id="es-league">
+            <option value="">— ไม่ระบุ —</option>
+            <option value="Premier League">Premier League</option>
+            <option value="La Liga">La Liga</option>
+            <option value="Serie A">Serie A</option>
+            <option value="Bundesliga">Bundesliga</option>
+            <option value="Ligue 1">Ligue 1</option>
+            <option value="National Team">🌍 National Team</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Season</label>
+          <input type="text" id="es-season" placeholder="เช่น 2018-19">
+        </div>
+        <div class="form-group" style="grid-column:1/-1"><label>รายละเอียดสินค้า</label>
+          <textarea id="es-desc" rows="3" placeholder="บรรยายสินค้า สภาพ ฯลฯ"></textarea>
+        </div>
+        <div class="form-group" style="grid-column:1/-1"><label>ตำหนิ (ถ้าไม่มีเว้นว่าง)</label>
+          <input type="text" id="es-defect" placeholder="เช่น มีรอยเหลืองเล็กน้อยที่ปก">
+        </div>
+        <div class="form-group" style="grid-column:1/-1"><label>URL รูปภาพ (คั่นด้วย ,)</label>
+          <input type="text" id="es-imgs" placeholder="https://...">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeEditStoreModal()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveEditStore()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-head"><h3 id="modal-title">เพิ่มสินค้าใหม่</h3><button class="btn btn-outline btn-sm" onclick="closeModal()">✕</button></div>
@@ -721,7 +761,8 @@ function renderStoreManage(){
           ?`<button class="btn btn-success btn-sm" onclick="restoreProduct('${p.name.replace(/'/g,"\\'")}')">🔄 คืนสต็อก</button>
              <button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\\'")}')">🗑️ ลบออก</button>`
           :inStore
-          ?`<button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\\'")}')">🙈 ซ่อน</button>`
+          ?`<button class="btn btn-outline btn-sm" onclick="openEditStoreForm(${JSON.stringify(storeItem).replace(/"/g,'&quot;')})">✏️ แก้ไข</button>
+             <button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\\'")}')">🙈 ซ่อน</button>`
           :`<button class="btn btn-success btn-sm" onclick="openStoreForm('${p.name.replace(/'/g,"\\'")}',${p.sell})">🛍️ แสดงในร้าน</button>`
         }
       </div></td>
@@ -797,6 +838,44 @@ document.addEventListener('DOMContentLoaded', ()=>{
   });
 });
 
+// ── EDIT STORE ITEM ───────────────────────────────────────────────
+let editStoreRow = -1;
+let editStoreData = null;
+
+function openEditStoreForm(storeItem){
+  const idx = storeProducts_raw.findIndex(r=>String(r[0]).trim()===String(storeItem[0]).trim());
+  editStoreRow = idx >= 0 ? idx + 2 : -1;
+  editStoreData = storeItem;
+  document.getElementById('es-league').value  = storeItem[10]||'';
+  document.getElementById('es-season').value  = storeItem[11]||'';
+  document.getElementById('es-desc').value    = storeItem[5]||'';
+  document.getElementById('es-defect').value  = storeItem[6]||'';
+  document.getElementById('es-imgs').value    = storeItem[7]||'';
+  document.getElementById('edit-store-modal').classList.add('open');
+}
+
+function closeEditStoreModal(){
+  document.getElementById('edit-store-modal').classList.remove('open');
+}
+
+async function saveEditStore(){
+  if(editStoreRow < 0){ toast('⚠️ ไม่พบแถวที่จะแก้ไข'); return; }
+  const rd = [...editStoreData];
+  rd[5]  = document.getElementById('es-desc').value.trim();
+  rd[6]  = document.getElementById('es-defect').value.trim();
+  rd[7]  = document.getElementById('es-imgs').value.trim();
+  rd[10] = document.getElementById('es-league').value;
+  rd[11] = document.getElementById('es-season').value.trim();
+  try{
+    await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Store',row:editStoreRow,data:rd})});
+    localStorage.removeItem('rj_products_cache');
+    toast('✅ แก้ไขสินค้าแล้ว');
+    closeEditStoreModal();
+    loadSheet1Products();
+  }catch(e){ toast('⚠️ บันทึกไม่สำเร็จ'); }
+}
+
+// ── qty / store form ──────────────────────────────────────────────
 function toggleQtyGrid(type){
   document.getElementById('qty-grid-box').style.display  = (type==='มือ2') ? 'none' : '';
   document.getElementById('size-single-box').style.display = (type==='มือ2') ? '' : 'none';

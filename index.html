@@ -245,34 +245,38 @@ footer strong{color:var(--gold-light);}
     <button id="wishlist-btn" onclick="toggleWishlistFilter(this)" title="Wishlist" style="background:none;border:1px solid var(--border);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;flex-shrink:0;">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     </button>
-    <!-- Filter dropdowns -->
-    <select id="filter-price" onchange="applyDropdownFilters()" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--muted);cursor:pointer;outline:none;">
-      <option value="">Price</option>
-      <option value="0-1000">Under ฿1,000</option>
-      <option value="1000-2000">฿1,000 – 2,000</option>
-      <option value="2000-5000">฿2,000 – 5,000</option>
-      <option value="5000-99999">฿5,000+</option>
-    </select>
-    <select id="filter-size" onchange="applyDropdownFilters()" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--muted);cursor:pointer;outline:none;">
-      <option value="">Size</option>
-      <option value="S">S</option>
-      <option value="M">M</option>
-      <option value="L">L</option>
-      <option value="XL">XL</option>
-      <option value="XXL">XXL</option>
-    </select>
-    <select id="filter-season" onchange="applyDropdownFilters()" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--muted);cursor:pointer;outline:none;">
-      <option value="">Season</option>
-      <option value="1990-2000">1990 – 2000</option>
-      <option value="2001-2010">2001 – 2010</option>
-      <option value="2011-2020">2011 – 2020</option>
-      <option value="2021-2099">2021 – Now</option>
-    </select>
     <div style="position:relative;">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
       <input type="text" class="search-input" placeholder="Search jerseys..." oninput="searchProducts(this.value)" style="padding-left:30px;margin-left:0;">
     </div>
   </div>
+</div>
+<!-- Filter dropdowns row 2 -->
+<div style="background:var(--white);border-bottom:1px solid var(--border);padding:8px 40px;display:flex;align-items:center;gap:8px;">
+  <span style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-right:4px;">Filter</span>
+  <select id="filter-price" onchange="applyDropdownFilters()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--text);cursor:pointer;outline:none;box-shadow:none;">
+    <option value="">Price</option>
+    <option value="0-1000">Under ฿1,000</option>
+    <option value="1000-2000">฿1,000 – 2,000</option>
+    <option value="2000-5000">฿2,000 – 5,000</option>
+    <option value="5000-99999">฿5,000+</option>
+  </select>
+  <select id="filter-size" onchange="applyDropdownFilters()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--text);cursor:pointer;outline:none;box-shadow:none;">
+    <option value="">Size</option>
+    <option value="S">S</option>
+    <option value="M">M</option>
+    <option value="L">L</option>
+    <option value="XL">XL</option>
+    <option value="XXL">XXL</option>
+  </select>
+  <select id="filter-season" onchange="applyDropdownFilters()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--text);cursor:pointer;outline:none;box-shadow:none;">
+    <option value="">Season</option>
+    <option value="1990-2000">1990 – 2000</option>
+    <option value="2001-2010">2001 – 2010</option>
+    <option value="2011-2020">2011 – 2020</option>
+    <option value="2021-2099">2021 – Now</option>
+  </select>
+  <button onclick="resetDropdownFilters()" style="background:none;border:none;font-size:11px;color:var(--muted);cursor:pointer;font-family:'Sarabun',sans-serif;padding:4px 8px;border-radius:6px;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Reset</button>
 </div>
 <div id="team-submenu"><div id="team-chips-wrap"><div id="team-all-btn"></div><div id="team-divider"></div><div id="team-chips"></div></div></div>
 
@@ -1084,6 +1088,14 @@ function showTeamMenu(league){
 }
 function hideTeamMenu(){document.getElementById('team-submenu').style.display='none';filterTeam='all';}
 let filterPrice='', filterSize='', filterSeason='';
+
+function resetDropdownFilters(){
+  filterPrice=''; filterSize=''; filterSeason='';
+  document.getElementById('filter-price').value='';
+  document.getElementById('filter-size').value='';
+  document.getElementById('filter-season').value='';
+  renderProducts();
+}
 
 function applyDropdownFilters(){
   filterPrice  = document.getElementById('filter-price').value;

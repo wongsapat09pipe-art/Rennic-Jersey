@@ -15,7 +15,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#1A0E06;padding:0
 .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
 .nav-logo img{width:40px;height:40px;border-radius:50%;border:1px solid var(--gold);object-fit:cover;}
 .nav-logo-text{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold-light);letter-spacing:0.5px;}
-.nav-links{display:flex;gap:0;align-items:center;background:#F5F0E8;border-radius:6px;padding:0;}
+.nav-links{display:flex;gap:0;align-items:center;background:#F5F0E8;border-radius:6px;padding:0;position:absolute;left:50%;transform:translateX(-50%);}
 .nav-links a{color:#3D2010;text-decoration:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;transition:all 0.2s;padding:6px 16px;border-radius:5px;}
 .nav-links a:hover{background:#EDE7D9;}
 .nav-cart{background:var(--gold);color:#fff;border:none;padding:9px 18px;border-radius:6px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;display:flex;align-items:center;gap:8px;transition:background 0.2s;}
@@ -213,14 +213,17 @@ footer strong{color:var(--gold-light);}
   </div>
 </nav>
 
-<section class="hero">
-  <div class="hero-content" style="text-align:left;max-width:600px;margin-left:10%;">
+<section class="hero" style="justify-content:space-between;">
+  <div class="hero-content" style="text-align:left;max-width:540px;margin-left:10%;flex:1;">
     <div style="width:32px;height:1px;background:#8B6F47;margin:0 0 18px;"></div>
     <div class="hero-badge">Est. 2021 &nbsp;|&nbsp; Bangkok, Thailand</div>
     <h1 class="hero-title" style="font-size:64px;">Rennic Jersey</h1>
     <div style="width:32px;height:1px;background:#8B6F47;margin:0 0 18px;"></div>
     <p class="hero-sub" style="font-size:13px;line-height:1.8;letter-spacing:0.5px;text-transform:none;font-style:italic;color:#8A7560;">Some jerseys only matter because of who wore them.<br>We keep those ones.</p>
     <button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop All</button>
+  </div>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding-right:10%;">
+    <img src="logo.png" alt="Rennic Jersey" style="width:180px;height:180px;object-fit:cover;border-radius:50%;opacity:0.9;">
   </div>
 </section>
 

@@ -21,15 +21,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--dark);paddi
 .nav-cart{background:var(--gold);color:#fff;border:none;padding:9px 18px;border-radius:6px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;display:flex;align-items:center;gap:8px;transition:background 0.2s;}
 .nav-cart:hover{background:#A8692E;}
 .cart-badge{background:#fff;color:var(--gold);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
-.hero{margin-top:64px;background:var(--dark);min-height:460px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:60px 40px;}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(193,125,60,0.15) 0%,transparent 70%);}
+.hero{margin-top:64px;background:#F5F0E8;min-height:400px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:60px 40px;border-bottom:1px solid #D4C9B0;}
+.hero::before{content:none;}
 .hero-content{text-align:center;position:relative;z-index:1;}
-.hero-badge{display:inline-block;border:1px solid var(--gold);color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;padding:6px 16px;border-radius:20px;margin-bottom:24px;}
-.hero-title{font-family:'Playfair Display',serif;font-size:56px;color:var(--cream);line-height:1.15;margin-bottom:16px;}
-.hero-title em{color:var(--gold);font-style:italic;}
-.hero-sub{font-size:15px;color:rgba(245,240,232,0.6);letter-spacing:1px;margin-bottom:32px;}
-.hero-btn{background:var(--gold);color:#fff;border:none;padding:14px 36px;border-radius:8px;font-family:'Sarabun',sans-serif;font-size:15px;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s;}
-.hero-btn:hover{background:#A8692E;transform:translateY(-1px);}
+.hero-badge{display:inline-block;font-size:10px;letter-spacing:4px;color:#8A7560;margin-bottom:18px;text-transform:uppercase;}
+.hero-title{font-family:'Playfair Display',serif;font-size:48px;color:#2C1A0E;line-height:1.15;margin-bottom:8px;}
+.hero-title em{color:#8B6F47;font-style:italic;}
+.hero-sub{font-size:10px;color:#8A7560;letter-spacing:2px;margin-bottom:24px;text-transform:uppercase;}
+.hero-btn{background:#2C1A0E;color:#E8C98A;border:none;padding:11px 32px;border-radius:4px;font-family:'Sarabun',sans-serif;font-size:12px;cursor:pointer;letter-spacing:2px;text-transform:uppercase;transition:all 0.2s;}
+.hero-btn:hover{background:#3D2010;}
 .filter-section{background:var(--white);border-bottom:1px solid var(--border);padding:14px 40px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:64px;z-index:90;}
 .filter-chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 .chip{padding:6px 14px;border:1px solid var(--border);border-radius:20px;font-size:12px;cursor:pointer;transition:all 0.2s;background:transparent;color:var(--muted);font-family:'Sarabun',sans-serif;display:inline-flex;align-items:center;gap:5px;}
@@ -213,11 +213,12 @@ footer strong{color:var(--gold-light);}
 </nav>
 
 <section class="hero">
-  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(193,125,60,0.15) 0%,transparent 70%);"></div>
   <div class="hero-content">
-    <div class="hero-badge">Est. 2021 • Vintage Collection</div>
+    <div style="width:32px;height:1px;background:#8B6F47;margin:0 auto 18px;"></div>
+    <div class="hero-badge">Est. 2021</div>
     <h1 class="hero-title">Rennic Jersey<br><em>Football Jerseys</em></h1>
-    <p class="hero-sub">BNWT & Pre-owned</p>
+    <div style="width:32px;height:1px;background:#8B6F47;margin:0 auto 18px;"></div>
+    <p class="hero-sub">Authentic 100% &nbsp;·&nbsp; BNWT & Pre-owned &nbsp;·&nbsp; Fast Shipping</p>
     <button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop All</button>
   </div>
 </section>

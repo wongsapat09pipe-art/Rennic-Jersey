@@ -832,7 +832,9 @@ function addToCart(id, size){
   }
   cart.push({...p, _cartKey:cartKey, _chosenSize:size});
   saveCart(); renderCart(); renderProducts();
-  toastStore('✅ เพิ่ม '+p.name+' ('+size+') ลงตะกร้าแล้ว');
+  // เปิด cart sidebar
+  document.getElementById('cart-sidebar').classList.add('open');
+  document.getElementById('cart-overlay').classList.add('open');
 }
 function removeFromCart(cartKey){
   cart=cart.filter(x=>x._cartKey!==cartKey);

@@ -728,7 +728,12 @@ async function updateOrder(row,status){
     if(!res.status==='ok'||!res.data[row-1]) return;
     const orderRow=[...res.data[row-1]];
     orderRow[7]=status;
-    await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Order',row,data:orderRow})});
+    // ยกเลิก — ลบแถว Order ออกด้วย
+    if(status==='ยกเลิก'){
+      await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Order',row})});
+    } else {
+      await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Order',row,data:orderRow})});
+    }
 
     // จัดการ Store ตาม status
     const storeRes=await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());

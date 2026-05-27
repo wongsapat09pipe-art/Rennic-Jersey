@@ -262,52 +262,46 @@ footer strong{color:var(--gold-light);}
     </div>
   </div>
 </div>
-<!-- Filter dropdowns row 2 -->
-<div style="background:var(--white);border-bottom:1px solid var(--border);padding:8px 40px;display:flex;align-items:center;gap:8px;position:relative;">
-  <span style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-right:4px;">Filter</span>
 
-  <!-- Price -->
-  <div class="multi-drop" id="mdrop-price">
-    <button class="mdrop-btn" onclick="toggleDrop('price')">Price <span class="mdrop-badge" id="mbadge-price"></span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-    <div class="mdrop-list" id="mlist-price">
-      <label><input type="checkbox" value="0-1000" onchange="applyMultiFilters()"> Under ฿1,000</label>
-      <label><input type="checkbox" value="1000-2000" onchange="applyMultiFilters()"> ฿1,000 – 2,000</label>
-      <label><input type="checkbox" value="2000-5000" onchange="applyMultiFilters()"> ฿2,000 – 5,000</label>
-      <label><input type="checkbox" value="5000-99999" onchange="applyMultiFilters()"> ฿5,000+</label>
-    </div>
-  </div>
-
-  <!-- Size -->
-  <div class="multi-drop" id="mdrop-size">
-    <button class="mdrop-btn" onclick="toggleDrop('size')">Size <span class="mdrop-badge" id="mbadge-size"></span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-    <div class="mdrop-list" id="mlist-size">
-      <label><input type="checkbox" value="S" onchange="applyMultiFilters()"> S</label>
-      <label><input type="checkbox" value="M" onchange="applyMultiFilters()"> M</label>
-      <label><input type="checkbox" value="L" onchange="applyMultiFilters()"> L</label>
-      <label><input type="checkbox" value="XL" onchange="applyMultiFilters()"> XL</label>
-      <label><input type="checkbox" value="XXL" onchange="applyMultiFilters()"> XXL</label>
-    </div>
-  </div>
-
-  <!-- Season -->
-  <div class="multi-drop" id="mdrop-season">
-    <button class="mdrop-btn" onclick="toggleDrop('season')">Season <span class="mdrop-badge" id="mbadge-season"></span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-    <div class="mdrop-list" id="mlist-season">
-      <label><input type="checkbox" value="1990-2000" onchange="applyMultiFilters()"> 1990 – 2000</label>
-      <label><input type="checkbox" value="2001-2010" onchange="applyMultiFilters()"> 2001 – 2010</label>
-      <label><input type="checkbox" value="2011-2020" onchange="applyMultiFilters()"> 2011 – 2020</label>
-      <label><input type="checkbox" value="2021-2099" onchange="applyMultiFilters()"> 2021 – Now</label>
-    </div>
-  </div>
-
-  <button onclick="resetDropdownFilters()" style="background:none;border:none;font-size:11px;color:var(--muted);cursor:pointer;font-family:'Sarabun',sans-serif;padding:4px 8px;border-radius:6px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Reset</button>
-</div>
 <div id="team-submenu"><div id="team-chips-wrap"><div id="team-all-btn"></div><div id="team-divider"></div><div id="team-chips"></div></div></div>
 
 <section class="products-section" id="products">
-  <div class="section-header">
-    <h2 class="section-title">All Items</h2>
-    <span class="product-count" id="product-count">กำลังโหลด...</span>
+  <div class="section-header" style="align-items:center;">
+    <div>
+      <h2 class="section-title">All Items</h2>
+      <span class="product-count" id="product-count">กำลังโหลด...</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;position:relative;">
+      <div class="multi-drop" id="mdrop-price">
+        <button class="mdrop-btn" onclick="toggleDrop('price')">Price <span class="mdrop-badge" id="mbadge-price"></span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mdrop-list" id="mlist-price" style="right:0;left:auto;">
+          <label><input type="checkbox" value="0-1000" onchange="applyMultiFilters()"> Under ฿1,000</label>
+          <label><input type="checkbox" value="1000-2000" onchange="applyMultiFilters()"> ฿1,000 – 2,000</label>
+          <label><input type="checkbox" value="2000-5000" onchange="applyMultiFilters()"> ฿2,000 – 5,000</label>
+          <label><input type="checkbox" value="5000-99999" onchange="applyMultiFilters()"> ฿5,000+</label>
+        </div>
+      </div>
+      <div class="multi-drop" id="mdrop-size">
+        <button class="mdrop-btn" onclick="toggleDrop('size')">Size <span class="mdrop-badge" id="mbadge-size"></span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mdrop-list" id="mlist-size" style="right:0;left:auto;">
+          <label><input type="checkbox" value="S" onchange="applyMultiFilters()"> S</label>
+          <label><input type="checkbox" value="M" onchange="applyMultiFilters()"> M</label>
+          <label><input type="checkbox" value="L" onchange="applyMultiFilters()"> L</label>
+          <label><input type="checkbox" value="XL" onchange="applyMultiFilters()"> XL</label>
+          <label><input type="checkbox" value="XXL" onchange="applyMultiFilters()"> XXL</label>
+        </div>
+      </div>
+      <div class="multi-drop" id="mdrop-season">
+        <button class="mdrop-btn" onclick="toggleDrop('season')">Season <span class="mdrop-badge" id="mbadge-season"></span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="mdrop-list" id="mlist-season" style="right:0;left:auto;">
+          <label><input type="checkbox" value="1990-2000" onchange="applyMultiFilters()"> 1990 – 2000</label>
+          <label><input type="checkbox" value="2001-2010" onchange="applyMultiFilters()"> 2001 – 2010</label>
+          <label><input type="checkbox" value="2011-2020" onchange="applyMultiFilters()"> 2011 – 2020</label>
+          <label><input type="checkbox" value="2021-2099" onchange="applyMultiFilters()"> 2021 – Now</label>
+        </div>
+      </div>
+      <button onclick="resetDropdownFilters()" style="background:none;border:none;font-size:11px;color:rgba(245,240,232,0.4);cursor:pointer;font-family:Sarabun,sans-serif;padding:4px 8px;border-radius:6px;">Reset</button>
+    </div>
   </div>
   <div class="products-grid" id="products-grid">
     <div class="loading-spinner">⏳ กำลังโหลดสินค้า...</div>

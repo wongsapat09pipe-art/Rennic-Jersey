@@ -38,6 +38,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#1A0E06;padding:0
 .search-input{margin-left:auto;padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-family:'Sarabun',sans-serif;font-size:13px;background:var(--cream);color:var(--text);width:220px;}
 .search-input:focus{outline:none;border-color:var(--gold);}
 select:focus{outline:none;box-shadow:none;border-color:var(--gold);}
+.multi-drop{position:relative;}
+.mdrop-btn{background:var(--cream);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:'Sarabun',sans-serif;font-size:12px;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:border-color 0.2s;}
+.mdrop-btn:hover{border-color:var(--gold);}
+.mdrop-btn.active{border-color:var(--gold);color:var(--gold);}
+.mdrop-badge{background:var(--gold);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;display:none;}
+.mdrop-badge.show{display:inline;}
+.mdrop-list{display:none;position:absolute;top:calc(100% + 6px);left:0;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:8px 0;min-width:160px;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,0.08);}
+.mdrop-list.open{display:block;}
+.mdrop-list label{display:flex;align-items:center;gap:8px;padding:7px 14px;font-size:12px;color:var(--text);cursor:pointer;transition:background 0.15s;}
+.mdrop-list label:hover{background:var(--surface);}
+.mdrop-list input[type=checkbox]{accent-color:var(--gold);cursor:pointer;}
 #team-submenu{display:none;background:var(--white);border-bottom:1px solid var(--border);padding:10px 40px;}
 #team-chips-wrap{display:flex;align-items:center;gap:12px;}
 #team-all-btn{flex-shrink:0;align-self:center;}
@@ -252,31 +263,44 @@ footer strong{color:var(--gold-light);}
   </div>
 </div>
 <!-- Filter dropdowns row 2 -->
-<div style="background:var(--white);border-bottom:1px solid var(--border);padding:8px 40px;display:flex;align-items:center;gap:8px;">
+<div style="background:var(--white);border-bottom:1px solid var(--border);padding:8px 40px;display:flex;align-items:center;gap:8px;position:relative;">
   <span style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-right:4px;">Filter</span>
-  <select id="filter-price" onchange="applyDropdownFilters()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--text);cursor:pointer;outline:none;box-shadow:none;">
-    <option value="">Price</option>
-    <option value="0-1000">Under ฿1,000</option>
-    <option value="1000-2000">฿1,000 – 2,000</option>
-    <option value="2000-5000">฿2,000 – 5,000</option>
-    <option value="5000-99999">฿5,000+</option>
-  </select>
-  <select id="filter-size" onchange="applyDropdownFilters()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--text);cursor:pointer;outline:none;box-shadow:none;">
-    <option value="">Size</option>
-    <option value="S">S</option>
-    <option value="M">M</option>
-    <option value="L">L</option>
-    <option value="XL">XL</option>
-    <option value="XXL">XXL</option>
-  </select>
-  <select id="filter-season" onchange="applyDropdownFilters()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Sarabun',sans-serif;font-size:12px;background:var(--cream);color:var(--text);cursor:pointer;outline:none;box-shadow:none;">
-    <option value="">Season</option>
-    <option value="1990-2000">1990 – 2000</option>
-    <option value="2001-2010">2001 – 2010</option>
-    <option value="2011-2020">2011 – 2020</option>
-    <option value="2021-2099">2021 – Now</option>
-  </select>
-  <button onclick="resetDropdownFilters()" style="background:none;border:none;font-size:11px;color:var(--muted);cursor:pointer;font-family:'Sarabun',sans-serif;padding:4px 8px;border-radius:6px;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Reset</button>
+
+  <!-- Price -->
+  <div class="multi-drop" id="mdrop-price">
+    <button class="mdrop-btn" onclick="toggleDrop('price')">Price <span class="mdrop-badge" id="mbadge-price"></span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="mdrop-list" id="mlist-price">
+      <label><input type="checkbox" value="0-1000" onchange="applyMultiFilters()"> Under ฿1,000</label>
+      <label><input type="checkbox" value="1000-2000" onchange="applyMultiFilters()"> ฿1,000 – 2,000</label>
+      <label><input type="checkbox" value="2000-5000" onchange="applyMultiFilters()"> ฿2,000 – 5,000</label>
+      <label><input type="checkbox" value="5000-99999" onchange="applyMultiFilters()"> ฿5,000+</label>
+    </div>
+  </div>
+
+  <!-- Size -->
+  <div class="multi-drop" id="mdrop-size">
+    <button class="mdrop-btn" onclick="toggleDrop('size')">Size <span class="mdrop-badge" id="mbadge-size"></span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="mdrop-list" id="mlist-size">
+      <label><input type="checkbox" value="S" onchange="applyMultiFilters()"> S</label>
+      <label><input type="checkbox" value="M" onchange="applyMultiFilters()"> M</label>
+      <label><input type="checkbox" value="L" onchange="applyMultiFilters()"> L</label>
+      <label><input type="checkbox" value="XL" onchange="applyMultiFilters()"> XL</label>
+      <label><input type="checkbox" value="XXL" onchange="applyMultiFilters()"> XXL</label>
+    </div>
+  </div>
+
+  <!-- Season -->
+  <div class="multi-drop" id="mdrop-season">
+    <button class="mdrop-btn" onclick="toggleDrop('season')">Season <span class="mdrop-badge" id="mbadge-season"></span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="mdrop-list" id="mlist-season">
+      <label><input type="checkbox" value="1990-2000" onchange="applyMultiFilters()"> 1990 – 2000</label>
+      <label><input type="checkbox" value="2001-2010" onchange="applyMultiFilters()"> 2001 – 2010</label>
+      <label><input type="checkbox" value="2011-2020" onchange="applyMultiFilters()"> 2011 – 2020</label>
+      <label><input type="checkbox" value="2021-2099" onchange="applyMultiFilters()"> 2021 – Now</label>
+    </div>
+  </div>
+
+  <button onclick="resetDropdownFilters()" style="background:none;border:none;font-size:11px;color:var(--muted);cursor:pointer;font-family:'Sarabun',sans-serif;padding:4px 8px;border-radius:6px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Reset</button>
 </div>
 <div id="team-submenu"><div id="team-chips-wrap"><div id="team-all-btn"></div><div id="team-divider"></div><div id="team-chips"></div></div></div>
 
@@ -611,25 +635,26 @@ function renderProducts(){
     const mteam=filterTeam==='all'||p.name.toLowerCase().includes(filterTeam.toLowerCase());
     const ms=!searchQ||p.name.toLowerCase().includes(searchQ.toLowerCase());
     const mw=!filterWishlist||liked.includes(p.id);
-    // price filter
+    // price filter (multi)
     let mp=true;
-    if(filterPrice){const [mn,mx]=filterPrice.split('-').map(Number);mp=p.price>=mn&&p.price<=mx;}
-    // size filter
-    let msz=true;
-    if(filterSize){
-      const hasQty=Object.keys(p.qty||{}).length>0;
-      if(hasQty) msz=getQtyNum(p.qty,filterSize)>0;
-      else msz=(p.size||'').includes(filterSize);
+    if(multiPrice.length){
+      mp=multiPrice.some(range=>{const [mn,mx]=range.split('-').map(Number);return p.price>=mn&&p.price<=mx;});
     }
-    // season filter — parse ปีแรกจาก "2015-16" หรือ "1998-99"
+    // size filter (multi)
+    let msz=true;
+    if(multiSize.length){
+      const hasQty=Object.keys(p.qty||{}).length>0;
+      if(hasQty) msz=multiSize.some(sz=>getQtyNum(p.qty,sz)>0);
+      else msz=multiSize.some(sz=>(p.size||'').includes(sz));
+    }
+    // season filter (multi)
     let mss=true;
-    if(filterSeason){
-      const [rangeMin,rangeMax]=filterSeason.split('-').map(Number);
+    if(multiSeason.length){
       const seasonStr=p.season||'';
       const yearMatch=seasonStr.match(/(\d{4})/);
       if(yearMatch){
         const yr=parseInt(yearMatch[1]);
-        mss=yr>=rangeMin&&yr<=rangeMax;
+        mss=multiSeason.some(range=>{const [mn,mx]=range.split('-').map(Number);return yr>=mn&&yr<=mx;});
       } else { mss=false; }
     }
     return mt&&ml&&mteam&&ms&&mw&&mp&&msz&&mss;
@@ -1089,20 +1114,51 @@ function showTeamMenu(league){
 function hideTeamMenu(){document.getElementById('team-submenu').style.display='none';filterTeam='all';}
 let filterPrice='', filterSize='', filterSeason='';
 
-function resetDropdownFilters(){
-  filterPrice=''; filterSize=''; filterSeason='';
-  document.getElementById('filter-price').value='';
-  document.getElementById('filter-size').value='';
-  document.getElementById('filter-season').value='';
+// ── MULTI-SELECT FILTERS ──────────────────────────────────────────
+let multiPrice=[], multiSize=[], multiSeason=[];
+
+function toggleDrop(name){
+  ['price','size','season'].forEach(n=>{
+    const l=document.getElementById('mlist-'+n);
+    const b=document.getElementById('mdrop-'+n)?.querySelector('.mdrop-btn');
+    if(n===name){ l.classList.toggle('open'); b?.classList.toggle('active'); }
+    else{ l.classList.remove('open'); b?.classList.remove('active'); }
+  });
+}
+
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.multi-drop')){
+    document.querySelectorAll('.mdrop-list').forEach(l=>l.classList.remove('open'));
+    document.querySelectorAll('.mdrop-btn').forEach(b=>b.classList.remove('active'));
+  }
+});
+
+function applyMultiFilters(){
+  multiPrice  = [...document.querySelectorAll('#mlist-price input:checked')].map(i=>i.value);
+  multiSize   = [...document.querySelectorAll('#mlist-size input:checked')].map(i=>i.value);
+  multiSeason = [...document.querySelectorAll('#mlist-season input:checked')].map(i=>i.value);
+  // update badges
+  updateBadge('price', multiPrice.length);
+  updateBadge('size',  multiSize.length);
+  updateBadge('season',multiSeason.length);
   renderProducts();
 }
 
-function applyDropdownFilters(){
-  filterPrice  = document.getElementById('filter-price').value;
-  filterSize   = document.getElementById('filter-size').value;
-  filterSeason = document.getElementById('filter-season').value;
+function updateBadge(name, count){
+  const b=document.getElementById('mbadge-'+name);
+  if(!b)return;
+  b.textContent=count; b.className='mdrop-badge'+(count?' show':'');
+}
+
+function resetDropdownFilters(){
+  multiPrice=[]; multiSize=[]; multiSeason=[];
+  document.querySelectorAll('.mdrop-list input[type=checkbox]').forEach(i=>i.checked=false);
+  ['price','size','season'].forEach(n=>updateBadge(n,0));
   renderProducts();
 }
+
+function applyMultiFilters_unused(){} // compat stub
+
 
 function populateSeasonDropdown(){
   const seasons=[...new Set(products.map(p=>p.season).filter(Boolean))].sort().reverse();

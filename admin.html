@@ -273,7 +273,7 @@
           <button class="btn btn-outline btn-sm" onclick="loadOrders()">🔄 รีเฟรช</button>
         </div>
         <div class="tbl-wrap">
-          <table><thead><tr><th>วันที่</th><th>ชื่อ</th><th>เบอร์</th><th>สินค้า</th><th>ยอด</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+          <table><thead><tr><th>วันที่</th><th>ชื่อ</th><th>เบอร์</th><th>สินค้า</th><th>ยอด</th><th>สถานะ</th><th>พัสดุ</th><th>จัดการ</th></tr></thead>
           <tbody id="orders-table"></tbody></table>
         </div>
       </div>
@@ -668,7 +668,7 @@ async function loadOrders(){
   try{
     const res=await fetch(GAS_URL+'?action=read&sheet=Order').then(r=>r.json());
     ordersList=res.status==='ok'&&res.data.length>1
-      ?res.data.slice(1).filter(r=>r[0]).map((r,i)=>({_row:i+2,date:r[0],name:r[1],phone:r[2],address:r[3],items:r[4],total:parseInt(r[5])||0,note:r[6],status:r[7]||'รอยืนยัน'}))
+      ?res.data.slice(1).filter(r=>r[0]).map((r,i)=>({_row:i+2,date:r[0],name:r[1],phone:r[2],address:r[3],items:r[4],total:parseInt(r[5])||0,note:r[6],status:r[7]||'รอยืนยัน',carrier:r[8]||'',tracking:r[9]||''}))
       :[];
   }catch(e){ordersList=[];}
   renderOrdersTable();
@@ -683,6 +683,22 @@ function renderOrdersTable(){
     <td style="font-size:12px">${o.items}</td>
     <td style="font-family:Kanit,sans-serif;color:var(--earth-accent)">฿${o.total.toLocaleString()}</td>
     <td><span class="badge ${o.status==='รอยืนยัน'?'badge-unposted':o.status==='ยืนยันแล้ว'||o.status==='จัดส่งแล้ว'?'badge-sold':'badge-stock'}">${o.status}</span></td>
+    <td>
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:160px;">
+        <select id="carrier-${o._row}" style="padding:3px 6px;font-size:11px;border:1px solid var(--earth-border);border-radius:4px;font-family:Sarabun,sans-serif;background:var(--earth-bg);">
+          <option value="" ${!o.carrier?'selected':''}>— ขนส่ง —</option>
+          <option value="kerry" ${o.carrier==='kerry'?'selected':''}>Kerry</option>
+          <option value="flash" ${o.carrier==='flash'?'selected':''}>Flash Express</option>
+          <option value="thpost" ${o.carrier==='thpost'?'selected':''}>ไปรษณีย์ไทย</option>
+          <option value="jt" ${o.carrier==='jt'?'selected':''}>J&T</option>
+          <option value="ninja" ${o.carrier==='ninja'?'selected':''}>Ninja Van</option>
+        </select>
+        <div style="display:flex;gap:4px;">
+          <input type="text" id="tracking-${o._row}" value="${o.tracking}" placeholder="เลขพัสดุ" style="padding:3px 6px;font-size:11px;border:1px solid var(--earth-border);border-radius:4px;font-family:Sarabun,sans-serif;flex:1;min-width:0;">
+          <button class="btn btn-primary btn-xs" onclick="saveTracking(${o._row})">💾</button>
+        </div>
+      </div>
+    </td>
     <td><div class="row-action" style="flex-wrap:wrap;gap:4px;">
       <button class="btn btn-success btn-xs" onclick="updateOrder(${o._row},'ยืนยันแล้ว')">✅ ยืนยัน</button>
       <button class="btn btn-outline btn-xs" onclick="updateOrder(${o._row},'จัดส่งแล้ว')">📮 จัดส่ง</button>
@@ -690,6 +706,21 @@ function renderOrdersTable(){
     </div></td>
   </tr>`).join('');
 }
+async function saveTracking(row){
+  const carrier  = document.getElementById('carrier-'+row)?.value||'';
+  const tracking = document.getElementById('tracking-'+row)?.value.trim()||'';
+  try{
+    const res=await fetch(GAS_URL+'?action=read&sheet=Order').then(r=>r.json());
+    if(res.status==='ok'&&res.data[row-1]){
+      const rd=[...res.data[row-1]];
+      rd[8]=carrier; rd[9]=tracking;
+      await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Order',row,data:rd})});
+      toast('✅ บันทึกเลขพัสดุแล้ว');
+      loadOrders();
+    }
+  }catch(e){toast('⚠️ เกิดข้อผิดพลาด');}
+}
+
 async function updateOrder(row,status){
   try{
     const res=await fetch(GAS_URL+'?action=read&sheet=Order').then(r=>r.json());

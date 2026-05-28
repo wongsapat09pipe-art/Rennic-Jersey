@@ -550,7 +550,7 @@ footer strong{color:var(--gold-light);}
 <div id="toast-store"></div>
 
 <script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzSO0TC-xINCO_A7HZXiePWE2wTP-RXgLZibvJNeNfLeC42pM0jttUaXB-tlJPcj7GK/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbx2yBxpXl5zuEL08FCEdXg4Us8WvGKj11pO-cxkaBbMZd1_Smup55VeTuPcImT-GTIR/exec";
 const STORE_SHEET = "Store";
 const LEAGUE_TEAMS = {
   'Premier League':['All','Arsenal','Aston Villa','Bournemouth','Brentford','Brighton','Chelsea','Crystal Palace','Everton','Fulham','Ipswich','Leicester','Liverpool','Man City','Man United','Newcastle','Nottm Forest','Southampton','Tottenham','West Ham','Wolves'],
@@ -1049,15 +1049,28 @@ async function submitOrder(){
   const phone=document.getElementById('o-phone').value.trim();
   const address=document.getElementById('o-address').value.trim();
   if(!name||!phone||!address){toastStore('กรุณากรอกข้อมูลให้ครบถ้วนครับ');return;}
-  const total=cart.reduce((s,p)=>s+p.price,0);
+  const total=cart.reduce((s,p)=>s+(p.price*(p._qty||1)),0);
   saveAddressIfNeeded(name,phone,address,document.getElementById('o-note').value);
   try{
-    // บันทึกออเดอร์
+    // Upload สลิปไป Cloudinary ก่อน
+    let slipUrl = '';
+    const slipFile = slipInput.files[0];
+    if(slipFile){
+      const fd = new FormData();
+      fd.append('file', slipFile);
+      fd.append('upload_preset', 'rennic_jersey');
+      fd.append('folder', 'slips');
+      const cdRes = await fetch('https://api.cloudinary.com/v1_1/dfqwla01w/image/upload', {method:'POST',body:fd});
+      const cdData = await cdRes.json();
+      slipUrl = cdData.secure_url || '';
+    }
+
+    // บันทึกออเดอร์ + slipUrl
     await fetch(GAS_URL,{method:'POST',body:JSON.stringify({
       action:'append',sheet:'Order',
       data:[new Date().toLocaleString('th-TH'),name,phone,address,
         cart.map(p=>p.name+'('+(p._chosenSize||p.size)+')'+(( p._qty||1)>1?' x'+(p._qty||1):'')).join(', '),
-        total,document.getElementById('o-note').value,'รอยืนยัน']
+        total,document.getElementById('o-note').value,'รอยืนยัน','','',slipUrl]
     })});
 
     // อัปเดต qty และ status ใน Store

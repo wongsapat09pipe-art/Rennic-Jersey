@@ -1039,7 +1039,12 @@ async function saveAddressIfNeeded(name,phone,address,note){
 }
 
 // ── SUBMIT ORDER ──────────────────────────────────────────────────
+let isSubmitting = false;
 async function submitOrder(){
+  if(isSubmitting) return;
+  isSubmitting = true;
+  const btn = document.querySelector('.submit-order-btn');
+  if(btn){ btn.disabled=true; btn.textContent='กำลังดำเนินการ...'; }
   const slipInput = document.getElementById('slip-input');
   if(!slipInput || !slipInput.files || slipInput.files.length === 0){
     toastStore('กรุณาแนบสลิปการโอนเงินก่อนครับ');
@@ -1105,6 +1110,7 @@ async function submitOrder(){
       <div class="success-sub">ขอบคุณที่ช้อปกับ <strong>Rennic Jersey</strong> ครับ<br>ทีมงานจะตรวจสอบสลิปและติดต่อกลับภายใน 24 ชั่วโมง</div>
       <button class="hero-btn" style="margin-top:24px;" onclick="closeCheckout();cart=[];saveCart();renderCart();">กลับหน้าร้าน</button>
     </div>`;
+  isSubmitting = false;
 }
 
 // ── FILTERS ───────────────────────────────────────────────────────

@@ -702,7 +702,7 @@ function renderOrdersTable(){
     <td><div class="row-action" style="flex-wrap:wrap;gap:4px;">
       <button class="btn btn-success btn-xs" onclick="updateOrder(${o._row},'ยืนยันแล้ว')">✅ ยืนยัน</button>
       <button class="btn btn-outline btn-xs" onclick="updateOrder(${o._row},'จัดส่งแล้ว')">📮 จัดส่ง</button>
-      <button class="btn btn-danger btn-xs" onclick="updateOrder(${o._row},'ยกเลิก')">❌ ยกเลิก</button>
+      <button class="btn btn-danger btn-xs" onclick="this.disabled=true;updateOrder(${o._row},'ยกเลิก')">❌ ยกเลิก</button>
     </div></td>
   </tr>`).join('');
 }

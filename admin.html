@@ -823,11 +823,10 @@ function renderStoreManage(){
       <td><strong>${p.name}</strong>${inStore?'<br><span style="font-size:11px;color:var(--earth-muted)">qty: '+qtyDisplay+'</span>':''}</td>
       <td style="font-family:Kanit,sans-serif;color:var(--earth-accent)">฿${p.cost.toLocaleString()}</td>
       <td><span class="badge ${p.sold?'badge-sold':'badge-stock'}">${p.sold?'ขายแล้ว':'ในสต็อก'}</span></td>
-      <td><span class="badge ${isPending?'badge-unposted':inStore?'badge-posted':'badge-stock'}">${isPending?'⏳ Sold Out':inStore?'✅ แสดงอยู่':'ซ่อน'}</span></td>
+      <td><span class="badge ${isPending?'badge-unposted':inStore?'badge-posted':'badge-stock'}">${isPending?'🔒 Reserved':inStore?'✅ แสดงอยู่':'ซ่อน'}</span></td>
       <td><div class="row-action">
         ${isPending
-          ?`<button class="btn btn-success btn-sm" onclick="restoreProduct('${p.name.replace(/'/g,"\\'")}')">🔄 คืนสต็อก</button>
-             <button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\\'")}')">🗑️ ลบออก</button>`
+          ?`<button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\\'")}')">🗑️ ลบรายการ</button>`
           :inStore
           ?`<button class="btn btn-outline btn-sm" onclick="openEditStoreForm(${JSON.stringify(storeItem).replace(/"/g,'&quot;')})">✏️ แก้ไข</button>
              <button class="btn btn-danger btn-sm" onclick="removeFromStore('${p.name.replace(/'/g,"\\'")}')">🙈 ซ่อน</button>`

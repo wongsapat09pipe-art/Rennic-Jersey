@@ -723,55 +723,60 @@ async function saveTracking(row){
 
 async function updateOrder(row,status){
   try{
-    // อัปเดตสถานะใน Order sheet
     const res=await fetch(GAS_URL+'?action=read&sheet=Order').then(r=>r.json());
-    if(!res.status==='ok'||!res.data[row-1]) return;
+    if(!res.data||!res.data[row-1]) return;
     const orderRow=[...res.data[row-1]];
-    orderRow[7]=status;
-    // ยกเลิก — ลบแถว Order ออกด้วย
-    if(status==='ยกเลิก'){
-      await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Order',row})});
-    } else {
-      await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Order',row,data:orderRow})});
-    }
+    const itemsStr=String(orderRow[4]||'');
 
-    // จัดการ Store ตาม status
-    const storeRes=await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
-    if(storeRes.status==='ok'){
-      const itemsStr=String(orderRow[4]||'');
-      for(let i=1;i<storeRes.data.length;i++){
-        const r=storeRes.data[i];
-        const productName=String(r[1]||'').trim();
-        if(!productName||!itemsStr.includes(productName)) continue;
-        if(String(r[8]).trim()==='pending'){
-          if(status==='ยืนยันแล้ว'){
-            // ขายแล้ว — ลบออกจาก Store
+    if(status==='ยกเลิก'){
+      // ลบออเดอร์ออก
+      await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Order',row})});
+
+      // หาชื่อสินค้าและ size จาก items string
+      // รูปแบบ: "ชื่อสินค้า (Size: M) x1"
+      const nameMatch = itemsStr.match(/^(.+?)\s*\(/);
+      const sizeMatch = itemsStr.match(/Size:\s*([A-Z]+)/i) || itemsStr.match(/\(([A-Z]+)\)/i);
+      const qtyMatch  = itemsStr.match(/x(\d+)/i);
+
+      const productName = nameMatch ? nameMatch[1].trim() : '';
+      const size        = sizeMatch ? sizeMatch[1].trim() : '';
+      const qty         = qtyMatch  ? parseInt(qtyMatch[1]) : 1;
+
+      // คืน qty + status ผ่าน restoreQty action
+      if(productName){
+        await fetch(GAS_URL,{method:'POST',body:JSON.stringify({
+          action:'restoreQty',
+          productName,
+          size,
+          qty
+        })});
+      }
+      localStorage.removeItem('rj_products_cache');
+      toast('❌ ยกเลิกแล้ว คืนสต็อก');
+
+    } else if(status==='ยืนยันแล้ว'){
+      orderRow[7]=status;
+      await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Order',row,data:orderRow})});
+      // ลบสินค้าออกจาก Store
+      const storeRes=await fetch(GAS_URL+'?action=read&sheet=Store').then(r=>r.json());
+      if(storeRes.status==='ok'){
+        for(let i=1;i<storeRes.data.length;i++){
+          const r=storeRes.data[i];
+          if(String(r[8]).trim()==='pending' && itemsStr.includes(String(r[1]||'').trim())){
             await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Store',row:i+1})});
-            break;
-          } else if(status==='ยกเลิก'){
-            // ยกเลิก — คืน available + คืน qty
-            const rd=[...r];
-            rd[8]='available';
-            // คืน qty: ดึง size จาก order items
-            const sizeMatch = itemsStr.match(/\(([^)]+)\)/);
-            if(sizeMatch && rd[9]){
-              try{
-                const sz=sizeMatch[1].replace('Size:','').trim();
-                const qtyObj=JSON.parse(rd[9]||'{}');
-                if(qtyObj.hasOwnProperty(sz)){
-                  qtyObj[sz]=(parseInt(qtyObj[sz])||0)+1;
-                  rd[9]=JSON.stringify(qtyObj);
-                }
-              }catch(e){}
-            }
-            await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Store',row:i+1,data:rd})});
             localStorage.removeItem('rj_products_cache');
             break;
           }
         }
       }
+      toast('✅ ยืนยันออเดอร์แล้ว');
+
+    } else {
+      orderRow[7]=status;
+      await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'update',sheet:'Order',row,data:orderRow})});
+      toast('📮 อัพเดทสถานะแล้ว');
     }
-    toast(status==='ยืนยันแล้ว'?'✅ ยืนยันออเดอร์แล้ว':status==='ยกเลิก'?'❌ ยกเลิกแล้ว คืนสต็อก':'📮 อัพเดทสถานะแล้ว');
+
     loadOrders();
   }catch(e){toast('⚠️ เกิดข้อผิดพลาด: '+e.message);}
 }

@@ -732,15 +732,11 @@ async function updateOrder(row,status){
       // ลบออเดอร์ออก
       await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Order',row})});
 
-      // หาชื่อสินค้าและ size จาก items string
-      // รูปแบบ: "ชื่อสินค้า (Size: M) x1"
-      const nameMatch = itemsStr.match(/^(.+?)\s*\(/);
-      const sizeMatch = itemsStr.match(/Size:\s*([A-Z]+)/i) || itemsStr.match(/\(([A-Z]+)\)/i);
-      const qtyMatch  = itemsStr.match(/x(\d+)/i);
-
-      const productName = nameMatch ? nameMatch[1].trim() : '';
-      const size        = sizeMatch ? sizeMatch[1].trim() : '';
-      const qty         = qtyMatch  ? parseInt(qtyMatch[1]) : 1;
+      // parse items format: "Liverpool Home Replica 2009/10 XL Torres(M)"
+      const sizeMatch2 = itemsStr.match(/\(([A-Z]+)\)\s*$/i);
+      const size = sizeMatch2 ? sizeMatch2[1].trim() : '';
+      const productName = sizeMatch2 ? itemsStr.replace(/\([A-Z]+\)\s*$/i,'').trim() : itemsStr.trim();
+      const qty = 1;
 
       // คืน qty + status ผ่าน restoreQty action
       if(productName){

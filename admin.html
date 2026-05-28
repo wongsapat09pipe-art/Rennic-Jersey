@@ -461,7 +461,7 @@
 <div id="toast"></div>
 
 <script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwOsJfOsgyG3TTHXVHSGrsCb_RldWfcs0CJDGJjU91czE96tiC6K7m9ZQM_laqZ59ts/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzSO0TC-xINCO_A7HZXiePWE2wTP-RXgLZibvJNeNfLeC42pM0jttUaXB-tlJPcj7GK/exec";
 const SHEET_MAIN = "Sheet1";
 
 let jerseys=[], jipathas=[], editIdx=-1, CH={};
@@ -732,20 +732,22 @@ async function updateOrder(row,status){
       // ลบออเดอร์ออก
       await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',sheet:'Order',row})});
 
-      // parse items format: "Liverpool Home Replica 2009/10 XL Torres(M)"
-      const sizeMatch2 = itemsStr.match(/\(([A-Z]+)\)\s*$/i);
-      const size = sizeMatch2 ? sizeMatch2[1].trim() : '';
-      const productName = sizeMatch2 ? itemsStr.replace(/\([A-Z]+\)\s*$/i,'').trim() : itemsStr.trim();
-      const qty = 1;
-
-      // คืน qty + status ผ่าน restoreQty action
-      if(productName){
-        await fetch(GAS_URL,{method:'POST',body:JSON.stringify({
-          action:'restoreQty',
-          productName,
-          size,
-          qty
-        })});
+      // parse items — คั่นด้วย ", "
+      const items = itemsStr.split(',').map(s => s.trim()).filter(Boolean);
+      for(const item of items){
+        const sm = item.match(/\(([A-Z]+)\)\s*$/i);
+        const size = sm ? sm[1].trim() : '';
+        const productName = sm ? item.replace(/\([A-Z]+\)\s*$/i,'').trim() : item.trim();
+        const qtyM = item.match(/x(\d+)/i);
+        const qty = qtyM ? parseInt(qtyM[1]) : 1;
+        if(productName){
+          await fetch(GAS_URL,{method:'POST',body:JSON.stringify({
+            action:'restoreQty',
+            productName,
+            size,
+            qty
+          })});
+        }
       }
       localStorage.removeItem('rj_products_cache');
       toast('❌ ยกเลิกแล้ว คืนสต็อก');

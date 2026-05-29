@@ -878,7 +878,7 @@ async function uploadToCloudinary(files){
   zone.style.pointerEvents='auto';
 
   // อัปเดต URL field
-  document.getElementById('sf-imgs').value = uploadedUrls.join(', ');
+  document.getElementById('sf-imgs').value = uploadedUrls.join('|');
 }
 
 function addImgThumb(url){
@@ -892,7 +892,7 @@ function addImgThumb(url){
 function removeThumb(btn, url){
   btn.parentElement.remove();
   uploadedUrls = uploadedUrls.filter(u=>u!==url);
-  document.getElementById('sf-imgs').value = uploadedUrls.join(', ');
+  document.getElementById('sf-imgs').value = uploadedUrls.join('|');
 }
 
 // drag & drop support

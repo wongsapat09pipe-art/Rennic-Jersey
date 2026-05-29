@@ -827,9 +827,24 @@ function openProduct(id){
 
   // image
   const imgEl=document.getElementById('modal-img');
-  imgEl.innerHTML=p.img
-    ?`<img src="${p.img}" alt="${p.name}"><button class="modal-close" onclick="closeProductModal()">✕</button>`
-    :`<div style="font-size:48px;color:var(--border);">👕</div><button class="modal-close" onclick="closeProductModal()">✕</button>`;
+  const imgs = p.imgs && p.imgs.length ? p.imgs : (p.img ? [p.img] : []);
+  if(imgs.length > 1){
+    let cur = 0;
+    const slideHTML = () => `
+      <img src="${imgs[cur]}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">
+      <button class="modal-close" onclick="closeProductModal()">✕</button>
+      <button onclick="event.stopPropagation();slideModal(-1)" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.4);color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;">‹</button>
+      <button onclick="event.stopPropagation();slideModal(1)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.4);color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;">›</button>
+      <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;">
+        ${imgs.map((_, i) => `<div style="width:7px;height:7px;border-radius:50%;background:${i===cur?'#fff':'rgba(255,255,255,0.4)'};"></div>`).join('')}
+      </div>`;
+    window.slideModal = (dir) => { cur = (cur + dir + imgs.length) % imgs.length; imgEl.innerHTML = slideHTML(); };
+    imgEl.innerHTML = slideHTML();
+  } else if(imgs.length === 1){
+    imgEl.innerHTML = `<img src="${imgs[0]}" alt="${p.name}"><button class="modal-close" onclick="closeProductModal()">✕</button>`;
+  } else {
+    imgEl.innerHTML = `<div style="font-size:48px;color:var(--border);">👕</div><button class="modal-close" onclick="closeProductModal()">✕</button>`;
+  }
 
   // size selector ใน modal
   const selectorEl = document.getElementById('modal-size-selector');

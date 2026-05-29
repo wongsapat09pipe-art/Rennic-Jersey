@@ -626,8 +626,8 @@ async function loadProducts(){
         price: parseInt(r[4])||0,
         desc:  r[5],
         defect:r[6]||'',
-        imgs:  r[7]?String(r[7]).split(/[|,]+/).map(s=>s.trim()).filter(Boolean):[],
-        img:   r[7]?String(r[7]).split(/[|,]+/)[0].trim():'',
+        imgs:  r[7]?String(r[7]).split('|').map(s=>s.trim()).filter(Boolean):[],
+        img:   r[7]?String(r[7]).split('|')[0].trim():'',
         status:r[8]||'available',
         qty:   parseQty(r[9]),   // คอลัมน์ J — qty JSON
         league:r[10]||'',        // คอลัมน์ K — league

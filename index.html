@@ -695,7 +695,8 @@ function cardHTML(p){
     const sizeLabel = availEntry ? availEntry[0] : p.size;
     const dim = availEntry ? getQtyDim(p.qty, availEntry[0]) : '';
     if(!p._selectedSize && availEntry) p._selectedSize = availEntry[0];
-    sizesHTML = `<div class="card-meta" style="margin-bottom:8px;">Size: <strong>${sizeLabel}</strong>${dim?` <span style="color:var(--muted);font-weight:400;">(${dim})</span>`:''}</div>`;
+    const q2 = availEntry ? getQtyNum(p.qty, availEntry[0]) : 0;
+    sizesHTML = `<div class="card-meta" style="margin-bottom:4px;">Size: <strong>${sizeLabel}</strong>${dim?' <span style="color:var(--muted);font-weight:400;">('+dim+')</span>':''}</div><div class="qty-badge${q2<=3&&q2>0?' low':''}">${q2>0?qtyText(q2):'<span style="color:var(--red)">หมดแล้ว</span>'}</div>`;
   } else if(hasQty){
     sizesHTML = `<div class="size-selector" onclick="event.stopPropagation()">` +
       Object.entries(p.qty).filter(([sz])=>getQtyNum(p.qty,sz)>0).map(([sz])=>{

@@ -588,8 +588,8 @@ function getQtyDim(qtyObj, sz) {
   if(v && typeof v === 'object') {
     let dim = v.dim||'';
     // normalize คำ
-    dim = dim.replace(/^อก\s*/,'รอบอก ').replace(/\s*ยาว\s*/,' ความยาว ');
-    dim = dim.replace(/^รอบอก\s*/,'รอบอก ').replace(/\s*ความยาว\s*/,' ความยาว ');
+    dim = dim.replace(/^อก\s*/,'รอบอก ').replace(/\s*ยาว\s*/,' ยาว ');
+    dim = dim.replace(/^รอบอก\s*/,'รอบอก ').replace(/\s*ความยาว\s*/,' ยาว ');
     // เพิ่ม " หลังตัวเลขถ้ายังไม่มี
     dim = dim.replace(/(\d+)(?!")/g,'$1"');
     return dim.trim();

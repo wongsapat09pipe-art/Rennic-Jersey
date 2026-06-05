@@ -111,8 +111,8 @@ select:focus{outline:none;box-shadow:none;border-color:var(--gold);}
 
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(28,16,8,0.7);z-index:200;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
-.product-modal{background:var(--white);border-radius:16px;width:900px;max-width:100%;max-height:92vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:hidden;align-items:stretch;}
-.modal-img{background:var(--surface);display:flex;flex-direction:column;overflow:hidden;border-radius:16px 0 0 16px;align-self:stretch;}
+.product-modal{background:var(--white);border-radius:16px;width:900px;max-width:100%;height:min(88vh,640px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:hidden;}
+.modal-img{background:var(--surface);display:flex;flex-direction:column;overflow:hidden;border-radius:16px 0 0 16px;height:100%;}
 .modal-img-main{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--border);max-height:360px;}
 .modal-img-thumbs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;}
 .modal-img-thumb{width:64px;height:64px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer;flex-shrink:0;transition:border-color 0.2s;}
@@ -844,8 +844,8 @@ function openProduct(id){
         ${imgs.map((url, i) => `<div onclick="event.stopPropagation();selectModalImg(${i})" style="flex-shrink:0;width:64px;height:64px;border-radius:7px;overflow:hidden;border:2px solid ${i===curImg?'var(--brown)':'transparent'};cursor:pointer;opacity:${i===curImg?'1':'0.6'};transition:all 0.2s;"><img src="${url}" style="width:100%;height:100%;object-fit:cover;"></div>`).join('')}
       </div>` : '';
     imgEl.innerHTML = `
-      <div style="display:flex;flex-direction:column;">
-        <div style="position:relative;width:100%;background:var(--surface);overflow:hidden;flex:1;">
+      <div style="display:flex;flex-direction:column;height:100%;">
+        <div style="position:relative;flex:1;min-height:0;background:var(--surface);overflow:hidden;">
           ${mainImg ? `<img src="${mainImg}" alt="${p.name}" onclick="event.stopPropagation();openImgZoom('${mainImg}')" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in;">` : '<div style="font-size:48px;display:flex;align-items:center;justify-content:center;height:100%;">👕</div>'}
           <button class="modal-close" onclick="closeProductModal()">✕</button>
           ${arrows}

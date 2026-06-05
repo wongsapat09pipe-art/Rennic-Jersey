@@ -59,7 +59,8 @@ select:focus{outline:none;box-shadow:none;border-color:var(--gold);}
 .section-title{font-family:'Playfair Display',serif;font-size:28px;color:#F5F0E8;}
 .product-count{font-size:13px;color:rgba(245,240,232,0.5);}
 .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px;}
-.product-card{background:#F5F0E8;border:none;border-radius:10px;overflow:hidden;cursor:pointer;transition:all 0.25s;position:relative;}
+.product-card{background:#F5F0E8;border:none;border-radius:10px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;position:relative;will-change:transform;}
+.product-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(28,16,8,0.10);}
 .product-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
 .card-img{aspect-ratio:1/1;background:#EDE7D9;overflow:hidden;position:relative;}
 .card-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;}
@@ -111,7 +112,7 @@ select:focus{outline:none;box-shadow:none;border-color:var(--gold);}
 
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(28,16,8,0.7);z-index:200;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
-.product-modal{background:var(--white);border-radius:16px;max-width:98vw;height:min(88vh,620px);display:grid;grid-template-columns:auto 1fr;overflow:hidden;}
+.product-modal{background:var(--white);border-radius:16px;will-change:transform;max-width:98vw;height:min(88vh,620px);display:grid;grid-template-columns:auto 1fr;overflow:hidden;}
 .modal-img{background:var(--surface);display:flex;flex-direction:column;overflow:hidden;border-radius:16px 0 0 16px;height:100%;aspect-ratio:1/1;}
 .modal-img-main{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--border);max-height:360px;}
 .modal-img-thumbs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;}
@@ -959,7 +960,7 @@ function addToCart(id, size){
     toastStore('size นี้อยู่ในตะกร้าแล้วครับ'); return;
   }
   cart.push({...p, _cartKey:cartKey, _chosenSize:size});
-  saveCart(); renderCart(); renderProducts();
+  saveCart(); renderCart();
   // เปิด cart sidebar
   document.getElementById('cart-sidebar').classList.add('open');
   document.getElementById('cart-overlay').classList.add('open');
@@ -976,7 +977,7 @@ function changeQty(cartKey, delta){
 }
 function removeFromCart(cartKey){
   cart=cart.filter(x=>x._cartKey!==cartKey);
-  saveCart(); renderCart(); renderProducts();
+  saveCart(); renderCart();
 }
 function saveCart(){localStorage.setItem('rj_cart',JSON.stringify(cart));}
 function renderCart(){
@@ -1229,7 +1230,11 @@ function populateSeasonDropdown(){
   sel.innerHTML='<option value="">Season</option>'+seasons.map(s=>`<option value="${s}">${s}</option>`).join('');
 }
 
-function searchProducts(q){searchQ=q;renderProducts();}
+let _searchDebounce;
+function searchProducts(q){
+  clearTimeout(_searchDebounce);
+  _searchDebounce = setTimeout(()=>{searchQ=q;renderProducts();}, 150);
+}
 
 // ── MY ORDERS ─────────────────────────────────────────────────────
 const CARRIER_LINKS = {

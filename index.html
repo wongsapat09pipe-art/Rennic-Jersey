@@ -111,8 +111,8 @@ select:focus{outline:none;box-shadow:none;border-color:var(--gold);}
 
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(28,16,8,0.7);z-index:200;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
-.product-modal{background:var(--white);border-radius:16px;width:860px;max-width:100%;max-height:92vh;height:580px;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;}
-.modal-img{background:var(--surface);display:flex;flex-direction:column;overflow:hidden;border-radius:16px 0 0 16px;height:100%;}
+.product-modal{background:var(--white);border-radius:16px;width:900px;max-width:100%;max-height:92vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:hidden;align-items:stretch;}
+.modal-img{background:var(--surface);display:flex;flex-direction:column;overflow:hidden;border-radius:16px 0 0 16px;}
 .modal-img-main{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--border);max-height:360px;}
 .modal-img-thumbs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;}
 .modal-img-thumb{width:64px;height:64px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer;flex-shrink:0;transition:border-color 0.2s;}

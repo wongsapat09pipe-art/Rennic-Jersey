@@ -393,23 +393,25 @@
     </div>
 
   </div>
-</main>
-</div>
 
-<!-- SCHEDULE SECTION (injected outside main for simplicity, toggled via showSection) -->
-<div id="section-schedule" style="display:none;padding:20px;flex:1;overflow-y:auto;">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-    <div>
-      <div style="font-family:'Kanit',sans-serif;font-size:16px;font-weight:500;color:var(--earth-dark)" id="sched-week-label">สัปดาห์นี้</div>
-      <div style="font-size:12px;color:var(--earth-muted);margin-top:2px" id="sched-week-range"></div>
+    <!-- SCHEDULE SECTION -->
+    <div class="section" id="section-schedule">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+        <div>
+          <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:600;color:var(--earth-dark)" id="sched-week-label">สัปดาห์นี้</div>
+          <div style="font-size:12px;color:var(--earth-muted);margin-top:2px" id="sched-week-range"></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="btn btn-outline btn-sm" onclick="schedShift(-1)">← ก่อนหน้า</button>
+          <button class="btn btn-outline btn-sm" id="sched-today-btn" onclick="schedGoToday()" style="display:none;">วันนี้</button>
+          <button class="btn btn-outline btn-sm" onclick="schedShift(1)">ถัดไป →</button>
+        </div>
+      </div>
+      <div id="sched-grid"></div>
     </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-outline btn-sm" onclick="schedShift(-1)">← ก่อนหน้า</button>
-      <button class="btn btn-outline btn-sm" id="sched-today-btn" onclick="schedGoToday()" style="display:none;">วันนี้</button>
-      <button class="btn btn-outline btn-sm" onclick="schedShift(1)">ถัดไป →</button>
-    </div>
+
   </div>
-  <div id="sched-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;"></div>
+</main>
 </div>
 
 <!-- EDIT STORE MODAL -->
@@ -1137,7 +1139,7 @@ window.addEventListener('load',()=>{
 .tag-pick-btn.sel{border-color:var(--earth-accent);color:var(--earth-accent);background:rgba(193,125,60,0.1);}
 </style>
 
-<!-- ADD TASK MODAL -->
+<!-- ADD/EDIT TASK MODAL -->
 <div class="modal-overlay" id="task-modal">
   <div class="modal" style="width:360px;">
     <div class="modal-head">
@@ -1149,28 +1151,35 @@ window.addEventListener('load',()=>{
         <label>รายละเอียดงาน *</label>
         <input type="text" id="task-input" placeholder="เช่น ลง AC Milan Home ใน IG" onkeydown="if(event.key==='Enter')confirmTask()">
       </div>
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom:12px;">
         <label>ประเภท</label>
         <div class="tag-pick-row">
           <button class="tag-pick-btn sel" id="tp-post"    onclick="selectTaskTag('post')">📢 โพสต์</button>
-          <button class="tag-pick-btn"     id="tp-price"   onclick="selectTaskTag('price')">💰 อัปเดตราคา</button>
-          <button class="tag-pick-btn"     id="tp-contact" onclick="selectTaskTag('contact')">📞 ติดต่อลูกค้า</button>
+          <button class="tag-pick-btn"     id="tp-price"   onclick="selectTaskTag('price')">💰 ราคา</button>
+          <button class="tag-pick-btn"     id="tp-contact" onclick="selectTaskTag('contact')">📞 ลูกค้า</button>
           <button class="tag-pick-btn"     id="tp-other"   onclick="selectTaskTag('other')">📝 อื่นๆ</button>
         </div>
+      </div>
+      <div class="form-group" id="task-done-row" style="display:none;align-items:center;gap:8px;">
+        <input type="checkbox" id="task-done-check" style="width:16px;height:16px;cursor:pointer;">
+        <label for="task-done-check" style="cursor:pointer;margin:0;">เสร็จแล้ว</label>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="document.getElementById('task-modal').classList.remove('open')">ยกเลิก</button>
-      <button class="btn btn-primary" onclick="confirmTask()">เพิ่มงาน</button>
+      <button class="btn btn-primary" onclick="confirmTask()">บันทึก</button>
     </div>
   </div>
 </div>
 
 <script>
 const DAYS_TH=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์'];
-const TAG_LABELS={post:'📢 โพสต์',price:'💰 อัปเดตราคา',contact:'📞 ติดต่อลูกค้า',other:'📝 อื่นๆ'};
+const SLOTS=[{key:'morning',label:'🌅 เช้า'},{key:'afternoon',label:'☀️ บ่าย'},{key:'evening',label:'🌙 เย็น'}];
+const TAG_LABELS={post:'📢 โพสต์',price:'💰 ราคา',contact:'📞 ลูกค้า',other:'📝 อื่นๆ'};
 const TAG_DOT={post:'#9B7EC8',price:'#6B8C5A',contact:'#1E7A85',other:'#C4A06A'};
-let schedDB={}, schedOffset=0, taskDate=null, taskTag='post';
+const TAG_BG={post:'#E8E0F5',price:'#D6E8D0',contact:'#D0E4E8',other:'#F0E8D5'};
+const TAG_COLOR={post:'#6B4FA8',price:'#2E6025',contact:'#1E5A65',other:'#8B5A20'};
+let schedDB={}, schedOffset=0, taskDate=null, taskSlot=null, taskTag='post', editTaskId=null;
 
 function loadSched(){try{schedDB=JSON.parse(localStorage.getItem('rj_sched')||'{}');}catch(e){schedDB={};}}
 function saveSched(){try{localStorage.setItem('rj_sched',JSON.stringify(schedDB));}catch(e){}}
@@ -1188,54 +1197,118 @@ function renderSched(){
   const f=d=>`${d.getDate()}/${d.getMonth()+1}`;
   document.getElementById('sched-week-label').textContent=label;
   document.getElementById('sched-week-range').textContent=`${f(dates[0])} — ${f(dates[6])}/${dates[6].getFullYear()}`;
-  document.getElementById('sched-today-btn').style.display=schedOffset!==0?'block':'none';
-  document.getElementById('sched-grid').innerHTML=dates.map(d=>{
-    const dk=dkey(d), isToday=dk===todayKey, tasks=schedDB[dk]||[];
-    const done=tasks.filter(t=>t.done).length;
-    const tHtml=tasks.map(t=>`
-      <div class="sched-task${t.done?' done':''}" onclick="toggleTask('${dk}','${t.id}')">
-        <div class="task-dot" style="background:${TAG_DOT[t.tag||'other']}"></div>
-        <div style="flex:1"><div class="task-txt">${t.text}</div><span class="task-tag tag-${t.tag||'other'}">${TAG_LABELS[t.tag||'other']}</span></div>
-        <button class="task-del-btn" onclick="event.stopPropagation();delTask('${dk}','${t.id}')">×</button>
-      </div>`).join('');
-    return `<div class="sched-day${isToday?' today':''}">
-      <div class="sched-day-head">
-        <div class="sched-day-name">${DAYS_TH[d.getDay()]}</div>
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;">
-          <div class="sched-day-date">${d.getDate()}</div>
-          ${tasks.length?`<div style="font-size:10px;color:var(--earth-muted);margin-bottom:2px">${done}/${tasks.length}</div>`:''}
-        </div>
-      </div>
-      <div class="sched-tasks">${tHtml}</div>
-      <button class="sched-add-btn" onclick="openTaskModal('${dk}','${DAYS_TH[d.getDay()]} ${d.getDate()}')">+</button>
-    </div>`;
-  }).join('');
-}
+  document.getElementById('sched-today-btn').style.display=schedOffset!==0?'inline-flex':'none';
 
+  const SLOT_COLOR={morning:'#C17D3C',afternoon:'#5A8A6A',evening:'#7B6FA8'};
+  const TAG_PILL={post:{bg:'#F2EDF8',c:'#7B5CB8'},price:{bg:'#EBF2E6',c:'#4A7A3A'},contact:{bg:'#E6EEF2',c:'#2A6878'},other:{bg:'#F5F0E8',c:'#8A7560'}};
+
+  let html=`<div style="overflow-x:auto;"><table style="width:100%;border-collapse:separate;border-spacing:0;min-width:720px;"><thead><tr><th style="width:68px;"></th>`;
+  dates.forEach(d=>{
+    const isToday=dkey(d)===todayKey;
+    html+=`<th style="padding:0 6px 16px;text-align:center;">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${isToday?'var(--earth-accent)':'var(--earth-muted)'};margin-bottom:6px;">${DAYS_TH[d.getDay()]}</div>
+      <div style="width:32px;height:32px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;background:${isToday?'var(--earth-accent)':'transparent'};font-family:'Kanit',sans-serif;font-size:15px;font-weight:600;color:${isToday?'#fff':'var(--earth-dark)'};">${d.getDate()}</div>
+    </th>`;
+  });
+  html+=`</tr></thead><tbody>`;
+
+  SLOTS.forEach((slot,si)=>{
+    const sc=SLOT_COLOR[slot.key];
+    html+=`<tr><td style="padding:12px 8px 12px 0;vertical-align:top;border-top:1px solid var(--earth-border);">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:2px;height:28px;border-radius:2px;background:${sc};flex-shrink:0;"></div>
+        <div style="font-size:11px;font-weight:600;color:${sc};white-space:nowrap;letter-spacing:.2px;">${slot.label}</div>
+      </div>
+    </td>`;
+    dates.forEach(d=>{
+      const dk=dkey(d), isToday=dk===todayKey;
+      const tasks=((schedDB[dk]||{})[slot.key])||[];
+      const tHtml=tasks.map(t=>{
+        const p=TAG_PILL[t.tag||'other'];
+        return `<div onclick="openEditTask('${dk}','${slot.key}','${t.id}')"
+          style="padding:5px 8px;border-radius:6px;margin-bottom:3px;cursor:pointer;background:${t.done?'transparent':p.bg};border:1px solid ${t.done?'var(--earth-border)':p.bg};display:flex;align-items:center;gap:5px;transition:opacity .1s;"
+          onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:11.5px;font-weight:500;color:${t.done?'var(--earth-muted)':p.c};${t.done?'text-decoration:line-through;':''}overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.35;">${t.text}</div>
+            ${!t.done?`<div style="font-size:9px;color:${p.c};opacity:.6;margin-top:1px;">${TAG_LABELS[t.tag||'other']}</div>`:''}
+          </div>
+          <button onclick="event.stopPropagation();delTask('${dk}','${slot.key}','${t.id}')"
+            style="background:none;border:none;cursor:pointer;color:var(--earth-muted);font-size:13px;line-height:1;padding:0;flex-shrink:0;opacity:0;transition:opacity .15s;"
+            onmouseover="this.style.opacity=1;this.style.color='var(--earth-red)'"
+            onmouseout="this.style.opacity=0;this.style.color='var(--earth-muted)'">×</button>
+        </div>`;
+      }).join('');
+      html+=`<td style="padding:12px 6px;vertical-align:top;border-top:1px solid var(--earth-border);background:${isToday?'rgba(193,125,60,0.03)':'transparent'};">
+        ${tHtml}
+        <button onclick="openAddTask('${dk}','${slot.key}')"
+          style="width:100%;padding:4px 6px;background:transparent;border:1.5px dashed var(--earth-border);border-radius:6px;cursor:pointer;color:var(--earth-muted);font-size:12px;font-family:'Sarabun',sans-serif;transition:all .15s;"
+          onmouseover="this.style.borderColor='var(--earth-accent)';this.style.color='var(--earth-accent)'"
+          onmouseout="this.style.borderColor='var(--earth-border)';this.style.color='var(--earth-muted)'">+ เพิ่ม</button>
+      </td>`;
+    });
+    html+=`</tr>`;
+  });
+  html+=`</tbody></table></div>`;
+  document.getElementById('sched-grid').innerHTML=html;
+}
 function schedShift(dir){schedOffset+=dir;renderSched();}
 function schedGoToday(){schedOffset=0;renderSched();}
 
-function openTaskModal(dk,label){
-  taskDate=dk; taskTag='post';
+function openAddTask(dk,slot){
+  taskDate=dk; taskSlot=slot; taskTag='post'; editTaskId=null;
   document.getElementById('task-input').value='';
-  document.getElementById('task-modal-title').textContent='เพิ่มงาน — '+label;
+  const d=new Date(dk+'T00:00:00');
+  const slotLabel=SLOTS.find(s=>s.key===slot)?.label||slot;
+  document.getElementById('task-modal-title').textContent=`เพิ่มงาน — ${DAYS_TH[d.getDay()]} ${d.getDate()} (${slotLabel})`;
+  document.getElementById('task-done-row').style.display='none';
+  refreshTagBtns();
+  document.getElementById('task-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('task-input').focus(),120);
+}
+
+function openEditTask(dk,slot,id){
+  taskDate=dk; taskSlot=slot; editTaskId=id;
+  const t=((schedDB[dk]||{})[slot]||[]).find(x=>x.id===id); if(!t)return;
+  taskTag=t.tag||'post';
+  document.getElementById('task-input').value=t.text;
+  document.getElementById('task-done-check').checked=t.done||false;
+  document.getElementById('task-done-row').style.display='flex';
+  const d=new Date(dk+'T00:00:00');
+  const slotLabel=SLOTS.find(s=>s.key===slot)?.label||slot;
+  document.getElementById('task-modal-title').textContent=`แก้ไขงาน — ${DAYS_TH[d.getDay()]} ${d.getDate()} (${slotLabel})`;
   refreshTagBtns();
   document.getElementById('task-modal').classList.add('open');
   setTimeout(()=>document.getElementById('task-input').focus(),120);
 }
 
 function selectTaskTag(t){taskTag=t;refreshTagBtns();}
-function refreshTagBtns(){['post','price','contact','other'].forEach(t=>{document.getElementById('tp-'+t).className='tag-pick-btn'+(t===taskTag?' sel':'');});}
+function refreshTagBtns(){
+  ['post','price','contact','other'].forEach(t=>{
+    const el=document.getElementById('tp-'+t);
+    if(el) el.className='tag-pick-btn'+(t===taskTag?' sel':'');
+  });
+}
 
 function confirmTask(){
   const text=document.getElementById('task-input').value.trim(); if(!text)return;
-  if(!schedDB[taskDate])schedDB[taskDate]=[];
-  schedDB[taskDate].push({id:Date.now().toString(),text,tag:taskTag,done:false});
-  saveSched(); document.getElementById('task-modal').classList.remove('open'); renderSched();
+  if(!schedDB[taskDate])schedDB[taskDate]={};
+  if(!schedDB[taskDate][taskSlot])schedDB[taskDate][taskSlot]=[];
+  if(editTaskId){
+    const t=schedDB[taskDate][taskSlot].find(x=>x.id===editTaskId);
+    if(t){t.text=text;t.tag=taskTag;t.done=document.getElementById('task-done-check').checked;}
+  } else {
+    schedDB[taskDate][taskSlot].push({id:Date.now().toString(),text,tag:taskTag,done:false});
+  }
+  saveSched();
+  document.getElementById('task-modal').classList.remove('open');
+  renderSched();
 }
 
-function toggleTask(dk,id){const t=(schedDB[dk]||[]).find(x=>x.id===id);if(t){t.done=!t.done;saveSched();renderSched();}}
-function delTask(dk,id){if(!schedDB[dk])return;schedDB[dk]=schedDB[dk].filter(x=>x.id!==id);saveSched();renderSched();}
+function delTask(dk,slot,id){
+  if(!schedDB[dk]||!schedDB[dk][slot])return;
+  schedDB[dk][slot]=schedDB[dk][slot].filter(x=>x.id!==id);
+  saveSched(); renderSched();
+}
 
 loadSched();
 </script>

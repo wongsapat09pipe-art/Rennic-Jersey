@@ -395,18 +395,18 @@
   </div>
 
     <!-- SCHEDULE SECTION -->
-    <div class="section" id="section-schedule">
+    <div class="section" id="section-schedule" style="padding:20px 24px;box-sizing:border-box;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
         <div>
           <div style="font-family:'Kanit',sans-serif;font-size:20px;font-weight:700;color:var(--earth-dark);letter-spacing:1px;">WEEKLY SCHEDULE</div>
           <div style="font-size:11px;color:var(--earth-muted);margin-top:2px;">คลิกช่องเพื่อเพิ่มงาน · ใช้ซ้ำทุกสัปดาห์</div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button class="btn btn-outline btn-sm" onclick="addHour(-1)">− ลดช่วงเวลา</button>
-          <button class="btn btn-outline btn-sm" onclick="addHour(1)">+ เพิ่มช่วงเวลา</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="openAddHourModal()">+ เพิ่มช่วงเวลา</button>
+          <button class="btn btn-outline btn-sm" onclick="removeHourModal()">− ลบช่วงเวลา</button>
         </div>
       </div>
-      <div id="sched-grid" style="overflow-x:auto;"></div>
+      <div id="sched-grid"></div>
     </div>
   </div>
 </main>
@@ -1200,110 +1200,154 @@ const PALETTE=[
   {bg:'#EEEEF8',border:'#7878C8',text:'#3A3A8A'},
 ];
 
-let schedDB={}, startHour=8, endHour=22;
+// hours = sorted array of hour numbers e.g. [8,9,10,...]
+let schedDB={}, hours=[8,9,10,11,12,13,14,15,16,17,18,19,20,21];
 
 function loadSched(){
   try{ schedDB=JSON.parse(localStorage.getItem('rj_sched3')||'{}'); }catch(e){ schedDB={}; }
-  try{ const tc=JSON.parse(localStorage.getItem('rj_sched3_tc')||'null'); if(tc){startHour=tc.s;endHour=tc.e;} }catch(e){}
+  try{ const h=JSON.parse(localStorage.getItem('rj_hours')||'null'); if(h&&h.length) hours=h; }catch(e){}
 }
 function saveSched(){ try{ localStorage.setItem('rj_sched3',JSON.stringify(schedDB)); }catch(e){} }
-function saveTC(){ try{ localStorage.setItem('rj_sched3_tc',JSON.stringify({s:startHour,e:endHour})); }catch(e){} }
-
-function addHour(dir){
-  if(dir===1){ if(endHour<24) endHour++; }
-  else{ if(endHour-1>startHour) endHour--; }
-  saveTC(); renderSched();
-}
+function saveHours(){ try{ localStorage.setItem('rj_hours',JSON.stringify(hours)); }catch(e){} }
 
 function getColor(t){
-  const idx=t.colorIdx!=null?t.colorIdx:11;
-  return PALETTE[idx]||PALETTE[11];
+  const idx=t.colorIdx!=null?t.colorIdx:3;
+  return PALETTE[idx%PALETTE.length];
+}
+
+// Show hour picker modal to add a new hour
+function openAddHourModal(){
+  // build list of hours not yet added (0-23)
+  const all=Array.from({length:24},(_,i)=>i);
+  const available=all.filter(h=>!hours.includes(h));
+  if(!available.length){alert('เพิ่มครบทุกชั่วโมงแล้ว');return;}
+  let opts=available.map(h=>`
+    <button onclick="addSpecificHour(${h})"
+      style="padding:6px 12px;border-radius:8px;border:1px solid #D4B896;background:#FAF7F2;
+      cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;color:#5A3E28;transition:all .12s;"
+      onmouseover="this.style.background='rgba(193,125,60,0.1)';this.style.borderColor='#C17D3C'"
+      onmouseout="this.style.background='#FAF7F2';this.style.borderColor='#D4B896'">${h}:00</button>`).join('');
+  document.getElementById('hour-picker-list').innerHTML=opts;
+  document.getElementById('hour-picker-modal').classList.add('open');
+}
+
+function addSpecificHour(h){
+  if(!hours.includes(h)){ hours.push(h); hours.sort((a,b)=>a-b); saveHours(); }
+  document.getElementById('hour-picker-modal').classList.remove('open');
+  renderSched();
+}
+
+function removeHourModal(){
+  if(!hours.length){alert('ไม่มีช่วงเวลาแล้ว');return;}
+  let opts=hours.map(h=>`
+    <button onclick="removeSpecificHour(${h})"
+      style="padding:6px 12px;border-radius:8px;border:1px solid #D4B896;background:#FAF7F2;
+      cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;color:#5A3E28;transition:all .12s;"
+      onmouseover="this.style.background='rgba(184,74,74,0.1)';this.style.borderColor='#C87878'"
+      onmouseout="this.style.background='#FAF7F2';this.style.borderColor='#D4B896'">${h}:00</button>`).join('');
+  document.getElementById('hour-remove-list').innerHTML=opts;
+  document.getElementById('hour-remove-modal').classList.add('open');
+}
+
+function removeSpecificHour(h){
+  hours=hours.filter(x=>x!==h); saveHours();
+  document.getElementById('hour-remove-modal').classList.remove('open');
+  renderSched();
 }
 
 function renderSched(){
   const todayDow=(new Date().getDay()+6)%7;
-  const hours=[];
-  for(let h=startHour;h<endHour;h++) hours.push(h);
-  const COL_W=110,TIME_W=54,ROW_H=52;
+  const grid=document.getElementById('sched-grid');
+  if(!grid)return;
 
-  let html=`<div style="min-width:${TIME_W+COL_W*7}px;border:1px solid #D4B896;border-radius:12px;overflow:hidden;background:#FAF7F2;">`;
+  // subtract schedule section's own padding (20px each side)
+  const containerW=Math.max(500, (grid.parentElement.offsetWidth||900) - 40);
+  const TIME_W=52;
+  const COL_W=Math.max(90,Math.floor((containerW-TIME_W-2)/7));
+  const ROW_H=48;
+
+  let html=`<div style="width:100%;max-width:100%;border:1px solid #D4B896;border-radius:12px;overflow:hidden;background:#FAF7F2;box-shadow:0 1px 6px rgba(90,60,20,0.07);">`;
 
   // Header
-  html+=`<div style="display:grid;grid-template-columns:${TIME_W}px repeat(7,${COL_W}px);border-bottom:1.5px solid #D4B896;">
-    <div style="padding:12px 8px;background:#FAF7F2;"></div>`;
+  html+=`<div style="display:grid;grid-template-columns:${TIME_W}px repeat(7,1fr);border-bottom:1.5px solid #D4B896;">
+    <div style="background:#F5EFE6;"></div>`;
   DAYS_TH.forEach((d,i)=>{
     const isToday=i===todayDow;
-    html+=`<div style="padding:12px 6px;text-align:center;background:${isToday?'rgba(193,125,60,0.12)':'#FAF7F2'};border-left:1px solid #D4B896;">
-      <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:${isToday?'#9B5E2A':'#9B7B5A'};">${d}</div>
-      ${isToday?`<div style="width:5px;height:5px;border-radius:50%;background:#C17D3C;margin:4px auto 0;"></div>`:''}
+    html+=`<div style="padding:10px 4px;text-align:center;background:${isToday?'rgba(193,125,60,0.13)':'#F5EFE6'};border-left:1px solid #D4B896;">
+      <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;color:${isToday?'#9B5E2A':'#9B7B5A'};">${d}</div>
+      ${isToday?`<div style="width:4px;height:4px;border-radius:50%;background:#C17D3C;margin:3px auto 0;"></div>`:''}
     </div>`;
   });
   html+=`</div>`;
 
-  // Rows
-  hours.forEach((h,hi)=>{
-    const isLast=hi===hours.length-1;
-    html+=`<div style="display:grid;grid-template-columns:${TIME_W}px repeat(7,${COL_W}px);border-bottom:${isLast?'none':'1px solid #E8D8C4'};">`;
-    html+=`<div style="padding:8px 8px 0;min-height:${ROW_H}px;background:#FAF7F2;border-right:1.5px solid #D4B896;">
-      <span style="font-size:11px;font-weight:600;color:#9B7B5A;font-family:'Kanit',sans-serif;">${h}:00</span>
-    </div>`;
-    DAYS_TH.forEach((_,dow)=>{
-      const isToday=dow===todayDow;
-      const key=`${dow}_${h}`;
-      const tasks=schedDB[key]||[];
-      const tHtml=tasks.map(t=>{
-        const c=getColor(t);
-        return `<div onclick="openEditTask('${key}','${t.id}')"
-          style="padding:3px 7px 3px 5px;border-radius:5px;margin-bottom:2px;cursor:pointer;
-          background:${c.bg};border-left:3px solid ${c.border};
-          display:flex;align-items:center;gap:4px;transition:opacity .12s;"
-          onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
-          <div style="font-size:11px;font-weight:500;color:${c.text};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.text}</div>
-          <button onclick="event.stopPropagation();delTask('${key}','${t.id}')"
-            style="background:none;border:none;cursor:pointer;color:${c.text};font-size:12px;line-height:1;padding:0;opacity:0;transition:opacity .12s;flex-shrink:0;"
-            onmouseover="this.style.opacity=1;" onmouseout="this.style.opacity=0;">×</button>
-        </div>`;
-      }).join('');
-      html+=`<div onclick="handleCellClick(event,'${key}')"
-        style="padding:6px;min-height:${ROW_H}px;border-left:1px solid #E8D8C4;cursor:pointer;transition:background .12s;
-        background:${isToday?'rgba(193,125,60,0.04)':'transparent'};"
-        onmouseover="if(!event.target.closest('button')&&!event.target.closest('[onclick*=openEditTask]'))this.style.background='rgba(193,125,60,0.08)'"
-        onmouseout="this.style.background='${isToday?'rgba(193,125,60,0.04)':'transparent'}'">
-        ${tHtml}
+  if(!hours.length){
+    html+=`<div style="padding:32px;text-align:center;color:#9B7B5A;font-size:13px;">กด "+ เพิ่มช่วงเวลา" เพื่อเริ่มต้น</div>`;
+  } else {
+    hours.forEach((h,hi)=>{
+      const isLast=hi===hours.length-1;
+      html+=`<div style="display:grid;grid-template-columns:${TIME_W}px repeat(7,1fr);border-bottom:${isLast?'none':'1px solid #EDE0D0'};">`;
+      // Time label
+      html+=`<div style="padding:6px 6px 0;min-height:${ROW_H}px;background:#F5EFE6;border-right:1.5px solid #D4B896;display:flex;align-items:flex-start;">
+        <span style="font-size:10.5px;font-weight:700;color:#9B7B5A;font-family:'Kanit',sans-serif;letter-spacing:.3px;">${h}:00</span>
       </div>`;
+      DAYS_TH.forEach((_,dow)=>{
+        const isToday=dow===todayDow;
+        const key=`${dow}_${h}`;
+        const tasks=schedDB[key]||[];
+        const tHtml=tasks.map(t=>{
+          const c=getColor(t);
+          return `<div onclick="openEditTask('${key}','${t.id}')"
+            style="padding:2px 6px 2px 5px;border-radius:4px;margin-bottom:2px;cursor:pointer;
+            background:${c.bg};border-left:3px solid ${c.border};
+            display:flex;align-items:center;gap:3px;transition:opacity .12s;"
+            onmouseover="this.style.opacity='.72'" onmouseout="this.style.opacity='1'">
+            <div style="font-size:10.5px;font-weight:500;color:${c.text};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.text}</div>
+            <button onclick="event.stopPropagation();delTask('${key}','${t.id}')"
+              style="background:none;border:none;cursor:pointer;color:${c.text};font-size:11px;line-height:1;padding:0;opacity:0;transition:opacity .12s;flex-shrink:0;"
+              onmouseover="this.style.opacity=1;" onmouseout="this.style.opacity=0;">×</button>
+          </div>`;
+        }).join('');
+        html+=`<div onclick="handleCellClick(event,'${key}')"
+          style="padding:5px;min-height:${ROW_H}px;border-left:1px solid #EDE0D0;cursor:pointer;transition:background .12s;
+          background:${isToday?'rgba(193,125,60,0.04)':'transparent'};"
+          onmouseover="if(!event.target.closest('button')&&!event.target.closest('[onclick*=openEditTask]'))this.style.background='rgba(193,125,60,0.09)'"
+          onmouseout="this.style.background='${isToday?'rgba(193,125,60,0.04)':'transparent'}'">
+          ${tHtml}
+        </div>`;
+      });
+      html+=`</div>`;
     });
-    html+=`</div>`;
-  });
+  }
   html+=`</div>`;
-  document.getElementById('sched-grid').innerHTML=html;
+  grid.innerHTML=html;
 }
 
 function renderPalette(selectedIdx){
   return PALETTE.map((p,i)=>`
     <div onclick="window._taskColorIdx=${i};renderPalette2(${i})"
-      style="width:22px;height:22px;border-radius:5px;background:${p.bg};border:2px solid ${i===selectedIdx?p.border:'transparent'};
-      cursor:pointer;transition:all .12s;box-shadow:${i===selectedIdx?'0 0 0 1px '+p.border:'none'};"
-      id="pal_${i}"></div>`).join('');
+      style="width:22px;height:22px;border-radius:5px;background:${p.bg};
+      border:2px solid ${i===selectedIdx?p.border:'#D4B896'};
+      cursor:pointer;box-shadow:${i===selectedIdx?'0 0 0 1px '+p.border:'none'};transition:all .1s;"></div>`).join('');
 }
 
-function renderPalette2(selectedIdx){
-  const container=document.getElementById('palette-container');
-  if(container) container.innerHTML=renderPalette(selectedIdx);
+function renderPalette2(idx){
+  const c=document.getElementById('palette-container');
+  if(c) c.innerHTML=renderPalette(idx);
 }
 
 function handleCellClick(e,key){
-  if(e.target.closest('button')||e.target.closest('[onclick*=openEditTask]')) return;
+  if(e.target.closest('button')||e.target.closest('[onclick*=openEditTask]'))return;
   openAddTask(key);
 }
 
 function openAddTask(key){
-  window._taskKey=key; window._taskId=null; window._taskColorIdx=11;
+  window._taskKey=key; window._taskId=null; window._taskColorIdx=3;
   const [dow,h]=key.split('_');
   document.getElementById('task-input').value='';
   document.getElementById('task-time-input').value=`${h}:00`;
   document.getElementById('task-done-row').style.display='none';
   document.getElementById('task-modal-title').textContent=`เพิ่มงาน — ${DAYS_TH_FULL[dow]} ${h}:00`;
-  document.getElementById('palette-container').innerHTML=renderPalette(11);
+  document.getElementById('palette-container').innerHTML=renderPalette(3);
   selectTaskTag('other');
   document.getElementById('task-modal').classList.add('open');
   setTimeout(()=>document.getElementById('task-input').focus(),100);
@@ -1311,7 +1355,8 @@ function openAddTask(key){
 
 function openEditTask(key,id){
   const t=(schedDB[key]||[]).find(x=>x.id===id); if(!t)return;
-  window._taskKey=key; window._taskId=id; window._taskColorIdx=t.colorIdx!=null?t.colorIdx:11;
+  window._taskKey=key; window._taskId=id;
+  window._taskColorIdx=t.colorIdx!=null?t.colorIdx:3;
   const [dow,h]=key.split('_');
   document.getElementById('task-input').value=t.text;
   document.getElementById('task-time-input').value=t.time||`${h}:00`;
@@ -1336,8 +1381,8 @@ function confirmTask(){
   const text=document.getElementById('task-input').value.trim(); if(!text)return;
   const key=window._taskKey,id=window._taskId,tag=window._taskTag||'other';
   const time=document.getElementById('task-time-input').value.trim();
-  const colorIdx=window._taskColorIdx!=null?window._taskColorIdx:11;
-  if(!schedDB[key]) schedDB[key]=[];
+  const colorIdx=window._taskColorIdx!=null?window._taskColorIdx:3;
+  if(!schedDB[key])schedDB[key]=[];
   if(id){
     const t=schedDB[key].find(x=>x.id===id);
     if(t){t.text=text;t.tag=tag;t.time=time;t.colorIdx=colorIdx;t.done=document.getElementById('task-done-check').checked;}
@@ -1355,6 +1400,35 @@ function delTask(key,id){
   saveSched(); renderSched();
 }
 
+window.addEventListener('resize',()=>renderSched());
 loadSched();
 </script>
+
+<!-- HOUR PICKER MODAL (Add) -->
+<div class="modal-overlay" id="hour-picker-modal">
+  <div class="modal" style="width:340px;">
+    <div class="modal-head">
+      <h3>เพิ่มช่วงเวลา</h3>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('hour-picker-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="hour-picker-list" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HOUR REMOVE MODAL -->
+<div class="modal-overlay" id="hour-remove-modal">
+  <div class="modal" style="width:340px;">
+    <div class="modal-head">
+      <h3>ลบช่วงเวลา</h3>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('hour-remove-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--earth-muted);margin-bottom:10px;">เลือกช่วงเวลาที่ต้องการลบออก</div>
+      <div id="hour-remove-list" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+  </div>
+</div>
+
 </html>

@@ -395,15 +395,15 @@
   </div>
 
     <!-- SCHEDULE SECTION -->
-    <div class="section" id="section-schedule" style="padding:20px 24px;box-sizing:border-box;">
+    <div class="section" id="section-schedule" style="padding:20px 24px;box-sizing:border-box;background:#1A1410;min-height:calc(100vh - 60px);border-radius:0;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
         <div>
-          <div style="font-family:'Kanit',sans-serif;font-size:20px;font-weight:700;color:var(--earth-dark);letter-spacing:1px;">WEEKLY SCHEDULE</div>
-          <div style="font-size:11px;color:var(--earth-muted);margin-top:2px;">คลิกช่องเพื่อเพิ่มงาน · ใช้ซ้ำทุกสัปดาห์</div>
+          <div style="font-family:'Kanit',sans-serif;font-size:20px;font-weight:700;color:#E8C98A;letter-spacing:1px;">WEEKLY SCHEDULE</div>
+          <div style="font-size:11px;color:#7A6A5A;margin-top:2px;">คลิกช่องเพื่อเพิ่มงาน · คลิกขวาเพื่อ Merge ช่อง · ใช้ซ้ำทุกสัปดาห์</div>
         </div>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-outline btn-sm" onclick="openAddHourModal()">+ เพิ่มช่วงเวลา</button>
-          <button class="btn btn-outline btn-sm" onclick="removeHourModal()">− ลบช่วงเวลา</button>
+          <button class="btn btn-outline btn-sm" onclick="openAddHourModal()" style="border-color:#5A4A3A;color:#E8C98A;background:transparent;">+ เพิ่มช่วงเวลา</button>
+          <button class="btn btn-outline btn-sm" onclick="removeHourModal()" style="border-color:#5A3A3A;color:#F0A8A8;background:transparent;">− ลบช่วงเวลา</button>
         </div>
       </div>
       <div id="sched-grid"></div>
@@ -1184,169 +1184,244 @@ window.addEventListener('load',()=>{
 const DAYS_TH=['MON','TUE','WED','THU','FRI','SAT','SUN'];
 const DAYS_TH_FULL=['จันทร์','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์','อาทิตย์'];
 const TAG_LABELS={post:'📢 โพสต์',price:'💰 ราคา',contact:'📞 ลูกค้า',other:'📝 อื่นๆ'};
-
+const DAY_COLORS=[
+  {bg:'#3D3500',header:'#C8A800',text:'#FFE566'},
+  {bg:'#3D1A2A',header:'#C84080',text:'#FFB0D0'},
+  {bg:'#1A3520',header:'#40C870',text:'#90FFB8'},
+  {bg:'#3D2A00',header:'#C87000',text:'#FFB840'},
+  {bg:'#1A2040',header:'#4070C8',text:'#90B8FF'},
+  {bg:'#2A1A3D',header:'#8040C8',text:'#D090FF'},
+  {bg:'#3D1A1A',header:'#C83030',text:'#FF9090'},
+];
 const PALETTE=[
-  {bg:'#F0EBF8',border:'#9B7EC8',text:'#6B4FA8'},
-  {bg:'#EAF2E6',border:'#6B8C5A',text:'#3A6A2A'},
-  {bg:'#E3EEF2',border:'#4A8A9A',text:'#1E5A6A'},
-  {bg:'#F5F0E8',border:'#B8956A',text:'#7A5A30'},
-  {bg:'#FAE8E8',border:'#C87878',text:'#8B3A3A'},
-  {bg:'#E8F0FA',border:'#5A7AC8',text:'#2A4A8A'},
-  {bg:'#F0FAE8',border:'#6AB85A',text:'#2A6A1A'},
-  {bg:'#FAF0E8',border:'#C89A5A',text:'#8A5A1A'},
-  {bg:'#F5E8FA',border:'#A87AC8',text:'#6A2A8A'},
-  {bg:'#E8FAF5',border:'#5AB8A0',text:'#1A6A58'},
-  {bg:'#FAF5E8',border:'#C8B45A',text:'#8A7020'},
-  {bg:'#EEEEF8',border:'#7878C8',text:'#3A3A8A'},
+  {bg:'#4A3860',border:'#9B7EC8',text:'#D4B8F0'},
+  {bg:'#2A4A30',border:'#6B8C5A',text:'#A8D4A0'},
+  {bg:'#1E3A48',border:'#4A8A9A',text:'#90C8D8'},
+  {bg:'#4A3820',border:'#C89A5A',text:'#E8C890'},
+  {bg:'#4A2020',border:'#C87878',text:'#F0A8A8'},
+  {bg:'#1E2E4A',border:'#5A7AC8',text:'#90A8E8'},
+  {bg:'#204A28',border:'#6AB85A',text:'#90D890'},
+  {bg:'#4A3010',border:'#C89A4A',text:'#E8C070'},
+  {bg:'#3A1E4A',border:'#A87AC8',text:'#D090F0'},
+  {bg:'#104A38',border:'#5AB8A0',text:'#80D8C0'},
+  {bg:'#4A4010',border:'#C8B45A',text:'#E8D070'},
+  {bg:'#282848',border:'#7878C8',text:'#A0A0E8'},
 ];
 
-// hours = sorted array of hour numbers e.g. [8,9,10,...]
-let schedDB={}, hours=[8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+// schedDB[key] = [{id,text,tag,time,colorIdx,done}]  key="dow_hour"
+// merges = [{id, r1,c1,r2,c2, colorIdx, label}]  r=hourIndex c=dow(0-6)
+let schedDB={}, merges=[], hours=[8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+let selecting=false, selStart=null, selEnd=null;
+let selectedMergeId=null;
 
 function loadSched(){
   try{ schedDB=JSON.parse(localStorage.getItem('rj_sched3')||'{}'); }catch(e){ schedDB={}; }
   try{ const h=JSON.parse(localStorage.getItem('rj_hours')||'null'); if(h&&h.length) hours=h; }catch(e){}
+  try{ merges=JSON.parse(localStorage.getItem('rj_merges2')||'[]'); }catch(e){ merges=[]; }
 }
-function saveSched(){ try{ localStorage.setItem('rj_sched3',JSON.stringify(schedDB)); }catch(e){} }
-function saveHours(){ try{ localStorage.setItem('rj_hours',JSON.stringify(hours)); }catch(e){} }
+function saveSched(){ localStorage.setItem('rj_sched3',JSON.stringify(schedDB)); }
+function saveHours(){ localStorage.setItem('rj_hours',JSON.stringify(hours)); }
+function saveMerges(){ localStorage.setItem('rj_merges2',JSON.stringify(merges)); }
 
-function getColor(t){
-  const idx=t.colorIdx!=null?t.colorIdx:3;
-  return PALETTE[idx%PALETTE.length];
+function getColor(t){ return PALETTE[(t.colorIdx??3)%PALETTE.length]; }
+
+function getMergeAt(ri,ci){
+  return merges.find(m=>ri>=m.r1&&ri<=m.r2&&ci>=m.c1&&ci<=m.c2)||null;
 }
 
-// Show hour picker modal to add a new hour
+function isCovered(ri,ci){
+  const m=getMergeAt(ri,ci);
+  if(!m) return false;
+  return !(ri===m.r1&&ci===m.c1); // covered if not the top-left origin
+}
+
+// Add/remove hours
 function openAddHourModal(){
-  // build list of hours not yet added (0-23)
-  const all=Array.from({length:24},(_,i)=>i);
-  const available=all.filter(h=>!hours.includes(h));
-  if(!available.length){alert('เพิ่มครบทุกชั่วโมงแล้ว');return;}
-  let opts=available.map(h=>`
-    <button onclick="addSpecificHour(${h})"
-      style="padding:6px 12px;border-radius:8px;border:1px solid #D4B896;background:#FAF7F2;
-      cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;color:#5A3E28;transition:all .12s;"
-      onmouseover="this.style.background='rgba(193,125,60,0.1)';this.style.borderColor='#C17D3C'"
-      onmouseout="this.style.background='#FAF7F2';this.style.borderColor='#D4B896'">${h}:00</button>`).join('');
-  document.getElementById('hour-picker-list').innerHTML=opts;
+  const avail=Array.from({length:24},(_,i)=>i).filter(h=>!hours.includes(h));
+  if(!avail.length){alert('เพิ่มครบแล้ว');return;}
+  document.getElementById('hour-picker-list').innerHTML=avail.map(h=>
+    `<button onclick="addSpecificHour(${h})" style="padding:6px 14px;border-radius:8px;border:1px solid #5A4A3A;background:#3A2E22;cursor:pointer;font-size:13px;color:#E8C98A;font-family:'Sarabun',sans-serif;">${h}:00</button>`
+  ).join('');
   document.getElementById('hour-picker-modal').classList.add('open');
 }
-
 function addSpecificHour(h){
-  if(!hours.includes(h)){ hours.push(h); hours.sort((a,b)=>a-b); saveHours(); }
+  if(!hours.includes(h)){hours.push(h);hours.sort((a,b)=>a-b);saveHours();}
   document.getElementById('hour-picker-modal').classList.remove('open');
   renderSched();
 }
-
 function removeHourModal(){
-  if(!hours.length){alert('ไม่มีช่วงเวลาแล้ว');return;}
-  let opts=hours.map(h=>`
-    <button onclick="removeSpecificHour(${h})"
-      style="padding:6px 12px;border-radius:8px;border:1px solid #D4B896;background:#FAF7F2;
-      cursor:pointer;font-family:'Sarabun',sans-serif;font-size:13px;color:#5A3E28;transition:all .12s;"
-      onmouseover="this.style.background='rgba(184,74,74,0.1)';this.style.borderColor='#C87878'"
-      onmouseout="this.style.background='#FAF7F2';this.style.borderColor='#D4B896'">${h}:00</button>`).join('');
-  document.getElementById('hour-remove-list').innerHTML=opts;
+  if(!hours.length){alert('ไม่มีช่วงเวลา');return;}
+  document.getElementById('hour-remove-list').innerHTML=hours.map(h=>
+    `<button onclick="removeSpecificHour(${h})" style="padding:6px 14px;border-radius:8px;border:1px solid #5A3A3A;background:#3A2222;cursor:pointer;font-size:13px;color:#F0A8A8;font-family:'Sarabun',sans-serif;">${h}:00</button>`
+  ).join('');
   document.getElementById('hour-remove-modal').classList.add('open');
 }
-
 function removeSpecificHour(h){
-  hours=hours.filter(x=>x!==h); saveHours();
+  const ri=hours.indexOf(h);
+  hours=hours.filter(x=>x!==h);
+  merges=merges.filter(m=>m.r1!==ri&&m.r2!==ri).map(m=>({
+    ...m,
+    r1:m.r1>ri?m.r1-1:m.r1,
+    r2:m.r2>ri?m.r2-1:m.r2
+  }));
+  saveHours(); saveMerges();
   document.getElementById('hour-remove-modal').classList.remove('open');
   renderSched();
 }
 
+// RENDER
 function renderSched(){
   const todayDow=(new Date().getDay()+6)%7;
   const grid=document.getElementById('sched-grid');
-  if(!grid)return;
+  if(!grid) return;
+  const containerW=Math.max(500,(grid.parentElement.offsetWidth||900)-40);
+  const TIME_W=54, ROW_H=52, totalRows=hours.length;
 
-  // subtract schedule section's own padding (20px each side)
-  const containerW=Math.max(500, (grid.parentElement.offsetWidth||900) - 40);
-  const TIME_W=52;
-  const COL_W=Math.max(90,Math.floor((containerW-TIME_W-2)/7));
-  const ROW_H=48;
-
-  let html=`<div style="width:100%;max-width:100%;border:1px solid #D4B896;border-radius:12px;overflow:hidden;background:#FAF7F2;box-shadow:0 1px 6px rgba(90,60,20,0.07);">`;
+  let html=`<div style="width:100%;border:1px solid #4A3828;border-radius:12px;overflow:hidden;background:#2A2018;box-shadow:0 2px 12px rgba(0,0,0,.4);">`;
 
   // Header
-  html+=`<div style="display:grid;grid-template-columns:${TIME_W}px repeat(7,1fr);border-bottom:1.5px solid #D4B896;">
-    <div style="background:#F5EFE6;"></div>`;
+  html+=`<div style="display:grid;grid-template-columns:${TIME_W}px repeat(7,1fr);border-bottom:2px solid #4A3828;">
+    <div style="background:#1A1208;padding:12px 0;"></div>`;
   DAYS_TH.forEach((d,i)=>{
-    const isToday=i===todayDow;
-    html+=`<div style="padding:10px 4px;text-align:center;background:${isToday?'rgba(193,125,60,0.13)':'#F5EFE6'};border-left:1px solid #D4B896;">
-      <div style="font-size:10px;font-weight:800;letter-spacing:1.2px;color:${isToday?'#9B5E2A':'#9B7B5A'};">${d}</div>
-      ${isToday?`<div style="width:4px;height:4px;border-radius:50%;background:#C17D3C;margin:3px auto 0;"></div>`:''}
+    const dc=DAY_COLORS[i], isToday=i===todayDow;
+    html+=`<div style="padding:12px 4px;text-align:center;background:${dc.bg};border-left:1px solid #4A3828;position:relative;">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:${dc.text};text-shadow:0 1px 4px rgba(0,0,0,.4);">${d}</div>
+      ${isToday?`<div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:24px;height:3px;background:${dc.text};border-radius:2px;"></div>`:''}
     </div>`;
   });
   html+=`</div>`;
 
-  if(!hours.length){
-    html+=`<div style="padding:32px;text-align:center;color:#9B7B5A;font-size:13px;">กด "+ เพิ่มช่วงเวลา" เพื่อเริ่มต้น</div>`;
-  } else {
-    hours.forEach((h,hi)=>{
-      const isLast=hi===hours.length-1;
-      html+=`<div style="display:grid;grid-template-columns:${TIME_W}px repeat(7,1fr);border-bottom:${isLast?'none':'1px solid #EDE0D0'};">`;
-      // Time label
-      html+=`<div style="padding:6px 6px 0;min-height:${ROW_H}px;background:#F5EFE6;border-right:1.5px solid #D4B896;display:flex;align-items:flex-start;">
-        <span style="font-size:10.5px;font-weight:700;color:#9B7B5A;font-family:'Kanit',sans-serif;letter-spacing:.3px;">${h}:00</span>
-      </div>`;
-      DAYS_TH.forEach((_,dow)=>{
-        const isToday=dow===todayDow;
-        const key=`${dow}_${h}`;
-        const tasks=schedDB[key]||[];
-        const tHtml=tasks.map(t=>{
-          const c=getColor(t);
-          return `<div onclick="openEditTask('${key}','${t.id}')"
-            style="padding:2px 6px 2px 5px;border-radius:4px;margin-bottom:2px;cursor:pointer;
-            background:${c.bg};border-left:3px solid ${c.border};
-            display:flex;align-items:center;gap:3px;transition:opacity .12s;"
-            onmouseover="this.style.opacity='.72'" onmouseout="this.style.opacity='1'">
-            <div style="font-size:10.5px;font-weight:500;color:${c.text};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.text}</div>
-            <button onclick="event.stopPropagation();delTask('${key}','${t.id}')"
-              style="background:none;border:none;cursor:pointer;color:${c.text};font-size:11px;line-height:1;padding:0;opacity:0;transition:opacity .12s;flex-shrink:0;"
-              onmouseover="this.style.opacity=1;" onmouseout="this.style.opacity=0;">×</button>
-          </div>`;
-        }).join('');
-        html+=`<div onclick="handleCellClick(event,'${key}')"
-          style="padding:5px;min-height:${ROW_H}px;border-left:1px solid #EDE0D0;cursor:pointer;transition:background .12s;
-          background:${isToday?'rgba(193,125,60,0.04)':'transparent'};"
-          onmouseover="if(!event.target.closest('button')&&!event.target.closest('[onclick*=openEditTask]'))this.style.background='rgba(193,125,60,0.09)'"
-          onmouseout="this.style.background='${isToday?'rgba(193,125,60,0.04)':'transparent'}'">
-          ${tHtml}
-        </div>`;
-      });
-      html+=`</div>`;
-    });
+  if(!totalRows){
+    html+=`<div style="padding:40px;text-align:center;color:#8A7060;font-size:13px;">กด "+ เพิ่มช่วงเวลา" เพื่อเริ่มต้น</div></div>`;
+    grid.innerHTML=html; return;
   }
-  html+=`</div>`;
+
+  // CSS Grid body
+  html+=`<div id="sched-body" style="display:grid;grid-template-columns:${TIME_W}px repeat(7,1fr);grid-template-rows:repeat(${totalRows},${ROW_H}px);user-select:none;">`;
+
+  // Time labels
+  hours.forEach((h,ri)=>{
+    html+=`<div style="grid-column:1;grid-row:${ri+1};background:#1A1208;border-right:2px solid #4A3828;border-bottom:${ri<totalRows-1?'1px solid #3A2E22':'none'};display:flex;align-items:center;justify-content:center;">
+      <span style="font-size:10.5px;font-weight:700;color:#6A5A48;font-family:'Kanit',sans-serif;">${h}:00</span>
+    </div>`;
+  });
+
+  // Day cells
+  DAYS_TH.forEach((_,ci)=>{
+    const dc=DAY_COLORS[ci], isToday=ci===todayDow;
+    hours.forEach((h,ri)=>{
+      if(isCovered(ri,ci)) return; // skip cells covered by a merge
+      const merge=getMergeAt(ri,ci);
+      const rowSpan=merge?merge.r2-merge.r1+1:1;
+      const colSpan=merge?merge.c2-merge.c1+1:1;
+      const key=`${ci}_${h}`;
+      const tasks=schedDB[key]||[];
+
+      const isSelected = selStart&&selEnd &&
+        ri>=Math.min(selStart.r,selEnd.r) && ri<=Math.max(selStart.r,selEnd.r) &&
+        ci>=Math.min(selStart.c,selEnd.c) && ci<=Math.max(selStart.c,selEnd.c);
+
+      let cellBg = merge ? PALETTE[(merge.colorIdx??0)%PALETTE.length].bg : dc.bg+'33';
+      if(isSelected) cellBg='rgba(255,255,255,0.18)';
+
+      const mp = merge ? PALETTE[(merge.colorIdx??0)%PALETTE.length] : null;
+      const cellBorder = merge ? `outline:2px solid ${mp.border};outline-offset:-2px;` : `border-bottom:${ri<totalRows-1?'1px solid #3A2E22':'none'};`;
+
+      const tHtml=tasks.map(t=>{
+        const c=getColor(t);
+        return `<div onclick="event.stopPropagation();openEditTask('${key}','${t.id}')"
+          style="width:100%;padding:5px 7px;border-radius:5px;margin-bottom:2px;cursor:pointer;background:${c.bg};box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:4px;"
+          onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+          <div style="font-size:11px;font-weight:600;color:${c.text};flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.text}</div>
+          <button onclick="event.stopPropagation();delTask('${key}','${t.id}')" style="background:none;border:none;cursor:pointer;color:${c.text};font-size:11px;line-height:1;padding:0;opacity:0;flex-shrink:0;"
+            onmouseover="this.style.opacity=1;" onmouseout="this.style.opacity=0;">×</button>
+        </div>`;
+      }).join('');
+
+      const mergeLabel = merge && !tasks.length
+        ? `<div style="font-size:12px;font-weight:600;color:${mp?mp.text:'#aaa'};text-align:center;">${merge.label||''}</div>` : '';
+
+      html+=`<div data-r="${ri}" data-c="${ci}"
+        style="grid-column:${ci+2}/span ${colSpan};grid-row:${ri+1}/span ${rowSpan};
+        background:${cellBg};border-left:1px solid #3A2E22;${cellBorder}
+        padding:5px;box-sizing:border-box;cursor:pointer;
+        display:flex;flex-direction:column;align-items:stretch;justify-content:center;${cellBorder}"
+        onmousedown="startSel(event,${ri},${ci})"
+        onmouseenter="moveSel(event,${ri},${ci})"
+        onmouseup="endSel(event,${ri},${ci})"
+        onclick="cellClick(event,'${key}',${ri},${ci})">
+        ${mergeLabel}${tHtml}
+      </div>`;
+    });
+  });
+
+  html+=`</div></div>
+  <div style="margin-top:8px;font-size:11px;color:#6A5A4A;text-align:right;">ลาก = เลือกช่อง · ดับเบิลคลิก = เพิ่มงาน · เลือกแล้วกด M = Merge | U = Unmerge | Del = ลบ</div>`;
   grid.innerHTML=html;
 }
 
-function renderPalette(selectedIdx){
-  return PALETTE.map((p,i)=>`
-    <div onclick="window._taskColorIdx=${i};renderPalette2(${i})"
-      style="width:22px;height:22px;border-radius:5px;background:${p.bg};
-      border:2px solid ${i===selectedIdx?p.border:'#D4B896'};
-      cursor:pointer;box-shadow:${i===selectedIdx?'0 0 0 1px '+p.border:'none'};transition:all .1s;"></div>`).join('');
+// Selection
+function startSel(e,r,c){ if(e.button!==0)return; selecting=true; selStart={r,c}; selEnd={r,c}; renderSched(); }
+function moveSel(e,r,c){ if(!selecting)return; selEnd={r,c}; renderSched(); }
+function endSel(e,r,c){ selecting=false; selEnd={r,c}; renderSched(); showSelToolbar(); }
+
+function cellClick(e,key,r,c){
+  if(e.detail>=2){ openAddTask(key); selStart=null; selEnd=null; return; }
 }
 
-function renderPalette2(idx){
-  const c=document.getElementById('palette-container');
-  if(c) c.innerHTML=renderPalette(idx);
+function showSelToolbar(){
+  const old=document.getElementById('sel-toolbar'); if(old) old.remove();
+  if(!selStart||!selEnd) return;
+  const r1=Math.min(selStart.r,selEnd.r),r2=Math.max(selStart.r,selEnd.r);
+  const c1=Math.min(selStart.c,selEnd.c),c2=Math.max(selStart.c,selEnd.c);
+  if(r1===r2&&c1===c2) return; // single cell - no toolbar
+
+  const bar=document.createElement('div');
+  bar.id='sel-toolbar';
+  bar.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2A2018;border:1px solid #5A4A3A;border-radius:10px;padding:8px 14px;display:flex;gap:10px;align-items:center;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.5);';
+  bar.innerHTML=`
+    <span style="font-size:11px;color:#8A7060;">เลือก ${r2-r1+1}×${c2-c1+1}</span>
+    <button onclick="doMerge()" style="padding:5px 14px;border-radius:7px;background:#4A3828;border:1px solid #6A5A48;color:#E8C98A;cursor:pointer;font-size:12px;font-family:'Sarabun',sans-serif;">Merge</button>
+    <button onclick="doUnmerge()" style="padding:5px 14px;border-radius:7px;background:#3A2222;border:1px solid #6A3838;color:#F0A8A8;cursor:pointer;font-size:12px;font-family:'Sarabun',sans-serif;">Unmerge</button>
+    <button onclick="clearSel()" style="background:none;border:none;color:#6A5A4A;cursor:pointer;font-size:16px;line-height:1;">✕</button>`;
+  document.body.appendChild(bar);
 }
 
-function handleCellClick(e,key){
-  if(e.target.closest('button')||e.target.closest('[onclick*=openEditTask]'))return;
-  openAddTask(key);
+function clearSel(){ selStart=null; selEnd=null; const t=document.getElementById('sel-toolbar'); if(t)t.remove(); renderSched(); }
+
+function doMerge(){
+  const r1=Math.min(selStart.r,selEnd.r),r2=Math.max(selStart.r,selEnd.r);
+  const c1=Math.min(selStart.c,selEnd.c),c2=Math.max(selStart.c,selEnd.c);
+  // remove any existing merges that overlap
+  merges=merges.filter(m=>!(m.r2>=r1&&m.r1<=r2&&m.c2>=c1&&m.c1<=c2));
+  const colorIdx=Math.floor(Math.random()*PALETTE.length);
+  merges.push({id:Date.now().toString(),r1,c1,r2,c2,colorIdx,label:''});
+  saveMerges(); clearSel();
 }
 
+function doUnmerge(){
+  const r1=Math.min(selStart.r,selEnd.r),r2=Math.max(selStart.r,selEnd.r);
+  const c1=Math.min(selStart.c,selEnd.c),c2=Math.max(selStart.c,selEnd.c);
+  merges=merges.filter(m=>!(m.r2>=r1&&m.r1<=r2&&m.c2>=c1&&m.c1<=c2));
+  saveMerges(); clearSel();
+}
+
+document.addEventListener('keydown',e=>{
+  if(!selStart||!selEnd) return;
+  if(e.key==='m'||e.key==='M') doMerge();
+  if(e.key==='u'||e.key==='U') doUnmerge();
+  if(e.key==='Escape') clearSel();
+});
+document.addEventListener('mousedown',e=>{ if(!e.target.closest('#sched-grid')&&!e.target.closest('#sel-toolbar')) clearSel(); });
+
+// Task CRUD
 function openAddTask(key){
   window._taskKey=key; window._taskId=null; window._taskColorIdx=3;
-  const [dow,h]=key.split('_');
+  const [ci,h]=key.split('_');
   document.getElementById('task-input').value='';
   document.getElementById('task-time-input').value=`${h}:00`;
   document.getElementById('task-done-row').style.display='none';
-  document.getElementById('task-modal-title').textContent=`เพิ่มงาน — ${DAYS_TH_FULL[dow]} ${h}:00`;
+  document.getElementById('task-modal-title').textContent=`เพิ่มงาน — ${DAYS_TH_FULL[ci]} ${h}:00`;
   document.getElementById('palette-container').innerHTML=renderPalette(3);
   selectTaskTag('other');
   document.getElementById('task-modal').classList.add('open');
@@ -1355,34 +1430,25 @@ function openAddTask(key){
 
 function openEditTask(key,id){
   const t=(schedDB[key]||[]).find(x=>x.id===id); if(!t)return;
-  window._taskKey=key; window._taskId=id;
-  window._taskColorIdx=t.colorIdx!=null?t.colorIdx:3;
-  const [dow,h]=key.split('_');
+  window._taskKey=key; window._taskId=id; window._taskColorIdx=t.colorIdx??3;
+  const [ci,h]=key.split('_');
   document.getElementById('task-input').value=t.text;
   document.getElementById('task-time-input').value=t.time||`${h}:00`;
   document.getElementById('task-done-check').checked=t.done||false;
   document.getElementById('task-done-row').style.display='flex';
-  document.getElementById('task-modal-title').textContent=`แก้ไขงาน — ${DAYS_TH_FULL[dow]} ${h}:00`;
+  document.getElementById('task-modal-title').textContent=`แก้ไขงาน — ${DAYS_TH_FULL[ci]} ${h}:00`;
   document.getElementById('palette-container').innerHTML=renderPalette(window._taskColorIdx);
   selectTaskTag(t.tag||'other');
   document.getElementById('task-modal').classList.add('open');
   setTimeout(()=>document.getElementById('task-input').focus(),100);
 }
 
-function selectTaskTag(t){
-  window._taskTag=t;
-  ['post','price','contact','other'].forEach(x=>{
-    const el=document.getElementById('tp-'+x);
-    if(el) el.className='tag-pick-btn'+(x===t?' sel':'');
-  });
-}
-
 function confirmTask(){
   const text=document.getElementById('task-input').value.trim(); if(!text)return;
   const key=window._taskKey,id=window._taskId,tag=window._taskTag||'other';
   const time=document.getElementById('task-time-input').value.trim();
-  const colorIdx=window._taskColorIdx!=null?window._taskColorIdx:3;
-  if(!schedDB[key])schedDB[key]=[];
+  const colorIdx=window._taskColorIdx??3;
+  if(!schedDB[key]) schedDB[key]=[];
   if(id){
     const t=schedDB[key].find(x=>x.id===id);
     if(t){t.text=text;t.tag=tag;t.time=time;t.colorIdx=colorIdx;t.done=document.getElementById('task-done-check').checked;}
@@ -1400,16 +1466,32 @@ function delTask(key,id){
   saveSched(); renderSched();
 }
 
-window.addEventListener('resize',()=>renderSched());
+function selectTaskTag(t){
+  window._taskTag=t;
+  ['post','price','contact','other'].forEach(x=>{
+    const el=document.getElementById('tp-'+x);
+    if(el) el.className='tag-pick-btn'+(x===t?' sel':'');
+  });
+}
+
+function renderPalette(sel){
+  return PALETTE.map((p,i)=>`
+    <div onclick="window._taskColorIdx=${i};renderPalette2(${i})"
+      style="width:22px;height:22px;border-radius:5px;background:${p.bg};
+      border:2px solid ${i===sel?p.border:'#3A2E22'};cursor:pointer;
+      box-shadow:${i===sel?'0 0 0 1px '+p.border:'none'};transition:all .1s;"></div>`).join('');
+}
+function renderPalette2(idx){ const c=document.getElementById('palette-container'); if(c) c.innerHTML=renderPalette(idx); }
+
 loadSched();
 </script>
 
 <!-- HOUR PICKER MODAL (Add) -->
 <div class="modal-overlay" id="hour-picker-modal">
-  <div class="modal" style="width:340px;">
-    <div class="modal-head">
-      <h3>เพิ่มช่วงเวลา</h3>
-      <button class="btn btn-outline btn-sm" onclick="document.getElementById('hour-picker-modal').classList.remove('open')">✕</button>
+  <div class="modal" style="width:340px;background:#2A2018;border-color:#5A4A3A;">
+    <div class="modal-head" style="border-color:#3A2E22;">
+      <h3 style="color:#E8C98A;">เพิ่มช่วงเวลา</h3>
+      <button class="btn btn-outline btn-sm" style="border-color:#5A4A3A;color:#E8C98A;" onclick="document.getElementById('hour-picker-modal').classList.remove('open')">✕</button>
     </div>
     <div class="modal-body">
       <div id="hour-picker-list" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
@@ -1419,13 +1501,13 @@ loadSched();
 
 <!-- HOUR REMOVE MODAL -->
 <div class="modal-overlay" id="hour-remove-modal">
-  <div class="modal" style="width:340px;">
-    <div class="modal-head">
-      <h3>ลบช่วงเวลา</h3>
-      <button class="btn btn-outline btn-sm" onclick="document.getElementById('hour-remove-modal').classList.remove('open')">✕</button>
+  <div class="modal" style="width:340px;background:#2A2018;border-color:#5A4A3A;">
+    <div class="modal-head" style="border-color:#3A2E22;">
+      <h3 style="color:#E8C98A;">ลบช่วงเวลา</h3>
+      <button class="btn btn-outline btn-sm" style="border-color:#5A4A3A;color:#E8C98A;" onclick="document.getElementById('hour-remove-modal').classList.remove('open')">✕</button>
     </div>
     <div class="modal-body">
-      <div style="font-size:12px;color:var(--earth-muted);margin-bottom:10px;">เลือกช่วงเวลาที่ต้องการลบออก</div>
+      <div style="font-size:12px;color:#7A6A5A;margin-bottom:10px;">เลือกช่วงเวลาที่ต้องการลบออก</div>
       <div id="hour-remove-list" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
     </div>
   </div>

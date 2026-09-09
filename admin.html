@@ -396,17 +396,23 @@
 
     <!-- SCHEDULE SECTION -->
     <div class="section" id="section-schedule" style="padding:20px 24px;box-sizing:border-box;background:#1A1410;min-height:calc(100vh - 60px);border-radius:0;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
         <div>
           <div style="font-family:'Kanit',sans-serif;font-size:20px;font-weight:700;color:#E8C98A;letter-spacing:1px;">WEEKLY SCHEDULE</div>
-          <div style="font-size:11px;color:#7A6A5A;margin-top:2px;">คลิกช่องเพื่อเพิ่มงาน · คลิกขวาเพื่อ Merge ช่อง · ใช้ซ้ำทุกสัปดาห์</div>
+          <div id="sched-hint" style="font-size:11px;color:#7A6A5A;margin-top:2px;">คลิกช่องเพื่อเลือก · Shift+คลิกเพื่อเลือกหลายช่อง · ดับเบิลคลิกเพื่อเพิ่มงาน</div>
         </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-outline btn-sm" onclick="openAddHourModal()" style="border-color:#5A4A3A;color:#E8C98A;background:transparent;">+ เพิ่มช่วงเวลา</button>
-          <button class="btn btn-outline btn-sm" onclick="removeHourModal()" style="border-color:#5A3A3A;color:#F0A8A8;background:transparent;">− ลบช่วงเวลา</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <div id="merge-controls" style="display:none;gap:8px;align-items:center;">
+            <span id="sel-info" style="font-size:11px;color:#8A7060;"></span>
+            <button onclick="doMerge()" style="padding:6px 14px;border-radius:7px;background:#4A3828;border:1px solid #8A6A48;color:#E8C98A;cursor:pointer;font-size:12px;font-family:'Sarabun',sans-serif;">✓ Merge</button>
+            <button onclick="doUnmerge()" style="padding:6px 14px;border-radius:7px;background:#3A2222;border:1px solid #8A4848;color:#F0A8A8;cursor:pointer;font-size:12px;font-family:'Sarabun',sans-serif;">✗ Unmerge</button>
+            <button onclick="clearSel()" style="padding:6px 10px;border-radius:7px;background:transparent;border:1px solid #4A3828;color:#6A5A4A;cursor:pointer;font-size:12px;">✕</button>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="openAddHourModal()" style="border-color:#5A4A3A;color:#E8C98A;">+ เพิ่มเวลา</button>
+          <button class="btn btn-outline btn-sm" onclick="removeHourModal()" style="border-color:#5A3A3A;color:#F0A8A8;">− ลบเวลา</button>
         </div>
       </div>
-      <div id="sched-grid"></div>
+      <div id="sched-grid"><div id="sched-grid"></div>
     </div>
   </div>
 </main>
@@ -665,20 +671,15 @@ async function saveItem(){
 
 function showSection(name){
   const T={overview:"ภาพรวม",stock:"สินค้าในสต็อก",sold:"สินค้าขายแล้ว",finance:"การเงิน",jipatha:"จิปาถะ",store:"จัดการร้านค้า",orders:"ออเดอร์",schedule:"ตารางงาน"};
-  if(name==="store")loadSheet1Products();
-  if(name==="orders")loadOrders();
-  if(name==="schedule"){
-    document.getElementById("section-schedule").style.display="block";
-    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-  } else {
-    document.getElementById("section-schedule").style.display="none";
-    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-    document.getElementById("section-"+name).classList.add("active");
-  }
+  if(name==="store") loadSheet1Products();
+  if(name==="orders") loadOrders();
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+  const sec=document.getElementById("section-"+name);
+  if(sec) sec.classList.add("active");
   document.querySelectorAll(".nav-item").forEach(nav=>{if(nav.textContent.trim().includes(T[name]))nav.classList.add("active");});
   document.getElementById("page-title").textContent=T[name]||name;
-  if(name==="schedule") renderSched();
+  if(name==="schedule") setTimeout(()=>renderSched(),50);
 }
 
 function n(v){return parseFloat(String(v).replace(/[^0-9.-]/g,""))||0;}
@@ -1183,59 +1184,36 @@ window.addEventListener('load',()=>{
 <script>
 const DAYS_TH=['MON','TUE','WED','THU','FRI','SAT','SUN'];
 const DAYS_TH_FULL=['จันทร์','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์','อาทิตย์'];
-const TAG_LABELS={post:'📢 โพสต์',price:'💰 ราคา',contact:'📞 ลูกค้า',other:'📝 อื่นๆ'};
 const DAY_COLORS=[
-  {bg:'#3D3500',header:'#C8A800',text:'#FFE566'},
-  {bg:'#3D1A2A',header:'#C84080',text:'#FFB0D0'},
-  {bg:'#1A3520',header:'#40C870',text:'#90FFB8'},
-  {bg:'#3D2A00',header:'#C87000',text:'#FFB840'},
-  {bg:'#1A2040',header:'#4070C8',text:'#90B8FF'},
-  {bg:'#2A1A3D',header:'#8040C8',text:'#D090FF'},
-  {bg:'#3D1A1A',header:'#C83030',text:'#FF9090'},
+  {bg:'#3D3500',text:'#FFE566'},{bg:'#3D1A2A',text:'#FFB0D0'},
+  {bg:'#1A3520',text:'#90FFB8'},{bg:'#3D2A00',text:'#FFB840'},
+  {bg:'#1A2040',text:'#90B8FF'},{bg:'#2A1A3D',text:'#D090FF'},
+  {bg:'#3D1A1A',text:'#FF9090'},
 ];
 const PALETTE=[
-  {bg:'#4A3860',border:'#9B7EC8',text:'#D4B8F0'},
-  {bg:'#2A4A30',border:'#6B8C5A',text:'#A8D4A0'},
-  {bg:'#1E3A48',border:'#4A8A9A',text:'#90C8D8'},
-  {bg:'#4A3820',border:'#C89A5A',text:'#E8C890'},
-  {bg:'#4A2020',border:'#C87878',text:'#F0A8A8'},
-  {bg:'#1E2E4A',border:'#5A7AC8',text:'#90A8E8'},
-  {bg:'#204A28',border:'#6AB85A',text:'#90D890'},
-  {bg:'#4A3010',border:'#C89A4A',text:'#E8C070'},
-  {bg:'#3A1E4A',border:'#A87AC8',text:'#D090F0'},
-  {bg:'#104A38',border:'#5AB8A0',text:'#80D8C0'},
-  {bg:'#4A4010',border:'#C8B45A',text:'#E8D070'},
-  {bg:'#282848',border:'#7878C8',text:'#A0A0E8'},
+  {bg:'#4A3860',border:'#9B7EC8',text:'#D4B8F0'},{bg:'#2A4A30',border:'#6B8C5A',text:'#A8D4A0'},
+  {bg:'#1E3A48',border:'#4A8A9A',text:'#90C8D8'},{bg:'#4A3820',border:'#C89A5A',text:'#E8C890'},
+  {bg:'#4A2020',border:'#C87878',text:'#F0A8A8'},{bg:'#1E2E4A',border:'#5A7AC8',text:'#90A8E8'},
+  {bg:'#204A28',border:'#6AB85A',text:'#90D890'},{bg:'#4A3010',border:'#C89A4A',text:'#E8C070'},
+  {bg:'#3A1E4A',border:'#A87AC8',text:'#D090F0'},{bg:'#104A38',border:'#5AB8A0',text:'#80D8C0'},
+  {bg:'#4A4010',border:'#C8B45A',text:'#E8D070'},{bg:'#282848',border:'#7878C8',text:'#A0A0E8'},
 ];
 
-// schedDB[key] = [{id,text,tag,time,colorIdx,done}]  key="dow_hour"
-// merges = [{id, r1,c1,r2,c2, colorIdx, label}]  r=hourIndex c=dow(0-6)
-let schedDB={}, merges=[], hours=[8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-let selecting=false, selStart=null, selEnd=null;
-let selectedMergeId=null;
+let schedDB={},merges=[],hours=[8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+let selStart=null,selEnd=null;
 
 function loadSched(){
-  try{ schedDB=JSON.parse(localStorage.getItem('rj_sched3')||'{}'); }catch(e){ schedDB={}; }
-  try{ const h=JSON.parse(localStorage.getItem('rj_hours')||'null'); if(h&&h.length) hours=h; }catch(e){}
-  try{ merges=JSON.parse(localStorage.getItem('rj_merges2')||'[]'); }catch(e){ merges=[]; }
+  try{schedDB=JSON.parse(localStorage.getItem('rj_sched3')||'{}');}catch(e){schedDB={};}
+  try{const h=JSON.parse(localStorage.getItem('rj_hours')||'null');if(h&&h.length)hours=h;}catch(e){}
+  try{merges=JSON.parse(localStorage.getItem('rj_merges2')||'[]');}catch(e){merges=[];}
 }
-function saveSched(){ localStorage.setItem('rj_sched3',JSON.stringify(schedDB)); }
-function saveHours(){ localStorage.setItem('rj_hours',JSON.stringify(hours)); }
-function saveMerges(){ localStorage.setItem('rj_merges2',JSON.stringify(merges)); }
+function saveSched(){localStorage.setItem('rj_sched3',JSON.stringify(schedDB));}
+function saveHours(){localStorage.setItem('rj_hours',JSON.stringify(hours));}
+function saveMerges(){localStorage.setItem('rj_merges2',JSON.stringify(merges));}
+function getColor(t){return PALETTE[(t.colorIdx??3)%PALETTE.length];}
+function getMergeAt(ri,ci){return merges.find(m=>ri>=m.r1&&ri<=m.r2&&ci>=m.c1&&ci<=m.c2)||null;}
+function isCovered(ri,ci){const m=getMergeAt(ri,ci);return m?!(ri===m.r1&&ci===m.c1):false;}
 
-function getColor(t){ return PALETTE[(t.colorIdx??3)%PALETTE.length]; }
-
-function getMergeAt(ri,ci){
-  return merges.find(m=>ri>=m.r1&&ri<=m.r2&&ci>=m.c1&&ci<=m.c2)||null;
-}
-
-function isCovered(ri,ci){
-  const m=getMergeAt(ri,ci);
-  if(!m) return false;
-  return !(ri===m.r1&&ci===m.c1); // covered if not the top-left origin
-}
-
-// Add/remove hours
 function openAddHourModal(){
   const avail=Array.from({length:24},(_,i)=>i).filter(h=>!hours.includes(h));
   if(!avail.length){alert('เพิ่มครบแล้ว');return;}
@@ -1259,164 +1237,168 @@ function removeHourModal(){
 function removeSpecificHour(h){
   const ri=hours.indexOf(h);
   hours=hours.filter(x=>x!==h);
-  merges=merges.filter(m=>m.r1!==ri&&m.r2!==ri).map(m=>({
-    ...m,
-    r1:m.r1>ri?m.r1-1:m.r1,
-    r2:m.r2>ri?m.r2-1:m.r2
-  }));
-  saveHours(); saveMerges();
+  merges=merges.filter(m=>m.r1!==ri&&m.r2!==ri).map(m=>({...m,r1:m.r1>ri?m.r1-1:m.r1,r2:m.r2>ri?m.r2-1:m.r2}));
+  saveHours();saveMerges();
   document.getElementById('hour-remove-modal').classList.remove('open');
   renderSched();
 }
 
-// RENDER
+// Selection: click = set start, shift+click = set end
+function cellClickSel(e,ri,ci,key){
+  if(e.target.closest('.del-task')||e.target.closest('.task-card'))return;
+  if(e.detail>=2){clearSel();openAddTask(key);return;}
+  if(e.shiftKey&&selStart){
+    selEnd={r:ri,c:ci};
+    updateSelUI();
+  } else {
+    selStart={r:ri,c:ci};
+    selEnd=null;
+    updateSelUI();
+  }
+}
+
+function updateSelUI(){
+  const ctrl=document.getElementById('merge-controls');
+  const info=document.getElementById('sel-info');
+  if(!ctrl)return;
+  if(selStart&&selEnd){
+    const r1=Math.min(selStart.r,selEnd.r),r2=Math.max(selStart.r,selEnd.r);
+    const c1=Math.min(selStart.c,selEnd.c),c2=Math.max(selStart.c,selEnd.c);
+    ctrl.style.display='flex';
+    info.textContent=`เลือก ${r2-r1+1}×${c2-c1+1}`;
+  } else if(selStart){
+    ctrl.style.display='flex';
+    info.textContent='Shift+คลิกช่องสุดท้าย';
+  } else {
+    ctrl.style.display='none';
+  }
+  // highlight cells
+  document.querySelectorAll('.sched-cell').forEach(el=>{
+    const r=+el.dataset.r,c=+el.dataset.c;
+    const dc=DAY_COLORS[c];
+    if(selStart&&selEnd){
+      const inSel=r>=Math.min(selStart.r,selEnd.r)&&r<=Math.max(selStart.r,selEnd.r)&&
+                  c>=Math.min(selStart.c,selEnd.c)&&c<=Math.max(selStart.c,selEnd.c);
+      el.style.outline=inSel?'2px solid #E8C98A':'none';
+    } else if(selStart&&selStart.r===r&&selStart.c===c){
+      el.style.outline='2px solid #E8C98A';
+    } else {
+      el.style.outline='none';
+    }
+  });
+}
+
+function clearSel(){
+  selStart=null;selEnd=null;
+  const ctrl=document.getElementById('merge-controls');
+  if(ctrl)ctrl.style.display='none';
+  document.querySelectorAll('.sched-cell').forEach(el=>el.style.outline='none');
+}
+
+function doMerge(){
+  if(!selStart||!selEnd){alert('เลือกช่องก่อน: คลิกช่องแรก แล้ว Shift+คลิกช่องสุดท้าย');return;}
+  const r1=Math.min(selStart.r,selEnd.r),r2=Math.max(selStart.r,selEnd.r);
+  const c1=Math.min(selStart.c,selEnd.c),c2=Math.max(selStart.c,selEnd.c);
+  merges=merges.filter(m=>!(m.r2>=r1&&m.r1<=r2&&m.c2>=c1&&m.c1<=c2));
+  merges.push({id:Date.now().toString(),r1,c1,r2,c2,colorIdx:Math.floor(Math.random()*PALETTE.length),label:''});
+  saveMerges();clearSel();renderSched();
+}
+
+function doUnmerge(){
+  if(!selStart){alert('คลิกที่ช่อง merge ก่อน');return;}
+  const r1=selEnd?Math.min(selStart.r,selEnd.r):selStart.r;
+  const r2=selEnd?Math.max(selStart.r,selEnd.r):selStart.r;
+  const c1=selEnd?Math.min(selStart.c,selEnd.c):selStart.c;
+  const c2=selEnd?Math.max(selStart.c,selEnd.c):selStart.c;
+  merges=merges.filter(m=>!(m.r2>=r1&&m.r1<=r2&&m.c2>=c1&&m.c1<=c2));
+  saveMerges();clearSel();renderSched();
+}
+
 function renderSched(){
   const todayDow=(new Date().getDay()+6)%7;
   const grid=document.getElementById('sched-grid');
-  if(!grid) return;
-  const containerW=Math.max(500,(grid.parentElement.offsetWidth||900)-40);
-  const TIME_W=54, ROW_H=52, totalRows=hours.length;
+  if(!grid)return;
+  const TIME_W=54,ROW_H=52,totalRows=hours.length;
 
   let html=`<div style="width:100%;border:1px solid #4A3828;border-radius:12px;overflow:hidden;background:#2A2018;box-shadow:0 2px 12px rgba(0,0,0,.4);">`;
-
-  // Header
   html+=`<div style="display:grid;grid-template-columns:${TIME_W}px repeat(7,1fr);border-bottom:2px solid #4A3828;">
     <div style="background:#1A1208;padding:12px 0;"></div>`;
   DAYS_TH.forEach((d,i)=>{
-    const dc=DAY_COLORS[i], isToday=i===todayDow;
+    const dc=DAY_COLORS[i],isToday=i===todayDow;
     html+=`<div style="padding:12px 4px;text-align:center;background:${dc.bg};border-left:1px solid #4A3828;position:relative;">
-      <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:${dc.text};text-shadow:0 1px 4px rgba(0,0,0,.4);">${d}</div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:${dc.text};">${d}</div>
       ${isToday?`<div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:24px;height:3px;background:${dc.text};border-radius:2px;"></div>`:''}
     </div>`;
   });
   html+=`</div>`;
 
   if(!totalRows){
-    html+=`<div style="padding:40px;text-align:center;color:#8A7060;font-size:13px;">กด "+ เพิ่มช่วงเวลา" เพื่อเริ่มต้น</div></div>`;
-    grid.innerHTML=html; return;
+    html+=`<div style="padding:40px;text-align:center;color:#8A7060;font-size:13px;">กด "+ เพิ่มเวลา" เพื่อเริ่มต้น</div></div>`;
+    grid.innerHTML=html;return;
   }
 
-  // CSS Grid body
-  html+=`<div id="sched-body" style="display:grid;grid-template-columns:${TIME_W}px repeat(7,1fr);grid-template-rows:repeat(${totalRows},${ROW_H}px);user-select:none;">`;
-
-  // Time labels
+  html+=`<div id="sched-body" style="display:grid;grid-template-columns:${TIME_W}px repeat(7,1fr);grid-template-rows:repeat(${totalRows},${ROW_H}px);">`;
   hours.forEach((h,ri)=>{
     html+=`<div style="grid-column:1;grid-row:${ri+1};background:#1A1208;border-right:2px solid #4A3828;border-bottom:${ri<totalRows-1?'1px solid #3A2E22':'none'};display:flex;align-items:center;justify-content:center;">
       <span style="font-size:10.5px;font-weight:700;color:#6A5A48;font-family:'Kanit',sans-serif;">${h}:00</span>
     </div>`;
   });
-
-  // Day cells
-  DAYS_TH.forEach((_,ci)=>{
-    const dc=DAY_COLORS[ci], isToday=ci===todayDow;
-    hours.forEach((h,ri)=>{
-      if(isCovered(ri,ci)) return; // skip cells covered by a merge
+  hours.forEach((h,ri)=>{
+    DAYS_TH.forEach((_,ci)=>{
+      if(isCovered(ri,ci))return;
+      const dc=DAY_COLORS[ci];
       const merge=getMergeAt(ri,ci);
       const rowSpan=merge?merge.r2-merge.r1+1:1;
       const colSpan=merge?merge.c2-merge.c1+1:1;
       const key=`${ci}_${h}`;
       const tasks=schedDB[key]||[];
-
-      const isSelected = selStart&&selEnd &&
-        ri>=Math.min(selStart.r,selEnd.r) && ri<=Math.max(selStart.r,selEnd.r) &&
-        ci>=Math.min(selStart.c,selEnd.c) && ci<=Math.max(selStart.c,selEnd.c);
-
-      let cellBg = merge ? PALETTE[(merge.colorIdx??0)%PALETTE.length].bg : dc.bg+'33';
-      if(isSelected) cellBg='rgba(255,255,255,0.18)';
-
-      const mp = merge ? PALETTE[(merge.colorIdx??0)%PALETTE.length] : null;
-      const cellBorder = merge ? `outline:2px solid ${mp.border};outline-offset:-2px;` : `border-bottom:${ri<totalRows-1?'1px solid #3A2E22':'none'};`;
+      const mp=merge?PALETTE[(merge.colorIdx??0)%PALETTE.length]:null;
+      let bg=merge?mp.bg:dc.bg+'33';
+      const outline=merge?`outline:2px solid ${mp.border};outline-offset:-2px;`:'';
+      const borderB=!merge&&ri<totalRows-1?'border-bottom:1px solid #3A2E22;':'';
 
       const tHtml=tasks.map(t=>{
         const c=getColor(t);
-        return `<div onclick="event.stopPropagation();openEditTask('${key}','${t.id}')"
-          style="width:100%;padding:5px 7px;border-radius:5px;margin-bottom:2px;cursor:pointer;background:${c.bg};box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:4px;"
-          onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+        return `<div class="task-card" data-key="${key}" data-id="${t.id}"
+          style="width:100%;padding:5px 7px;border-radius:5px;margin-bottom:2px;cursor:pointer;background:${c.bg};box-sizing:border-box;display:flex;align-items:center;gap:4px;">
           <div style="font-size:11px;font-weight:600;color:${c.text};flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.text}</div>
-          <button onclick="event.stopPropagation();delTask('${key}','${t.id}')" style="background:none;border:none;cursor:pointer;color:${c.text};font-size:11px;line-height:1;padding:0;opacity:0;flex-shrink:0;"
-            onmouseover="this.style.opacity=1;" onmouseout="this.style.opacity=0;">×</button>
+          <span class="del-task" data-key="${key}" data-id="${t.id}" style="color:${c.text};font-size:12px;cursor:pointer;flex-shrink:0;padding:0 2px;">×</span>
         </div>`;
       }).join('');
 
-      const mergeLabel = merge && !tasks.length
-        ? `<div style="font-size:12px;font-weight:600;color:${mp?mp.text:'#aaa'};text-align:center;">${merge.label||''}</div>` : '';
+      const mergeLabel=merge&&!tasks.length?`<div style="font-size:12px;font-weight:600;color:${mp?mp.text:'#aaa'};text-align:center;">${merge.label||''}</div>`:'';
 
-      html+=`<div data-r="${ri}" data-c="${ci}"
+      html+=`<div class="sched-cell" data-r="${ri}" data-c="${ci}" data-key="${key}"
         style="grid-column:${ci+2}/span ${colSpan};grid-row:${ri+1}/span ${rowSpan};
-        background:${cellBg};border-left:1px solid #3A2E22;${cellBorder}
-        padding:5px;box-sizing:border-box;cursor:pointer;
-        display:flex;flex-direction:column;align-items:stretch;justify-content:center;${cellBorder}"
-        onmousedown="startSel(event,${ri},${ci})"
-        onmouseenter="moveSel(event,${ri},${ci})"
-        onmouseup="endSel(event,${ri},${ci})"
-        onclick="cellClick(event,'${key}',${ri},${ci})">
+        background:${bg};border-left:1px solid #3A2E22;${borderB}${outline}
+        padding:5px;box-sizing:border-box;display:flex;flex-direction:column;
+        align-items:stretch;justify-content:center;user-select:none;cursor:pointer;
+        transition:outline .1s;">
         ${mergeLabel}${tHtml}
       </div>`;
     });
   });
-
-  html+=`</div></div>
-  <div style="margin-top:8px;font-size:11px;color:#6A5A4A;text-align:right;">ลาก = เลือกช่อง · ดับเบิลคลิก = เพิ่มงาน · เลือกแล้วกด M = Merge | U = Unmerge | Del = ลบ</div>`;
+  html+=`</div></div>`;
   grid.innerHTML=html;
+  bindGridEvents();
+  updateSelUI();
 }
 
-// Selection
-function startSel(e,r,c){ if(e.button!==0)return; selecting=true; selStart={r,c}; selEnd={r,c}; renderSched(); }
-function moveSel(e,r,c){ if(!selecting)return; selEnd={r,c}; renderSched(); }
-function endSel(e,r,c){ selecting=false; selEnd={r,c}; renderSched(); showSelToolbar(); }
-
-function cellClick(e,key,r,c){
-  if(e.detail>=2){ openAddTask(key); selStart=null; selEnd=null; return; }
+function bindGridEvents(){
+  const body=document.getElementById('sched-body');
+  if(!body)return;
+  body.addEventListener('click',e=>{
+    const del=e.target.closest('.del-task');
+    if(del){delTask(del.dataset.key,del.dataset.id);return;}
+    const tc=e.target.closest('.task-card');
+    if(tc){openEditTask(tc.dataset.key,tc.dataset.id);return;}
+    const cell=e.target.closest('.sched-cell');
+    if(cell) cellClickSel(e,+cell.dataset.r,+cell.dataset.c,cell.dataset.key);
+  });
 }
 
-function showSelToolbar(){
-  const old=document.getElementById('sel-toolbar'); if(old) old.remove();
-  if(!selStart||!selEnd) return;
-  const r1=Math.min(selStart.r,selEnd.r),r2=Math.max(selStart.r,selEnd.r);
-  const c1=Math.min(selStart.c,selEnd.c),c2=Math.max(selStart.c,selEnd.c);
-  if(r1===r2&&c1===c2) return; // single cell - no toolbar
-
-  const bar=document.createElement('div');
-  bar.id='sel-toolbar';
-  bar.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2A2018;border:1px solid #5A4A3A;border-radius:10px;padding:8px 14px;display:flex;gap:10px;align-items:center;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.5);';
-  bar.innerHTML=`
-    <span style="font-size:11px;color:#8A7060;">เลือก ${r2-r1+1}×${c2-c1+1}</span>
-    <button onclick="doMerge()" style="padding:5px 14px;border-radius:7px;background:#4A3828;border:1px solid #6A5A48;color:#E8C98A;cursor:pointer;font-size:12px;font-family:'Sarabun',sans-serif;">Merge</button>
-    <button onclick="doUnmerge()" style="padding:5px 14px;border-radius:7px;background:#3A2222;border:1px solid #6A3838;color:#F0A8A8;cursor:pointer;font-size:12px;font-family:'Sarabun',sans-serif;">Unmerge</button>
-    <button onclick="clearSel()" style="background:none;border:none;color:#6A5A4A;cursor:pointer;font-size:16px;line-height:1;">✕</button>`;
-  document.body.appendChild(bar);
-}
-
-function clearSel(){ selStart=null; selEnd=null; const t=document.getElementById('sel-toolbar'); if(t)t.remove(); renderSched(); }
-
-function doMerge(){
-  const r1=Math.min(selStart.r,selEnd.r),r2=Math.max(selStart.r,selEnd.r);
-  const c1=Math.min(selStart.c,selEnd.c),c2=Math.max(selStart.c,selEnd.c);
-  // remove any existing merges that overlap
-  merges=merges.filter(m=>!(m.r2>=r1&&m.r1<=r2&&m.c2>=c1&&m.c1<=c2));
-  const colorIdx=Math.floor(Math.random()*PALETTE.length);
-  merges.push({id:Date.now().toString(),r1,c1,r2,c2,colorIdx,label:''});
-  saveMerges(); clearSel();
-}
-
-function doUnmerge(){
-  const r1=Math.min(selStart.r,selEnd.r),r2=Math.max(selStart.r,selEnd.r);
-  const c1=Math.min(selStart.c,selEnd.c),c2=Math.max(selStart.c,selEnd.c);
-  merges=merges.filter(m=>!(m.r2>=r1&&m.r1<=r2&&m.c2>=c1&&m.c1<=c2));
-  saveMerges(); clearSel();
-}
-
-document.addEventListener('keydown',e=>{
-  if(!selStart||!selEnd) return;
-  if(e.key==='m'||e.key==='M') doMerge();
-  if(e.key==='u'||e.key==='U') doUnmerge();
-  if(e.key==='Escape') clearSel();
-});
-document.addEventListener('mousedown',e=>{ if(!e.target.closest('#sched-grid')&&!e.target.closest('#sel-toolbar')) clearSel(); });
-
-// Task CRUD
 function openAddTask(key){
-  window._taskKey=key; window._taskId=null; window._taskColorIdx=3;
+  window._taskKey=key;window._taskId=null;window._taskColorIdx=3;
   const [ci,h]=key.split('_');
   document.getElementById('task-input').value='';
   document.getElementById('task-time-input').value=`${h}:00`;
@@ -1429,8 +1411,8 @@ function openAddTask(key){
 }
 
 function openEditTask(key,id){
-  const t=(schedDB[key]||[]).find(x=>x.id===id); if(!t)return;
-  window._taskKey=key; window._taskId=id; window._taskColorIdx=t.colorIdx??3;
+  const t=(schedDB[key]||[]).find(x=>x.id===id);if(!t)return;
+  window._taskKey=key;window._taskId=id;window._taskColorIdx=t.colorIdx??3;
   const [ci,h]=key.split('_');
   document.getElementById('task-input').value=t.text;
   document.getElementById('task-time-input').value=t.time||`${h}:00`;
@@ -1444,33 +1426,31 @@ function openEditTask(key,id){
 }
 
 function confirmTask(){
-  const text=document.getElementById('task-input').value.trim(); if(!text)return;
+  const text=document.getElementById('task-input').value.trim();if(!text)return;
   const key=window._taskKey,id=window._taskId,tag=window._taskTag||'other';
   const time=document.getElementById('task-time-input').value.trim();
   const colorIdx=window._taskColorIdx??3;
-  if(!schedDB[key]) schedDB[key]=[];
+  if(!schedDB[key])schedDB[key]=[];
   if(id){
     const t=schedDB[key].find(x=>x.id===id);
     if(t){t.text=text;t.tag=tag;t.time=time;t.colorIdx=colorIdx;t.done=document.getElementById('task-done-check').checked;}
-  } else {
+  }else{
     schedDB[key].push({id:Date.now().toString(),text,tag,time,colorIdx,done:false});
   }
-  saveSched();
-  document.getElementById('task-modal').classList.remove('open');
-  renderSched();
+  saveSched();document.getElementById('task-modal').classList.remove('open');renderSched();
 }
 
 function delTask(key,id){
   if(!schedDB[key])return;
   schedDB[key]=schedDB[key].filter(x=>x.id!==id);
-  saveSched(); renderSched();
+  saveSched();renderSched();
 }
 
 function selectTaskTag(t){
   window._taskTag=t;
   ['post','price','contact','other'].forEach(x=>{
     const el=document.getElementById('tp-'+x);
-    if(el) el.className='tag-pick-btn'+(x===t?' sel':'');
+    if(el)el.className='tag-pick-btn'+(x===t?' sel':'');
   });
 }
 
@@ -1481,7 +1461,13 @@ function renderPalette(sel){
       border:2px solid ${i===sel?p.border:'#3A2E22'};cursor:pointer;
       box-shadow:${i===sel?'0 0 0 1px '+p.border:'none'};transition:all .1s;"></div>`).join('');
 }
-function renderPalette2(idx){ const c=document.getElementById('palette-container'); if(c) c.innerHTML=renderPalette(idx); }
+function renderPalette2(idx){const c=document.getElementById('palette-container');if(c)c.innerHTML=renderPalette(idx);}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')clearSel();
+  if((e.key==='m'||e.key==='M')&&selStart&&selEnd)doMerge();
+  if((e.key==='u'||e.key==='U')&&selStart)doUnmerge();
+});
 
 loadSched();
 </script>

@@ -981,7 +981,7 @@ function addToCart(id, size){
     toastStore('size นี้อยู่ในตะกร้าแล้วครับ'); return;
   }
   cart.push({...p, _cartKey:cartKey, _chosenSize:size});
-  saveCart(); renderCart();
+  saveCart(); renderCart(); renderProducts();
   // เปิด cart sidebar
   document.getElementById('cart-sidebar').classList.add('open');
   document.getElementById('cart-overlay').classList.add('open');
@@ -998,7 +998,7 @@ function changeQty(cartKey, delta){
 }
 function removeFromCart(cartKey){
   cart=cart.filter(x=>x._cartKey!==cartKey);
-  saveCart(); renderCart();
+  saveCart(); renderCart(); renderProducts();
 }
 function saveCart(){localStorage.setItem('rj_cart',JSON.stringify(cart));}
 function renderCart(){

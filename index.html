@@ -745,6 +745,7 @@ function cardHTML(p){
       <button class="card-heart-btn${isLiked(p.id)?' liked':''}" onclick="event.stopPropagation();toggleLike('${p.id}',this)" aria-label="wishlist">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </button>
+      ${inCart?'<div style="position:absolute;top:10px;left:10px;background:var(--green);color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:4px;box-shadow:0 2px 6px rgba(0,0,0,0.25);z-index:2;">✓ In Cart</div>':''}
       ${isReserved
         ?'<div class="sold-out-badge" style="background:rgba(28,16,8,0.6);"><div class="sold-out-tag" style="background:#3D2010;color:#E8C98A;letter-spacing:3px;">Reserved</div></div>'
         :isSoldOut

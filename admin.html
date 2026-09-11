@@ -132,7 +132,7 @@
     <img class="login-logo-img" src="logo.png" alt="Rennic Jersey">
     <div class="login-title">Rennic Jersey</div>
     <div class="login-sub">Admin Dashboard — กรุณา Login</div>
-    <input class="login-input" type="text" id="login-user" placeholder="Username">
+    <input class="login-input" type="text" id="login-user" placeholder="อีเมลแอดมิน">
     <input class="login-input" type="password" id="login-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" onclick="doLogin()">เข้าสู่ระบบ</button>
     <div class="login-error" id="login-error">Username หรือ Password ไม่ถูกต้อง</div>
@@ -484,8 +484,30 @@
 <div id="toast"></div>
 
 <script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzdgmvhgxrINispWfZzXPqQbJp1KTTjN6JoU0WrGbZGSB8WiVbZXGRBVhpC2tT8QU8W/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbywuaBCZcyp1ZN8_Vc_XPF2jrG_Y490xSy9lE90-tVkqPljW4WoNH2biKMKOnqQAFGB/exec";
 const SHEET_MAIN = "Sheet1";
+
+// ── AUTH: แนบ idToken ของแอดมินไปกับทุก request ที่ยิงไปหา GAS_URL โดยอัตโนมัติ ──
+// (ไม่ต้องแก้ fetch(GAS_URL...) ที่มีอยู่เดิมทุกจุดในไฟล์นี้เลย)
+window._adminUser = null; // ตั้งค่าโดย Firebase Auth script ด้านล่างสุดของไฟล์
+const _rawFetch = window.fetch;
+window.fetch = async function(url, opts) {
+  if (typeof url === 'string' && url.indexOf(GAS_URL) === 0) {
+    var token = '';
+    try { if (window._adminUser) token = await window._adminUser.getIdToken(); } catch (e) {}
+    if (!opts || !opts.method || String(opts.method).toUpperCase() === 'GET') {
+      var sep = url.indexOf('?') === -1 ? '?' : '&';
+      url = url + sep + 'idToken=' + encodeURIComponent(token);
+    } else {
+      try {
+        var bodyObj = JSON.parse(opts.body);
+        bodyObj.idToken = token;
+        opts = Object.assign({}, opts, { body: JSON.stringify(bodyObj) });
+      } catch (e) {}
+    }
+  }
+  return _rawFetch(url, opts);
+};
 
 let jerseys=[], jipathas=[], editIdx=-1, CH={};
 let summaryData={profit:0,cash:0,totalCost:0,totalSell:0,eom:0,jipTotal:0};
@@ -1092,20 +1114,63 @@ async function removeFromStore(name){
 window.addEventListener("load",()=>{});
 </script>
 
-<script>
-const ADMIN_USER="Wongsapat",ADMIN_PASS=".Wongsapat9pipe";
-function doLogin(){
-  const u=document.getElementById('login-user').value,p=document.getElementById('login-pass').value;
-  const err=document.getElementById('login-error');
-  if(u===ADMIN_USER&&p===ADMIN_PASS){
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('dashboard-screen').style.display='block';
-    loadData();
-  }else{err.style.display='block';setTimeout(()=>err.style.display='none',3000);}
-}
-window.addEventListener('load',()=>{
-  const ta=document.querySelector('.topbar-actions');
-  if(ta){const b=document.createElement('button');b.className='logout-btn';b.textContent='🚪 ออกจากระบบ';b.onclick=()=>{document.getElementById('dashboard-screen').style.display='none';document.getElementById('login-screen').style.display='flex';};ta.appendChild(b);}
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+// ── ต้องตรงกับ ADMIN_EMAIL ที่ตั้งไว้ใน Apps Script Properties ──
+const ADMIN_EMAIL = "wongsapat09pipe@gmail.com";
+
+const app = initializeApp({apiKey:"AIzaSyCaMuwi38-IL-3WE28WiRwiXR7CNXL4ngQ",authDomain:"rennic-jersey-d7419.firebaseapp.com",projectId:"rennic-jersey-d7419",storageBucket:"rennic-jersey-d7419.firebasestorage.app",messagingSenderId:"83038924846",appId:"1:83038924846:web:bfe57eea222e181e802fbf"});
+const auth = getAuth(app);
+
+window.doLogin = async function () {
+  const uRaw = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-error');
+  const u = uRaw.includes('@') ? uRaw : uRaw + '@rennic.local';
+  err.style.display = 'none';
+  try {
+    const cred = await signInWithEmailAndPassword(auth, u, p);
+    if (cred.user.email !== ADMIN_EMAIL) {
+      await signOut(auth);
+      err.textContent = 'บัญชีนี้ไม่มีสิทธิ์แอดมิน';
+      err.style.display = 'block';
+      return;
+    }
+    // สำเร็จ — onAuthStateChanged ด้านล่างจะเปิด dashboard ให้เอง
+  } catch (e) {
+    err.textContent = 'Username หรือ Password ไม่ถูกต้อง';
+    err.style.display = 'block';
+    setTimeout(() => (err.style.display = 'none'), 3000);
+  }
+};
+
+window.doLogout = async function () {
+  await signOut(auth);
+};
+
+onAuthStateChanged(auth, (user) => {
+  window._adminUser = (user && user.email === ADMIN_EMAIL) ? user : null;
+  if (window._adminUser) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard-screen').style.display = 'block';
+    if (typeof loadData === 'function') loadData();
+  } else {
+    document.getElementById('dashboard-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+  }
+});
+
+window.addEventListener('load', () => {
+  const ta = document.querySelector('.topbar-actions');
+  if (ta && !document.querySelector('.logout-btn')) {
+    const b = document.createElement('button');
+    b.className = 'logout-btn';
+    b.textContent = '🚪 ออกจากระบบ';
+    b.onclick = () => window.doLogout();
+    ta.appendChild(b);
+  }
 });
 </script>
 </div>

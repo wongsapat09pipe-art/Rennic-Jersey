@@ -555,8 +555,29 @@ footer strong{color:var(--gold-light);}
 <div id="toast-store"></div>
 
 <script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzdgmvhgxrINispWfZzXPqQbJp1KTTjN6JoU0WrGbZGSB8WiVbZXGRBVhpC2tT8QU8W/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbywuaBCZcyp1ZN8_Vc_XPF2jrG_Y490xSy9lE90-tVkqPljW4WoNH2biKMKOnqQAFGB/exec";
 const STORE_SHEET = "Store";
+
+// ── AUTH: แนบ idToken ของลูกค้าที่ login อยู่ (ถ้ามี) ไปกับทุก request ที่ยิงไปหา GAS_URL โดยอัตโนมัติ ──
+// ถ้ายังไม่ได้ login (เช่นตอน guest checkout) จะส่ง idToken ว่างไปแทน ซึ่งไม่กระทบ action ที่เปิดสาธารณะ
+const _rawFetch = window.fetch;
+window.fetch = async function(url, opts) {
+  if (typeof url === 'string' && url.indexOf(GAS_URL) === 0) {
+    var token = '';
+    try { if (window._currentUser) token = await window._currentUser.getIdToken(); } catch (e) {}
+    if (!opts || !opts.method || String(opts.method).toUpperCase() === 'GET') {
+      var sep = url.indexOf('?') === -1 ? '?' : '&';
+      url = url + sep + 'idToken=' + encodeURIComponent(token);
+    } else {
+      try {
+        var bodyObj = JSON.parse(opts.body);
+        bodyObj.idToken = token;
+        opts = Object.assign({}, opts, { body: JSON.stringify(bodyObj) });
+      } catch (e) {}
+    }
+  }
+  return _rawFetch(url, opts);
+};
 const LEAGUE_TEAMS = {
   'Premier League':['All','Arsenal','Aston Villa','Bournemouth','Brentford','Brighton','Chelsea','Crystal Palace','Everton','Fulham','Ipswich','Leicester','Liverpool','Man City','Man United','Newcastle','Nottm Forest','Southampton','Tottenham','West Ham','Wolves'],
   'La Liga':['All','Alaves','Almeria','Athletic Club','Atletico Madrid','Barcelona','Betis','Celta Vigo','Espanyol','Getafe','Girona','Las Palmas','Leganes','Mallorca','Osasuna','Rayo Vallecano','Real Madrid','Real Sociedad','Sevilla','Valencia','Valladolid','Villarreal'],

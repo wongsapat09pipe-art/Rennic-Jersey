@@ -251,6 +251,93 @@ footer strong{color:var(--gold-light);}
 #toast-store{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark);color:var(--gold-light);padding:12px 24px;border-radius:10px;font-size:14px;opacity:0;transition:opacity 0.3s;z-index:999;pointer-events:none;border:1px solid rgba(193,125,60,0.3);}
 #toast-store.show{opacity:1;}
 .saved-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px;}
+
+/* ── MOBILE ─────────────────────────────────── */
+/* จอสัมผัส: ไม่มี hover จึงแสดงปุ่มบนการ์ดตลอด */
+@media (hover:none){
+  .card-overlay{opacity:1;}
+  .card-heart-btn{opacity:1;}
+}
+
+@media (max-width:900px){
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+}
+
+@media (max-width:640px){
+  html,body{overflow-x:hidden;}
+
+  /* nav */
+  nav{height:56px;padding:0 12px;}
+  .nav-logo{display:none;}
+  .nav-links{position:static;transform:none;}
+  .nav-links a{padding:7px 14px;font-size:11px;letter-spacing:1.5px;}
+
+  /* hero */
+  .hero{margin-top:56px;min-height:0;padding:32px 20px 36px;flex-direction:column-reverse;justify-content:center!important;gap:20px;}
+  .hero>div:last-child{padding-right:0!important;justify-content:center!important;flex:none!important;}
+  .hero>div:last-child img{width:140px!important;height:140px!important;}
+  .hero-content{margin-left:0!important;max-width:100%!important;flex:none!important;text-align:center!important;}
+  .hero-content>div[style*="width:32px"]{margin-left:auto!important;margin-right:auto!important;}
+  .hero-title{font-size:40px!important;}
+
+  /* filter bar */
+  .filter-section{top:56px;padding:10px 12px;gap:10px;}
+  .filter-chips{flex-wrap:nowrap;overflow-x:auto;width:100%;padding-bottom:2px;scrollbar-width:none;}
+  .filter-chips::-webkit-scrollbar{display:none;}
+  .filter-chips>*{flex-shrink:0;}
+  .filter-section>div:last-child{margin-left:0!important;width:100%;}
+  .filter-section>div:last-child>div:last-child{flex:1;}
+  .search-input{width:100%;font-size:16px;}
+  .chip{padding:8px 14px;}
+  #team-submenu{padding:10px 12px;}
+  #team-chips-wrap{flex-direction:column;align-items:stretch;gap:8px;}
+  #team-divider{display:none;}
+  #team-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+  #team-chips::-webkit-scrollbar{display:none;}
+  #team-chips .chip{flex-shrink:0;}
+
+  /* products */
+  .products-section{padding:24px 12px;}
+  .section-header{flex-direction:column;align-items:flex-start!important;gap:14px;margin-bottom:18px;}
+  .section-header>div:last-child{width:100%;flex-wrap:wrap;}
+  .section-title{font-size:24px;}
+  .mdrop-btn{padding:8px 12px;}
+  .products-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+  .product-card:hover{transform:none;}
+  .card-body{padding:10px;}
+  .card-name{font-size:13px;}
+  .card-price{font-size:16px;}
+  .card-badge{font-size:9px;padding:3px 8px;top:8px;left:8px;}
+  .card-heart-btn{width:32px;height:32px;top:8px;right:8px;}
+  .card-overlay{padding:8px;}
+  .card-overlay-btn{padding:8px 6px;font-size:12px;}
+  .size-btn{padding:5px 10px;}
+
+  /* product modal: เรียงบนลงล่าง เลื่อนได้ */
+  .modal-overlay{padding:10px;align-items:flex-end;}
+  .product-modal{grid-template-columns:1fr;height:auto;max-height:92vh;width:100%;overflow-y:auto;}
+  .modal-img{height:auto;width:100%;border-radius:16px 16px 0 0;}
+  .modal-info{height:auto;overflow:visible;padding:20px 18px 24px;}
+  .modal-name{font-size:22px;}
+  .modal-price{font-size:28px;margin-bottom:14px;}
+  .modal-size-btn{padding:9px 16px;}
+
+  /* cart */
+  .cart-sidebar{width:100vw;border-left:none;}
+
+  /* checkout / auth / popups */
+  .checkout-modal{width:100%;max-height:96vh;}
+  .checkout-body{padding:18px 16px;}
+  .form-row{grid-template-columns:1fr;}
+  .form-group input,.form-group textarea,.auth-input{font-size:16px;}
+  #addr-name,#addr-phone,#addr-address,#addr-note{font-size:16px!important;}
+  #qr-img{width:180px!important;height:180px!important;}
+  .auth-box{width:100%;}
+  #address-modal>div>div:nth-child(2)>div:first-child{grid-template-columns:1fr!important;}
+
+  footer{padding:24px 16px;}
+  #toast-store{max-width:90vw;text-align:center;bottom:16px;}
+}
 </style>
 </head>
 <body>

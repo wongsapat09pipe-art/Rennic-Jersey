@@ -89,7 +89,7 @@ function pushTelegramPhoto(photoUrl, caption) {
 
 // ══════════════════════════════════════════════════════════════════
 // PAYMENT PROVIDERS — ทุกเจ้าต้องมี 2 ฟังก์ชันนี้
-//   createCharge({orderId, amountSatang, description}) -> {chargeId, qrImage, qrPayload}
+//   createCharge({orderId, amountSatang, description, expiresAtIso}) -> {chargeId, qrImage, qrPayload}
 //   getCharge(chargeId) -> {id, paid:boolean, amountSatang:number, currency:'THB'}
 // หัวใจความปลอดภัย: เราไม่เชื่อข้อความ webhook เลย แค่ใช้เป็นสัญญาณให้ "ถามผู้ให้บริการอีกครั้ง"
 // ══════════════════════════════════════════════════════════════════
@@ -117,7 +117,7 @@ var PROVIDERS = {
       var resp = UrlFetchApp.fetch('https://api.omise.co/charges', {
         method: 'post', headers: this._auth(), muteHttpExceptions: true,
         payload: { amount: String(o.amountSatang), currency: 'thb', 'source[type]': 'promptpay',
-                   description: o.description, 'metadata[orderId]': o.orderId }
+                   description: o.description, 'metadata[orderId]': o.orderId, expires_at: o.expiresAtIso }
       });
       var d = JSON.parse(resp.getContentText());
       if (!d.id || d.object === 'error') throw new Error('omise: ' + (d.message || resp.getResponseCode()));
@@ -413,7 +413,8 @@ function createOrder_(b, user) {
     try {
       charge = provider_().createCharge({
         orderId: orderId, amountSatang: Math.round(total * 100),
-        description: 'Rennic Jersey ' + orderId.slice(0, 8).toUpperCase()
+        description: 'Rennic Jersey ' + orderId.slice(0, 8).toUpperCase(),
+        expiresAtIso: expires.toISOString()
       });
     } catch (err) {
       Logger.log('createCharge failed: ' + err);

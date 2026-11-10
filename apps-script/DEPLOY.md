@@ -48,7 +48,7 @@ Deploy → Manage deployments → ไอคอนดินสอ → Version: **
 ## 8. ใช้กับผู้ให้บริการรับเงินจริง (Opn Payments / Omise)
 โค้ดส่วนนี้เขียนไว้แล้วแต่ **ยังไม่เคยทดสอบกับบัญชีจริง** ให้ทดสอบด้วย test key ก่อนเสมอ
 1. สมัครบัญชีธุรกิจกับผู้ให้บริการ และขอ secret key (ตอนทดสอบใช้ `skey_test_...`)
-2. Script Properties: `PAYMENT_PROVIDER` = `omise`, เพิ่ม `OMISE_SECRET_KEY`
+2. Script Properties: `PAYMENT_PROVIDER` = `omise`, เพิ่ม `OMISE_SECRET_KEY` (QR จะหมดอายุพร้อมออเดอร์ที่ 15 นาที ผ่านพารามิเตอร์ `expires_at` ตามเอกสาร Opn ถ้าทดสอบแล้ว API ปฏิเสธพารามิเตอร์นี้ ให้ลบ `expires_at` ออกจากบรรทัด createCharge ของ omise)
 3. Deploy เวอร์ชันใหม่อีกครั้ง
 4. ทดสอบสั่งซื้อ: ต้องขึ้น QR จริงของผู้ให้บริการ และเมื่อทำรายการสำเร็จในโหมดทดสอบ หน้าเว็บต้องขึ้น "ชำระเงินสำเร็จ"
 5. (แนะนำ) ตั้ง webhook ที่ dashboard ของผู้ให้บริการ ชี้มาที่ URL `/exec` เดิม สำหรับ event `charge.complete`

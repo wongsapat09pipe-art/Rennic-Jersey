@@ -827,6 +827,7 @@ th:{
   pay_now:'ไปชำระเงิน', auto_note:'💳 กดปุ่มด้านล่างเพื่อรับ QR สำหรับชำระเงิน เมื่อโอนสำเร็จระบบจะยืนยันออเดอร์ให้อัตโนมัติภายในไม่กี่วินาที ไม่ต้องแนบสลิป',
   pay_scan:'สแกนเพื่อชำระเงิน', pay_left:'เหลือเวลา', pay_waiting:'กำลังรอรับชำระเงิน...', pay_hint:'บนมือถือ: กดค้างที่ QR เพื่อบันทึกรูป แล้วเปิดแอปธนาคารเลือกสแกนจากรูปภาพ',
   pay_ref:'เลขอ้างอิง', pay_cancel:'ยกเลิกออเดอร์นี้', pay_mock_note:'โหมดทดสอบ — ยังไม่ใช่การชำระเงินจริง', pay_mock_btn:'จำลองการชำระเงินสำเร็จ',
+  pay_review_title:'ได้รับยอดแล้ว กำลังตรวจสอบ', pay_review_sub:'ยอดที่ได้รับไม่ตรงกับออเดอร์ ทีมงานจะติดต่อกลับโดยเร็ว กรุณาเก็บเลขอ้างอิงไว้ครับ',
   pay_ok_title:'ชำระเงินสำเร็จ!', pay_ok_sub:'ยืนยันออเดอร์เรียบร้อยแล้ว ทีมงานจะแพ็คและจัดส่งให้เร็วที่สุด<br>ติดตามสถานะได้ที่ "ออเดอร์ของฉัน" (ต้องเข้าสู่ระบบ)',
   pay_exp_title:'หมดเวลาชำระเงิน', pay_exp_sub:'ออเดอร์นี้ถูกยกเลิกและคืนสินค้าเข้าสต็อกแล้ว ถ้าต้องการยังสั่งซื้อได้ใหม่ครับ', pay_retry:'กลับไปสั่งซื้อใหม่',
   pay_cancelled:'ยกเลิกออเดอร์แล้ว', st_wait:'รอชำระเงิน',
@@ -1460,6 +1461,7 @@ async function checkPay(){
     const st=await fetch(GAS_URL+'?action=order_status&orderId='+encodeURIComponent(payOrder.orderId)).then(r=>r.json());
     if(st.status==='ok'){
       if(st.state==='paid') onPaid(st);
+      else if(st.state==='review') onReview();
       else if(st.state==='expired'||st.state==='gone') onExpired();
     }
   }catch(e){} finally{ payBusy=false; }
@@ -1478,6 +1480,18 @@ function onPaid(st){
     </div>`;
   showCheckoutView('pay');
   document.getElementById('checkout-modal').classList.add('open');
+}
+function onReview(){
+  const ref=payOrder?payOrder.ref:'';
+  stopPayWatch(); payOrder=null; setPending(null);
+  document.getElementById('pay-panel').innerHTML=`
+    <div class="success-box"><div class="success-icon">🔎</div>
+      <div class="success-title">${t('pay_review_title')}</div>
+      <div class="pay-ref" style="margin:10px 0 6px;">${t('pay_ref')} <strong>${esc(ref)}</strong></div>
+      <div class="success-sub">${t('pay_review_sub')}</div>
+      <button class="hero-btn" style="margin-top:24px;" onclick="closeCheckout()">${t('back_shop')}</button>
+    </div>`;
+  showCheckoutView('pay');
 }
 function onExpired(){
   stopPayWatch(); payOrder=null; setPending(null); afterStockChange();

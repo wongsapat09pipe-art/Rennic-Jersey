@@ -46,7 +46,7 @@ var MAX_QTY_PER_ITEM = 5;
 
 var COL = { DATE:0, NAME:1, PHONE:2, ADDR:3, ITEMS:4, TOTAL:5, NOTE:6, STATUS:7, CARRIER:8, TRACKING:9, SLIP:10,
             ORDER_ID:11, CHARGE_ID:12, EXPIRES:13, PAID_AT:14, UID:15, ITEMS_JSON:16 };
-var ST_WAIT = 'รอชำระ', ST_PAID = 'ยืนยันแล้ว', ST_SHIPPED = 'จัดส่งแล้ว';
+var ST_WAIT = 'รอชำระ', ST_PAID = 'ยืนยันแล้ว', ST_SHIPPED = 'จัดส่งแล้ว', ST_REVIEW = 'ตรวจสอบยอด';
 
 // ── AUTH HELPERS ──────────────────────────────────────────────────
 function verifyIdToken(idToken) {
@@ -324,6 +324,8 @@ function withLock_(fn) {
   lock.waitLock(25000);
   try { return fn(); } finally { lock.releaseLock(); }
 }
+function toMs_(v) { return (v instanceof Date) ? v.getTime() : Date.parse(v); }
+function normPhone_(v) { return String(v == null ? '' : v).replace(/\D/g, '').replace(/^0+/, ''); }
 function parseQty_(v) { try { var o = JSON.parse(v || '{}'); return (o && typeof o === 'object') ? o : {}; } catch (x) { return {}; } }
 function sumQty_(o) { var t = 0; for (var k in o) t += parseInt(o[k]) || 0; return t; }
 function thaiNow_() {
@@ -369,7 +371,7 @@ function createOrder_(b, user) {
     var orders = osheet.getDataRange().getValues();
     var pendingForPhone = 0;
     for (var oi = 1; oi < orders.length; oi++) {
-      if (String(orders[oi][COL.STATUS]) === ST_WAIT && String(orders[oi][COL.PHONE]).trim() === phone) pendingForPhone++;
+      if (String(orders[oi][COL.STATUS]) === ST_WAIT && normPhone_(orders[oi][COL.PHONE]) === normPhone_(phone)) pendingForPhone++;
     }
     if (pendingForPhone >= MAX_PENDING_PER_PHONE) return { status: 'error', code: 'too_many_pending' };
 
@@ -466,16 +468,16 @@ function expirePendingNoLock_() {
   var now = Date.now();
   for (var i = rows.length - 1; i >= 1; i--) {
     if (String(rows[i][COL.STATUS]) !== ST_WAIT) continue;
-    var exp = Date.parse(rows[i][COL.EXPIRES]);
+    var exp = toMs_(rows[i][COL.EXPIRES]);
     if (!exp || exp > now) continue;
     var info = { row: i + 1, values: rows[i] };
-    var paid = false;
-    try { paid = provider_().getCharge(String(rows[i][COL.CHARGE_ID])).paid; } catch (err) { Logger.log('expire check failed: ' + err); continue; }
-    if (paid) { finalizePaidNoLock_(info, provider_().getCharge(String(rows[i][COL.CHARGE_ID]))); }
+    var charge;
+    try { charge = provider_().getCharge(String(rows[i][COL.CHARGE_ID])); } catch (err) { Logger.log('expire check failed: ' + err); continue; }
+    if (charge.paid) { verifyAndFinalizeNoLock_(info, charge); }
     else { cancelRowNoLock_(info); }
   }
 }
-function expireTrigger_() { withLock_(expirePendingNoLock_); }
+function expireTrigger() { withLock_(expirePendingNoLock_); }
 
 function cancelOrderByCustomer_(orderId) {
   return withLock_(function () {
@@ -488,6 +490,21 @@ function cancelOrderByCustomer_(orderId) {
     cancelRowNoLock_(info);
     return { status: 'ok', state: 'cancelled' };
   });
+}
+
+/** ผู้ให้บริการบอกว่าจ่ายแล้ว → ตรวจยอด/สกุลเงินให้ตรงกับออเดอร์ก่อนยืนยันเสมอ (ไม่ล็อกเอง)
+ *  ถ้าไม่ตรง: ตั้งสถานะ "ตรวจสอบยอด" (เก็บสต็อกไว้) แจ้ง Telegram ครั้งเดียว ให้แอดมินตัดสินใจเอง */
+function verifyAndFinalizeNoLock_(info, charge) {
+  var expected = Math.round(Number(info.values[COL.TOTAL]) * 100);
+  if (charge.amountSatang === expected && charge.currency === 'THB') {
+    finalizePaidNoLock_(info, charge);
+    return 'paid';
+  }
+  ordersSheet_().getRange(info.row, COL.STATUS + 1).setValue(ST_REVIEW);
+  pushTelegram('⚠️ ยอดชำระไม่ตรง Ref ' + String(info.values[COL.ORDER_ID]).slice(0, 8).toUpperCase()
+    + '\nควรได้ ' + (expected / 100) + ' THB แต่ได้ ' + (charge.amountSatang / 100) + ' ' + charge.currency
+    + '\nไม่ได้ยืนยันอัตโนมัติ — เก็บสต็อกไว้ให้ ตรวจในชีต Order (สถานะ "' + ST_REVIEW + '") แล้วคืนเงินหรือยืนยันเอง');
+  return 'mismatch';
 }
 
 /** เงินเข้าแล้ว: ตรวจยอดกับผู้ให้บริการ แล้วเปลี่ยนสถานะ + ตัดสต็อกถาวร + แจ้ง Telegram (ไม่ล็อกเอง) */
@@ -536,14 +553,7 @@ function confirmPaymentByCharge_(chargeId) {
       return { state: 'orphan' };
     }
     if (String(info.values[COL.STATUS]) !== ST_WAIT) return { state: 'already' };   // ซ้ำ = ไม่ทำอะไร
-    var expected = Math.round(Number(info.values[COL.TOTAL]) * 100);
-    if (charge.amountSatang !== expected || charge.currency !== 'THB') {
-      pushTelegram('⚠️ ยอดชำระไม่ตรง Ref ' + String(info.values[COL.ORDER_ID]).slice(0, 8).toUpperCase()
-        + '\nควรได้ ' + (expected / 100) + ' THB แต่ได้ ' + (charge.amountSatang / 100) + ' ' + charge.currency + ' — ไม่ได้ยืนยันอัตโนมัติ');
-      return { state: 'mismatch' };
-    }
-    finalizePaidNoLock_(info, charge);
-    return { state: 'paid' };
+    return { state: verifyAndFinalizeNoLock_(info, charge) };
   });
 }
 
@@ -551,8 +561,9 @@ function orderStatus_(orderId) {
   var info = findOrderRow_(orderId);
   if (!info) return { status: 'ok', state: 'gone' };   // ถูกยกเลิก/หมดเวลา (แถวถูกลบ)
   var v = info.values, st = String(v[COL.STATUS]);
-  var base = { status: 'ok', ref: String(v[COL.ORDER_ID]).slice(0, 8).toUpperCase(), amount: Number(v[COL.TOTAL]), expiresAt: v[COL.EXPIRES] };
+  var base = { status: 'ok', ref: String(v[COL.ORDER_ID]).slice(0, 8).toUpperCase(), amount: Number(v[COL.TOTAL]), expiresAt: (v[COL.EXPIRES] instanceof Date ? v[COL.EXPIRES].toISOString() : v[COL.EXPIRES]) };
   if (st === ST_PAID || st === ST_SHIPPED) { base.state = 'paid'; base.orderStatus = st; return base; }
+  if (st === ST_REVIEW) { base.state = 'review'; return base; }
   if (st !== ST_WAIT) { base.state = 'gone'; return base; }
 
   // รอชำระ: ถามผู้ให้บริการ (กันกรณี webhook ไม่มา) แต่ไม่ถี่เกิน 1 ครั้ง/5 วิ ต่อออเดอร์
@@ -562,8 +573,9 @@ function orderStatus_(orderId) {
     cache.put(key, '1', 5);
     var res = confirmPaymentByCharge_(String(v[COL.CHARGE_ID]));
     if (res.state === 'paid' || res.state === 'already') { base.state = 'paid'; base.orderStatus = ST_PAID; return base; }
+    if (res.state === 'mismatch') { base.state = 'review'; return base; }
   }
-  var exp = Date.parse(v[COL.EXPIRES]);
+  var exp = toMs_(v[COL.EXPIRES]);
   if (exp && exp <= Date.now()) {
     withLock_(expirePendingNoLock_);
     var again = findOrderRow_(orderId);
@@ -577,9 +589,9 @@ function orderStatus_(orderId) {
 // ── ตั้งเวลาให้ระบบยกเลิกออเดอร์ที่หมดเวลาเองทุก 5 นาที (รันฟังก์ชันนี้ "ครั้งเดียว" จากหน้า editor) ──
 function setupTriggers() {
   ScriptApp.getProjectTriggers().forEach(function (t) {
-    if (t.getHandlerFunction() === 'expireTrigger_') ScriptApp.deleteTrigger(t);
+    if (t.getHandlerFunction() === 'expireTrigger' || t.getHandlerFunction() === 'expireTrigger_') ScriptApp.deleteTrigger(t);
   });
-  ScriptApp.newTrigger('expireTrigger_').timeBased().everyMinutes(5).create();
+  ScriptApp.newTrigger('expireTrigger').timeBased().everyMinutes(5).create();
 }
 
 function out(o) {

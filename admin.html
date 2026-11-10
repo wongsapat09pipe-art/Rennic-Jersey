@@ -729,7 +729,7 @@ function renderOrdersTable(){
     <td style="font-size:11px;max-width:120px">${o.address}</td>
     <td style="font-size:12px">${o.items}</td>
     <td style="font-family:Kanit,sans-serif;color:var(--earth-accent)">฿${o.total.toLocaleString()}</td>
-    <td><span class="badge ${o.status==='รอยืนยัน'?'badge-unposted':o.status==='ยืนยันแล้ว'||o.status==='จัดส่งแล้ว'?'badge-sold':'badge-stock'}">${o.status}</span></td>
+    <td><span class="badge ${o.status==='รอยืนยัน'||o.status==='รอชำระ'?'badge-unposted':o.status==='ยืนยันแล้ว'||o.status==='จัดส่งแล้ว'?'badge-sold':'badge-stock'}">${o.status}</span></td>
     <td>
       <div style="display:flex;flex-direction:column;gap:4px;min-width:160px;">
         <select id="carrier-${o._row}" style="padding:3px 6px;font-size:11px;border:1px solid var(--earth-border);border-radius:4px;font-family:Sarabun,sans-serif;background:var(--earth-bg);">
